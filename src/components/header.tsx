@@ -68,15 +68,25 @@ export const Header = ({ cartCount, onCartClick, onContactClick, searchTerm, set
           </nav>
           
           <div className="flex flex-1 items-center justify-end gap-2">
-            {userName && (
-              <div className="hidden sm:flex items-center gap-2 text-sm">
-                <span className="font-medium text-primary">Bonjour, {userName}</span>
+            {userName ? (
+               <div className="hidden sm:flex items-center gap-2 text-sm">
+                <Button variant="ghost" asChild className="text-primary font-bold">
+                    <Link href="/account">Bonjour, {userName}</Link>
+                </Button>
                 <Button variant="ghost" size="icon" onClick={handleLogout} title="Déconnexion">
-                  <LogOut className="text-red-500" />
-                  <span className="sr-only">Déconnexion</span>
+                    <LogOut className="text-red-500" />
+                    <span className="sr-only">Déconnexion</span>
                 </Button>
               </div>
+            ) : (
+                 <Button variant="ghost" size="icon" asChild>
+                  <Link href="/login" title="Espace Client">
+                      <User />
+                      <span className="sr-only">Espace Client</span>
+                  </Link>
+              </Button>
             )}
+
             <div className="relative hidden sm:block">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               <Input
@@ -94,15 +104,6 @@ export const Header = ({ cartCount, onCartClick, onContactClick, searchTerm, set
                     <span className="sr-only">Espace Vendeur</span>
                 </Link>
             </Button>
-
-            {!userName && (
-              <Button variant="ghost" size="icon" asChild>
-                  <Link href="/client" title="Espace Client">
-                      <User />
-                      <span className="sr-only">Espace Client</span>
-                  </Link>
-              </Button>
-            )}
 
             <Button onClick={onCartClick} className="relative rounded-full bg-gradient-to-r from-primary to-blue-600 text-primary-foreground font-bold hover:scale-105 hover:shadow-[0_0_25px_rgba(0,212,255,0.4)] transition-all duration-300">
               <ShoppingCart className="mr-2 h-5 w-5" />

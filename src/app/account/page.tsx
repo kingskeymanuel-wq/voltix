@@ -189,7 +189,7 @@ const PlaceholderContent = ({ title, icon: Icon }: { title: string; icon: React.
 );
 
 
-export default function ClientPage() {
+export default function AccountPage() {
   const [isContactModalOpen, setIsContactModalOpen] = React.useState(false);
   const [activeView, setActiveView] = React.useState<ClientView>('details');
   const [userName, setUserName] = React.useState("Client VOLTIX");
@@ -200,8 +200,11 @@ export default function ClientPage() {
     const storedLastName = localStorage.getItem('userLastName');
     if (storedFirstName && storedLastName) {
       setUserName(`${storedFirstName} ${storedLastName}`);
+    } else {
+        // If no user data, redirect to login
+        router.push('/login');
     }
-  }, []);
+  }, [router]);
 
   const handleLogout = () => {
       localStorage.removeItem('userFirstName');
@@ -284,3 +287,4 @@ export default function ClientPage() {
     </div>
   );
 }
+

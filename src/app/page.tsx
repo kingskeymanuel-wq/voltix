@@ -7,6 +7,7 @@ import { ProductsSection } from "@/components/products-section";
 import { CartSheet } from "@/components/cart-sheet";
 import { ContactModal } from "@/components/contact-modal";
 import { ContactBar } from "@/components/contact-bar";
+import { VoltyAssistant } from "@/components/volty-assistant";
 import type { CartItem, Product } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
 
@@ -103,6 +104,7 @@ export default function Home() {
         addToCart={addToCart}
       />
       <ContactModal isOpen={isContactModalOpen} onOpenChange={setIsContactModalOpen} />
+      <VoltyAssistant addToCart={addToCart} />
     </div>
   );
 }
