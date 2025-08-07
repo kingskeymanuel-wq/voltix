@@ -14,7 +14,7 @@ export const ContactBar = ({ onContactClick }: ContactBarProps) => {
         <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-2 text-sm text-primary">
           <div className="flex items-center gap-2">
             <Phone size={16} />
-            <span>+225 07 XX XX XX XX</span>
+            <span>+225 0554796919</span>
           </div>
           <div className="flex items-center gap-2">
             <Mail size={16} />

@@ -17,8 +17,8 @@ interface ContactModalProps {
 }
 
 const contactMethods = [
-    { icon: Phone, title: "Hotline Premium", lines: ["+225 07000000", "+225 05000000"], note: "Appel gratuit 24h/7j" },
-    { icon: MessageSquare, title: "Chat en Direct", lines: ["WhatsApp Business", "+225 07000000"], note: "Réponse instantanée" },
+    { icon: Phone, title: "Hotline Premium", lines: ["+225 0554796919"], note: "Appel gratuit 24h/7j" },
+    { icon: MessageSquare, title: "Chat en Direct", lines: ["WhatsApp Business", "+225 0554796919"], note: "Réponse instantanée" },
     { icon: Mail, title: "Email Support", lines: ["support@voltixsmart.ci", "vip@voltixsmart.ci"], note: "Réponse sous 2h" },
     { icon: MapPin, title: "Showroom Abidjan", lines: ["Cocody, Riviera Palmeraie", "Face RTI, Immeuble VOLTIX"], note: "Lun-Sam: 8h-20h" },
     { icon: Truck, title: "Suivi Livraison", lines: ["Tracking GPS en temps réel", "+225 07111111"], note: "Livraison express CI" },
