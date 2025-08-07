@@ -25,4 +25,12 @@ export interface Order {
   signature: string;
 }
 
-    
+export interface SAVTicket {
+  id: string;
+  clientId: string;
+  orderId: string;
+  product: string;
+  issue: string;
+  status: 'Ouvert' | 'En cours' | 'Clôturé';
+  date: string;
+}

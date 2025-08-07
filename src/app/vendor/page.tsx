@@ -11,15 +11,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { DollarSign, ShoppingCart, Users, CreditCard, Lock, BarChart2, Mail, KeyRound, Eye, Bell, Truck, FileSignature } from "lucide-react";
+import { DollarSign, ShoppingCart, Users, CreditCard, Lock, BarChart2, Mail, KeyRound, Eye, Bell, Truck, FileSignature, Wrench } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
-import type { Order } from "@/lib/types";
+import type { Order, SAVTicket } from "@/lib/types";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Separator } from "@/components/ui/separator";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 
 
 const salesData = [
@@ -45,14 +46,87 @@ const mockOrders: Order[] = [
     { id: 'VOLTIX-9101', items: [{id: 'p7', name: 'MacBook Pro 16" M3', quantity:1, price: 1200000, category: 's', image: '', dataAiHint: '', description: ''}], total: 1200000, date: '2024-02-15', status: 'cancelled', signature: 'Ali Koné' },
 ];
 
+const initialSavTickets: SAVTicket[] = [
+    { id: 'SAV-001', clientId: 'USR-001', orderId: 'VOLTIX-1234', product: 'iPhone 15 Pro Max', issue: 'Problème de batterie, ne tient pas la charge.', status: 'En cours', date: '2024-07-20' },
+];
+
 
 type VendorView = 'login' | 'forgot-password' | 'reset-password';
 type SelectedClient = typeof mockClients[0] | null;
 
-const ClientDetailsModal = ({ client, isOpen, onOpenChange, onAlert }: { client: SelectedClient, isOpen: boolean, onOpenChange: (open: boolean) => void, onAlert: (message: string) => void }) => {
+const CreateSavTicketModal = ({ client, isOpen, onOpenChange, onTicketCreated }: { client: SelectedClient, isOpen: boolean, onOpenChange: (open: boolean) => void, onTicketCreated: (ticket: SAVTicket) => void }) => {
     if (!client) return null;
+
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+        const newTicket: SAVTicket = {
+            id: `SAV-${Date.now().toString().slice(-4)}`,
+            clientId: client.id,
+            orderId: formData.get('orderId') as string,
+            product: mockOrders.find(o => o.id === formData.get('orderId'))?.items[0].name || 'N/A',
+            issue: formData.get('issue') as string,
+            status: 'Ouvert',
+            date: new Date().toISOString().split('T')[0],
+        };
+        onTicketCreated(newTicket);
+        onOpenChange(false);
+    };
     
     return (
+        <Dialog open={isOpen} onOpenChange={onOpenChange}>
+            <DialogContent className="bg-background/95 backdrop-blur-xl">
+                <DialogHeader>
+                    <DialogTitle className="text-primary text-2xl flex items-center gap-3"><Wrench /> Créer un Ticket SAV</DialogTitle>
+                    <DialogDescription>
+                        Ouvrir un nouveau dossier de service après-vente pour {client.name}.
+                    </DialogDescription>
+                </DialogHeader>
+                <form onSubmit={handleSubmit}>
+                    <div className="py-4 space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="orderId">Commande Concernée</Label>
+                            <Select name="orderId" required>
+                                <SelectTrigger id="orderId">
+                                    <SelectValue placeholder="Sélectionner une commande" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {mockOrders.map(order => (
+                                        <SelectItem key={order.id} value={order.id}>
+                                            {order.id} - {order.items.map(i => i.name).join(', ')}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="issue">Description du problème</Label>
+                            <Textarea id="issue" name="issue" placeholder="Décrivez le problème signalé par le client..." required />
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <DialogClose asChild><Button type="button" variant="secondary">Annuler</Button></DialogClose>
+                        <Button type="submit">Créer le ticket</Button>
+                    </DialogFooter>
+                </form>
+            </DialogContent>
+        </Dialog>
+    );
+};
+
+
+const ClientDetailsModal = ({ client, isOpen, onOpenChange, onAlert, savTickets, onTicketCreated }: { client: SelectedClient, isOpen: boolean, onOpenChange: (open: boolean) => void, onAlert: (message: string) => void, savTickets: SAVTicket[], onTicketCreated: (ticket: SAVTicket) => void }) => {
+    const [isSavModalOpen, setIsSavModalOpen] = React.useState(false);
+    if (!client) return null;
+
+    const clientSavTickets = savTickets.filter(t => t.clientId === client.id);
+
+    const handleCreateTicket = (ticket: SAVTicket) => {
+        onTicketCreated(ticket);
+    }
+    
+    return (
+        <>
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
             <DialogContent className="max-w-3xl bg-background/95 backdrop-blur-xl">
                 <DialogHeader>
@@ -63,10 +137,11 @@ const ClientDetailsModal = ({ client, isOpen, onOpenChange, onAlert }: { client:
                 </DialogHeader>
                 <div className="py-4 max-h-[60vh] overflow-y-auto px-2">
                  <Tabs defaultValue="info" className="w-full">
-                    <TabsList className="grid w-full grid-cols-3">
+                    <TabsList className="grid w-full grid-cols-4">
                         <TabsTrigger value="info">Infos & Stats</TabsTrigger>
                         <TabsTrigger value="orders">Commandes</TabsTrigger>
                         <TabsTrigger value="contracts">Contrats</TabsTrigger>
+                        <TabsTrigger value="sav"><Wrench className="mr-2"/>SAV</TabsTrigger>
                     </TabsList>
                     <TabsContent value="info" className="mt-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -140,15 +215,43 @@ const ClientDetailsModal = ({ client, isOpen, onOpenChange, onAlert }: { client:
                              </CardContent>
                         </Card>
                     </TabsContent>
+                    <TabsContent value="sav" className="mt-4">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="flex items-center justify-between">
+                                    <span>Tickets SAV</span>
+                                    <Button size="sm" onClick={() => setIsSavModalOpen(true)}><Wrench className="mr-2"/> Ouvrir un ticket</Button>
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                {clientSavTickets.length > 0 ? (
+                                    <Table>
+                                        <TableHeader><TableRow><TableHead>ID</TableHead><TableHead>Produit</TableHead><TableHead>Date</TableHead><TableHead>Statut</TableHead></TableRow></TableHeader>
+                                        <TableBody>
+                                            {clientSavTickets.map(ticket => (
+                                                <TableRow key={ticket.id}>
+                                                    <TableCell>{ticket.id}</TableCell>
+                                                    <TableCell>{ticket.product}</TableCell>
+                                                    <TableCell>{new Date(ticket.date).toLocaleDateString('fr-FR')}</TableCell>
+                                                    <TableCell><Badge variant={ticket.status === 'Ouvert' ? 'destructive' : 'default'}>{ticket.status}</Badge></TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                ) : <p className="text-muted-foreground text-center p-4">Aucun ticket SAV pour ce client.</p>}
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
                 </Tabs>
                 </div>
                 <DialogFooter className="gap-2 flex-wrap">
                     <Button onClick={() => onAlert(`Rappel programmé pour ${client.name}.`)}><Bell className="mr-2"/> Planifier un rappel</Button>
-                    <Button onClick={() => onAlert(`Alerte envoyée à l'équipe de livraison concernant ${client.name}.`)} variant="outline"><Truck className="mr-2" /> Alerter Livraison/SAV</Button>
                     <DialogClose asChild><Button type="button" variant="secondary">Fermer</Button></DialogClose>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
+        <CreateSavTicketModal client={client} isOpen={isSavModalOpen} onOpenChange={setIsSavModalOpen} onTicketCreated={handleCreateTicket} />
+        </>
     )
 }
 
@@ -163,6 +266,7 @@ export default function VendorPage() {
   const [newPassword, setNewPassword] = React.useState('');
   const [selectedClient, setSelectedClient] = React.useState<SelectedClient>(null);
   const [isClientModalOpen, setIsClientModalOpen] = React.useState(false);
+  const [savTickets, setSavTickets] = React.useState<SAVTicket[]>(initialSavTickets);
   
   const { toast } = useToast();
   const router = useRouter();
@@ -211,6 +315,14 @@ export default function VendorPage() {
         description: message,
     });
   }
+
+  const handleCreateTicket = (ticket: SAVTicket) => {
+    setSavTickets(prev => [...prev, ticket]);
+    toast({
+        title: "Ticket SAV créé",
+        description: `Le ticket ${ticket.id} a été ouvert pour ${selectedClient?.name}.`,
+    });
+  };
 
   if (!isAuthenticated) {
     return (
@@ -408,11 +520,9 @@ export default function VendorPage() {
             </TabsContent>
         </Tabs>
       </main>
-      <ClientDetailsModal client={selectedClient} isOpen={isClientModalOpen} onOpenChange={setIsClientModalOpen} onAlert={handleAlert} />
+      <ClientDetailsModal client={selectedClient} isOpen={isClientModalOpen} onOpenChange={setIsClientModalOpen} onAlert={handleAlert} savTickets={savTickets} onTicketCreated={handleCreateTicket} />
       <ContactModal isOpen={isContactModalOpen} onOpenChange={setIsContactModalOpen} />
     </div>
     </>
   );
 }
-
-    
