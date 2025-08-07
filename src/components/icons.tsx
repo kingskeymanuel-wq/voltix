@@ -1,9 +1,38 @@
 import { cn } from "@/lib/utils";
 
 export const LightningIcon = () => (
-  <div className="relative inline-flex items-center justify-center bg-gradient-to-br from-primary to-blue-600 p-3 rounded-2xl shadow-[0_0_30px_rgba(0,212,255,0.6)] overflow-hidden">
-    <span className="text-2xl font-black text-primary-foreground">⚡</span>
-    <div className="absolute top-[-50%] left-[-50%] w-[200%] h-[200%] bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shine" />
+  <div className="p-2">
+    <svg 
+      width="40" 
+      height="40" 
+      viewBox="0 0 40 40" 
+      fill="none" 
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <defs>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="3.5" result="coloredBlur" />
+          <feMerge>
+            <feMergeNode in="coloredBlur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+      <path 
+        d="M20 3C30.4934 3 39 10.2969 39 19C39 27.7031 30.4934 35 20 35C9.50659 35 1 27.7031 1 19C1 10.2969 9.50659 3 20 3Z" 
+        stroke="hsl(var(--primary))" 
+        strokeWidth="3"
+      />
+      <path 
+        d="M20 7C28.2843 7 35 12.2843 35 19C35 25.7157 28.2843 31 20 31C11.7157 31 5 25.7157 5 19C5 12.2843 11.7157 7 20 7Z" 
+        fill="hsl(var(--primary))"
+        style={{filter: 'url(#glow)'}}
+      />
+      <path 
+        d="M20 11C25.5228 11 30 15.0228 30 19C30 22.9772 25.5228 27 20 27C14.4772 27 10 22.9772 10 19C10 15.0228 14.4772 11 20 11Z"
+        fill="hsl(var(--background))"
+      />
+    </svg>
   </div>
 );
 
