@@ -18,7 +18,7 @@ export const ContactBar = ({ onContactClick }: ContactBarProps) => {
           </div>
           <div className="flex items-center gap-2">
             <Mail size={16} />
-            <span>support@voltixsmart.ci</span>
+            <span>kingskeymanuel@gmail.com</span>
           </div>
           <div className="hidden md:flex items-center gap-2">
             <MapPin size={16} />

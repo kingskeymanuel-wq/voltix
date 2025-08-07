@@ -19,10 +19,10 @@ interface ContactModalProps {
 const contactMethods = [
     { icon: Phone, title: "Hotline Premium", lines: ["+225 0554796919"], note: "Appel gratuit 24h/7j" },
     { icon: MessageSquare, title: "Chat en Direct", lines: ["WhatsApp Business", "+225 0554796919"], note: "Réponse instantanée" },
-    { icon: Mail, title: "Email Support", lines: ["support@voltixsmart.ci", "vip@voltixsmart.ci"], note: "Réponse sous 2h" },
+    { icon: Mail, title: "Email Support", lines: ["kingskeymanuel@gmail.com"], note: "Réponse sous 2h" },
     { icon: MapPin, title: "Showroom Abidjan", lines: ["Cocody, Riviera Palmeraie", "Face RTI, Immeuble VOLTIX"], note: "Lun-Sam: 8h-20h" },
     { icon: Truck, title: "Suivi Livraison", lines: ["Tracking GPS en temps réel", "+225 07111111"], note: "Livraison express CI" },
-    { icon: Wrench, title: "SAV Technique", lines: ["Réparation & Garantie", "technique@voltixsmart.ci"], note: "Experts certifiés" },
+    { icon: Wrench, title: "SAV Technique", lines: ["Réparation & Garantie", "kingskeymanuel@gmail.com"], note: "Experts certifiés" },
 ];
 
 
