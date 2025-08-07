@@ -22,7 +22,7 @@ export const ContactBar = ({ onContactClick }: ContactBarProps) => {
           </div>
           <div className="hidden md:flex items-center gap-2">
             <MapPin size={16} />
-            <span>Abidjan, Cocody - Côte d'Ivoire</span>
+            <span>Abidjan, Koumassi - Côte d'Ivoire</span>
           </div>
           <div className="hidden lg:flex items-center gap-2">
             <Clock size={16} />
