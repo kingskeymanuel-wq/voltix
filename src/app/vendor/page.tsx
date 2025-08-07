@@ -139,12 +139,13 @@ export default function VendorPage() {
   
   const handleResetPassword = () => {
     if (resetCode === '123456' && newPassword) {
-       toast({ title: "Mot de passe modifié", description: "Vous pouvez maintenant vous connecter avec votre nouveau mot de passe." });
-       setView('login');
+       toast({ title: "Mot de passe modifié", description: "Vous êtes maintenant connecté." });
+       setIsAuthenticated(true); // Log in directly
        setPassword('');
        setNewPassword('');
        setResetCode('');
        setEmail('');
+       setView('login'); // Reset view for next time
     } else {
        toast({ variant: "destructive", title: "Erreur", description: "Code de réinitialisation invalide ou mot de passe manquant." });
     }
