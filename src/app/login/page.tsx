@@ -20,17 +20,26 @@ export default function LoginPage() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // This is a dummy login. In a real app, you'd validate credentials.
-    toast({
-      title: "Connexion réussie (simulation)",
-      description: "Vous allez être redirigé vers votre espace.",
-    });
-    // For demo, let's pretend a login was successful and set some user data
-    localStorage.setItem('userFirstName', 'Membre');
-    localStorage.setItem('userLastName', 'VOLTIX');
-    window.dispatchEvent(new Event('storage'));
-    
-    setTimeout(() => router.push('/account'), 1500);
+    const form = e.currentTarget as HTMLFormElement;
+    const password = (form.elements.namedItem('password') as HTMLInputElement).value;
+
+    if (password === 'admin123') {
+        toast({
+          title: "Connexion réussie",
+          description: "Vous allez être redirigé vers votre espace.",
+        });
+        localStorage.setItem('userFirstName', 'Membre');
+        localStorage.setItem('userLastName', 'VOLTIX');
+        window.dispatchEvent(new Event('storage'));
+        
+        setTimeout(() => router.push('/account'), 1500);
+    } else {
+         toast({
+            variant: "destructive",
+            title: "Erreur de connexion",
+            description: "Mot de passe incorrect.",
+        });
+    }
   };
 
   return (
@@ -55,14 +64,14 @@ export default function LoginPage() {
                 <Label htmlFor="email">Adresse Email ou Téléphone</Label>
                 <div className="relative">
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                    <Input id="email" type="email" placeholder="votre.email@example.com" className="pl-10" required />
+                    <Input id="email" name="email" type="email" placeholder="votre.email@example.com" className="pl-10" required />
                 </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="password">Mot de passe</Label>
                  <div className="relative">
                     <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                    <Input id="password" type="password" placeholder="••••••••" className="pl-10" required />
+                    <Input id="password" name="password" type="password" placeholder="••••••••" className="pl-10" required />
                 </div>
               </div>
               <Button type="submit" className="w-full font-bold text-lg p-6">
