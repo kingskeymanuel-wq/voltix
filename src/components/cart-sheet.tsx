@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -13,8 +14,8 @@ import {
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { ScrollArea } from "./ui/scroll-area";
-import type { CartItem, Product } from "@/lib/types";
-import { Minus, Plus, ShoppingCart, Trash2, X, CheckCircle, Smartphone } from "lucide-react";
+import type { CartItem, Product, Order } from "@/lib/types";
+import { Minus, Plus, ShoppingCart, Trash2, X, CheckCircle, Smartphone, FileSignature } from "lucide-react";
 import { Separator } from "./ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
@@ -22,6 +23,7 @@ import { Label } from "./ui/label";
 import { MtnLogo, OrangeLogo, WaveLogo } from "./icons";
 import { useToast } from "@/hooks/use-toast";
 import { AccessoryRecommender } from "./accessory-recommender";
+import { Checkbox } from "./ui/checkbox";
 
 interface CartSheetProps {
   isOpen: boolean;
@@ -34,7 +36,7 @@ interface CartSheetProps {
   addToCart: (product: Product) => void;
 }
 
-type PaymentStep = 'cart' | 'payment' | 'success';
+type PaymentStep = 'cart' | 'payment' | 'contract' | 'success';
 
 export const CartSheet = ({
   isOpen,
@@ -48,28 +50,60 @@ export const CartSheet = ({
 }: CartSheetProps) => {
   const [step, setStep] = React.useState<PaymentStep>('cart');
   const [isProcessing, setIsProcessing] = React.useState(false);
-  const [orderId, setOrderId] = React.useState('');
+  const [order, setOrder] = React.useState<Order | null>(null);
+  const [signature, setSignature] = React.useState("");
+  const [contractApproved, setContractApproved] = React.useState(false);
   const { toast } = useToast();
 
   React.useEffect(() => {
     if (isOpen) {
       setStep('cart');
       setIsProcessing(false);
+      setOrder(null);
+      setSignature("");
+      setContractApproved(false);
     }
   }, [isOpen]);
 
+  const handleGoToPayment = () => {
+    const newOrder: Order = {
+        id: 'VOLTIX-' + Date.now().toString().slice(-8),
+        date: new Date().toISOString(),
+        items: cartItems,
+        total: cartTotal,
+        status: 'pending',
+        signature: '',
+    };
+    setOrder(newOrder);
+    setStep('payment');
+  }
+
   const handleProcessPayment = (method: string) => {
     setIsProcessing(true);
-    toast({ title: "Traitement en cours...", description: "Veuillez patienter." });
+    toast({ title: "Vérification du paiement...", description: "Veuillez patienter." });
 
     setTimeout(() => {
-      const newOrderId = 'VOLTIX-' + Date.now().toString().slice(-8);
-      setOrderId(newOrderId);
       setIsProcessing(false);
-      setStep('success');
-      clearCart();
-    }, 3000);
+      setStep('contract');
+    }, 2000);
   };
+
+  const handleConfirmOrder = () => {
+    if (!order) return;
+    setIsProcessing(true);
+    toast({ title: "Finalisation de la commande...", description: "Veuillez patienter." });
+
+    setTimeout(() => {
+        const confirmedOrder = { ...order, status: 'validated' as const, signature };
+        // In a real app, you would save this order to a database
+        // and associate it with the logged-in user.
+        // For now, we just update the state.
+        setOrder(confirmedOrder); 
+        setIsProcessing(false);
+        setStep('success');
+        clearCart();
+    }, 2000);
+  }
 
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
@@ -134,17 +168,74 @@ export const CartSheet = ({
             </div>
           )}
 
-          {step === 'success' && (
+           {step === 'contract' && order && (
+                <div className="p-1 flex flex-col h-full">
+                    <h3 className="text-xl font-bold mb-4 text-center flex items-center justify-center gap-2"><FileSignature/> Contrat de Vente</h3>
+                    <ScrollArea className="flex-1 pr-4">
+                        <Card className="bg-secondary/50">
+                            <CardHeader>
+                                <CardTitle>Commande #{order.id}</CardTitle>
+                                <CardDescription>Veuillez vérifier votre commande et approuver les termes.</CardDescription>
+                            </CardHeader>
+                            <CardContent className="text-sm space-y-4">
+                                <div>
+                                    <h4 className="font-bold mb-2">Articles :</h4>
+                                    {order.items.map(item => (
+                                        <div key={item.id} className="flex justify-between">
+                                            <span>{item.name} x {item.quantity}</span>
+                                            <span>{(item.price * item.quantity).toLocaleString()} FCFA</span>
+                                        </div>
+                                    ))}
+                                    <Separator className="my-2"/>
+                                    <div className="flex justify-between font-bold text-base">
+                                        <span>Total</span>
+                                        <span className="text-primary">{order.total.toLocaleString()} FCFA</span>
+                                    </div>
+                                </div>
+                                <Separator/>
+                                <div>
+                                    <h4 className="font-bold mb-2">Termes et Conditions</h4>
+                                    <p className="text-xs text-muted-foreground">
+                                        Le client reconnaît avoir reçu les informations complètes sur les caractéristiques essentielles des produits commandés. La garantie constructeur s'applique à tous les produits. VOLTIX SMART s'engage à une livraison sous 48h à Abidjan. En cas de litige, une solution à l'amiable sera recherchée. Ce contrat est régi par le droit ivoirien.
+                                    </p>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="signature" className="font-bold">Signature (tapez votre nom complet)</Label>
+                                    <Input id="signature" placeholder="Ex: Ali Koné" value={signature} onChange={(e) => setSignature(e.target.value)} />
+                                </div>
+                                <div className="flex items-center space-x-2 pt-2">
+                                    <Checkbox id="terms" checked={contractApproved} onCheckedChange={(checked) => setContractApproved(checked as boolean)} />
+                                    <label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                        Lu et approuvé
+                                    </label>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </ScrollArea>
+                     <div className="flex gap-2 mt-4">
+                        <Button variant="outline" onClick={() => setStep('payment')} className="w-full">Retour</Button>
+                        <Button 
+                            onClick={handleConfirmOrder} 
+                            disabled={!signature || !contractApproved || isProcessing}
+                            className="w-full bg-accent text-accent-foreground hover:bg-accent/90"
+                        >
+                            {isProcessing ? "Finalisation..." : "Confirmer et Signer"}
+                        </Button>
+                    </div>
+                </div>
+            )}
+
+          {step === 'success' && order && (
              <div className="flex flex-col items-center justify-center text-center p-6 h-full">
                 <CheckCircle size={64} className="text-accent mb-4"/>
-                <h3 className="text-2xl font-bold text-accent mb-2">Paiement confirmé !</h3>
-                <p className="text-muted-foreground mb-4">Votre commande a été validée et sera traitée rapidement.</p>
+                <h3 className="text-2xl font-bold text-accent mb-2">Commande confirmée !</h3>
+                <p className="text-muted-foreground mb-4">Votre contrat a été validé. Votre commande sera traitée rapidement.</p>
                 <Card className="bg-gray-800/50 w-full">
                   <CardHeader>
                     <CardTitle>Référence de commande</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="font-code text-accent font-bold text-lg">{orderId}</p>
+                    <p className="font-code text-accent font-bold text-lg">{order.id}</p>
                   </CardContent>
                 </Card>
                 <SheetClose asChild>
@@ -154,14 +245,14 @@ export const CartSheet = ({
           )}
         </div>
         
-        {step !== 'success' && cartItems.length > 0 && (
+        {step === 'cart' && cartItems.length > 0 && (
           <SheetFooter className="p-6 bg-background/80 border-t border-white/10 mt-auto">
             <div className="w-full space-y-4">
                 <div className="flex justify-between items-center text-2xl font-black">
                     <span>Total:</span>
                     <span className="text-primary">{cartTotal.toLocaleString()} FCFA</span>
                 </div>
-                <Button onClick={() => setStep('payment')} size="lg" className="w-full font-bold bg-accent text-accent-foreground hover:bg-accent/90">
+                <Button onClick={handleGoToPayment} size="lg" className="w-full font-bold bg-accent text-accent-foreground hover:bg-accent/90">
                     Procéder au paiement
                 </Button>
             </div>
@@ -194,15 +285,13 @@ const PaymentFormWrapper = ({ method, onPay, isProcessing }: { method: 'orange' 
             <Label htmlFor={`${method}-phone`}>Numéro de téléphone</Label>
             <Input id={`${method}-phone`} type="tel" placeholder="0X XX XX XX XX" />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor={`${method}-pin`}>Code PIN</Label>
-            <Input id={`${method}-pin`} type="password" placeholder="••••" maxLength={4} />
-          </div>
           <Button onClick={() => onPay(method)} disabled={isProcessing} className="w-full bg-accent text-accent-foreground hover:bg-accent/90">
-            {isProcessing ? "Traitement..." : `Confirmer le paiement`}
+            {isProcessing ? "Vérification..." : `Payer ${method === 'wave' ? 'avec' : 'par'} ${titles[method]}`}
           </Button>
         </CardContent>
       </Card>
     </TabsContent>
   );
 };
+
+    

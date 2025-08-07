@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -10,12 +11,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { DollarSign, ShoppingCart, Users, CreditCard, Lock, BarChart2, Mail, KeyRound, Eye, Bell, Truck } from "lucide-react";
+import { DollarSign, ShoppingCart, Users, CreditCard, Lock, BarChart2, Mail, KeyRound, Eye, Bell, Truck, FileSignature } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
+import type { Order } from "@/lib/types";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Separator } from "@/components/ui/separator";
+
 
 const salesData = [
   { name: 'Jan', Ventes: 4000, Benefices: 2400 },
@@ -34,11 +39,12 @@ const mockClients = [
     { id: 'USR-004', name: 'Aïcha Traoré', email: 'a.traore@example.com', phone: '+225 04567890', totalSpent: 3500000, lastOrder: '2024-05-15', status: 'VIP' },
 ];
 
-const mockOrders = [
-    { id: 'VOLTIX-1234', product: 'iPhone 15 Pro Max', date: '2024-05-10', status: 'Livrée' },
-    { id: 'VOLTIX-5678', product: 'AirPods Pro 2', date: '2024-04-22', status: 'Livrée' },
-    { id: 'VOLTIX-9101', product: 'MacBook Pro 16" M3', date: '2024-02-15', status: 'Annulée' },
+const mockOrders: Order[] = [
+    { id: 'VOLTIX-1234', items: [{id: 'p1', name: 'iPhone 15 Pro Max', quantity:1, price: 850000, category: 's', image: '', dataAiHint: '', description: ''}], total: 850000, date: '2024-05-10', status: 'delivered', signature: 'Ali Koné' },
+    { id: 'VOLTIX-5678', items: [{id: 'p13', name: 'AirPods Pro 2', quantity:1, price: 180000, category: 's', image: '', dataAiHint: '', description: ''}], total: 180000, date: '2024-04-22', status: 'delivered', signature: 'Ali Koné' },
+    { id: 'VOLTIX-9101', items: [{id: 'p7', name: 'MacBook Pro 16" M3', quantity:1, price: 1200000, category: 's', image: '', dataAiHint: '', description: ''}], total: 1200000, date: '2024-02-15', status: 'cancelled', signature: 'Ali Koné' },
 ];
+
 
 type VendorView = 'login' | 'forgot-password' | 'reset-password';
 type SelectedClient = typeof mockClients[0] | null;
@@ -55,47 +61,88 @@ const ClientDetailsModal = ({ client, isOpen, onOpenChange, onAlert }: { client:
                         Fiche complète du client <span className="font-bold text-primary">{client.name}</span> (ID: {client.id})
                     </DialogDescription>
                 </DialogHeader>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-4 max-h-[60vh] overflow-y-auto px-2">
-                    <Card>
-                        <CardHeader><CardTitle>Informations Personnelles</CardTitle></CardHeader>
-                        <CardContent className="space-y-2">
-                            <p><strong>Nom:</strong> {client.name}</p>
-                            <p><strong>Email:</strong> {client.email}</p>
-                            <p><strong>Téléphone:</strong> {client.phone}</p>
-                            <p><strong>Statut:</strong> <Badge variant={client.status === 'VIP' ? 'destructive' : 'default'}>{client.status}</Badge></p>
-                        </CardContent>
-                    </Card>
-                     <Card>
-                        <CardHeader><CardTitle>Statistiques d'Achat</CardTitle></CardHeader>
-                        <CardContent className="space-y-2">
-                            <p><strong>Dépense totale:</strong> {client.totalSpent.toLocaleString()} FCFA</p>
-                            <p><strong>Dernière commande:</strong> {client.lastOrder}</p>
-                            <p><strong>Nombre de commandes:</strong> {mockOrders.length}</p>
-                        </CardContent>
-                    </Card>
-                    <div className="md:col-span-2">
+                <div className="py-4 max-h-[60vh] overflow-y-auto px-2">
+                 <Tabs defaultValue="info" className="w-full">
+                    <TabsList className="grid w-full grid-cols-3">
+                        <TabsTrigger value="info">Infos & Stats</TabsTrigger>
+                        <TabsTrigger value="orders">Commandes</TabsTrigger>
+                        <TabsTrigger value="contracts">Contrats</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="info" className="mt-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <Card>
+                                <CardHeader><CardTitle>Informations Personnelles</CardTitle></CardHeader>
+                                <CardContent className="space-y-2">
+                                    <p><strong>Nom:</strong> {client.name}</p>
+                                    <p><strong>Email:</strong> {client.email}</p>
+                                    <p><strong>Téléphone:</strong> {client.phone}</p>
+                                    <p><strong>Statut:</strong> <Badge variant={client.status === 'VIP' ? 'destructive' : 'default'}>{client.status}</Badge></p>
+                                </CardContent>
+                            </Card>
+                            <Card>
+                                <CardHeader><CardTitle>Statistiques d'Achat</CardTitle></CardHeader>
+                                <CardContent className="space-y-2">
+                                    <p><strong>Dépense totale:</strong> {client.totalSpent.toLocaleString()} FCFA</p>
+                                    <p><strong>Dernière commande:</strong> {client.lastOrder}</p>
+                                    <p><strong>Nombre de commandes:</strong> {mockOrders.length}</p>
+                                </CardContent>
+                            </Card>
+                        </div>
+                    </TabsContent>
+                     <TabsContent value="orders" className="mt-4">
                         <Card>
                             <CardHeader><CardTitle>Historique des Commandes</CardTitle></CardHeader>
                             <CardContent>
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
-                                            <TableHead>ID Commande</TableHead><TableHead>Produit</TableHead><TableHead>Date</TableHead><TableHead>Statut</TableHead>
+                                            <TableHead>ID</TableHead><TableHead>Total</TableHead><TableHead>Date</TableHead><TableHead>Statut</TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
                                         {mockOrders.map(order => (
                                             <TableRow key={order.id}>
-                                                <TableCell>{order.id}</TableCell><TableCell>{order.product}</TableCell><TableCell>{order.date}</TableCell><TableCell>{order.status}</TableCell>
+                                                <TableCell>{order.id}</TableCell>
+                                                <TableCell>{order.total.toLocaleString()} FCFA</TableCell>
+                                                <TableCell>{new Date(order.date).toLocaleDateString('fr-FR')}</TableCell>
+                                                <TableCell>{order.status}</TableCell>
                                             </TableRow>
                                         ))}
                                     </TableBody>
                                 </Table>
                             </CardContent>
                         </Card>
-                    </div>
+                    </TabsContent>
+                    <TabsContent value="contracts" className="mt-4">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2"><FileSignature/>Contrats Signés</CardTitle>
+                            </CardHeader>
+                             <CardContent className="space-y-2">
+                                {mockOrders.filter(o => o.signature).map(contract => (
+                                    <Accordion type="single" collapsible key={contract.id}>
+                                        <AccordionItem value={contract.id}>
+                                            <AccordionTrigger className="text-md font-semibold hover:no-underline p-3 bg-background/50 rounded-lg">
+                                                <div className="flex-1 text-left">
+                                                    <p>Contrat #{contract.id}</p>
+                                                    <p className="text-xs font-normal text-muted-foreground">
+                                                        Signé par {contract.signature} le {new Date(contract.date).toLocaleDateString('fr-FR')}
+                                                    </p>
+                                                </div>
+                                            </AccordionTrigger>
+                                            <AccordionContent className="space-y-2 pt-3 px-3">
+                                                <p><strong>Articles:</strong> {contract.items.map(i => `${i.name} (x${i.quantity})`).join(', ')}</p>
+                                                <p><strong>Montant:</strong> {contract.total.toLocaleString()} FCFA</p>
+                                            </AccordionContent>
+                                        </AccordionItem>
+                                    </Accordion>
+                                ))}
+                             </CardContent>
+                        </Card>
+                    </TabsContent>
+                </Tabs>
                 </div>
-                <DialogFooter className="gap-2">
+                <DialogFooter className="gap-2 flex-wrap">
                     <Button onClick={() => onAlert(`Rappel programmé pour ${client.name}.`)}><Bell className="mr-2"/> Planifier un rappel</Button>
                     <Button onClick={() => onAlert(`Alerte envoyée à l'équipe de livraison concernant ${client.name}.`)} variant="outline"><Truck className="mr-2" /> Alerter Livraison/SAV</Button>
                     <DialogClose asChild><Button type="button" variant="secondary">Fermer</Button></DialogClose>
@@ -131,7 +178,7 @@ export default function VendorPage() {
 
   const handleForgotPassword = () => {
     if (email) {
-      toast({ title: "Demande envoyée", description: `Un code de réinitialisation a été envoyé à ${email}.` });
+      toast({ title: "Demande envoyée", description: `Un code de réinitialisation a été envoyé à ${email}. (Code de démo: 123456)` });
       setView('reset-password');
     } else {
       toast({ variant: "destructive", title: "Erreur", description: "Veuillez entrer une adresse email." });
@@ -140,14 +187,14 @@ export default function VendorPage() {
   
   const handleResetPassword = () => {
     if (resetCode === '123456' && newPassword) {
-       toast({ title: "Mot de passe modifié", description: "Vous êtes maintenant connecté." });
        setVendorPassword(newPassword);
-       setIsAuthenticated(true); // Log in directly
+       toast({ title: "Mot de passe modifié", description: "Votre nouveau mot de passe est actif. Vous êtes maintenant connecté." });
+       setIsAuthenticated(true);
        setPassword('');
        setNewPassword('');
        setResetCode('');
        setEmail('');
-       setView('login'); // Reset view for next time
+       setView('login');
     } else {
        toast({ variant: "destructive", title: "Erreur", description: "Code de réinitialisation invalide ou mot de passe manquant." });
     }
@@ -167,7 +214,7 @@ export default function VendorPage() {
 
   if (!isAuthenticated) {
     return (
-      <div className="flex min-h-screen w-full flex-col items-center justify-center bg-gradient-to-b from-black to-gray-900/80">
+      <div className="flex min-h-screen w-full flex-col items-center justify-center bg-gradient-to-b from-black to-gray-900/80 p-4">
         {view === 'login' && (
           <Card className="w-full max-w-sm bg-card/50 border-primary/20">
             <CardHeader>
@@ -221,7 +268,7 @@ export default function VendorPage() {
             </CardHeader>
             <CardContent className="space-y-4">
                <div className="space-y-2">
-                <Label htmlFor="reset-code">Code de réinitialisation (Ex: 123456)</Label>
+                <Label htmlFor="reset-code">Code de réinitialisation</Label>
                 <Input 
                   id="reset-code" 
                   type="text" 
@@ -239,7 +286,7 @@ export default function VendorPage() {
                   onKeyDown={(e) => e.key === 'Enter' && handleResetPassword()}
                 />
               </div>
-              <Button onClick={handleResetPassword} className="w-full">Modifier le mot de passe</Button>
+              <Button onClick={handleResetPassword} className="w-full">Modifier et se connecter</Button>
               <Button variant="link" size="sm" className="w-full" onClick={() => setView('login')}>Retour à la connexion</Button>
             </CardContent>
           </Card>
@@ -367,3 +414,5 @@ export default function VendorPage() {
     </>
   );
 }
+
+    

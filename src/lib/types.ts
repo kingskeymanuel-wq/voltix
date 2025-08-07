@@ -1,3 +1,4 @@
+
 export interface Product {
   id: string;
   name: string;
@@ -14,3 +15,14 @@ export interface CartItem extends Product {
 }
 
 export type Category = 'all' | 'smartphones' | 'laptops' | 'audio' | 'tv' | 'gaming' | 'accessories' | 'home';
+
+export interface Order {
+  id: string;
+  date: string;
+  items: CartItem[];
+  total: number;
+  status: 'pending' | 'validated' | 'shipped' | 'delivered' | 'cancelled';
+  signature: string;
+}
+
+    

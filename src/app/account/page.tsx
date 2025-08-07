@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -7,7 +8,7 @@ import { ContactBar } from "@/components/contact-bar";
 import { ContactModal } from "@/components/contact-modal";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { User, ShoppingBag, Heart, Settings, Bell, Lock, Globe, LogOut, Home, Truck, CreditCard, Save } from "lucide-react";
+import { User, ShoppingBag, Heart, Settings, Bell, Lock, Globe, LogOut, Home, Truck, CreditCard, Save, FileSignature } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -15,8 +16,14 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
+import type { Order } from "@/lib/types";
 
-type ClientView = 'details' | 'orders' | 'wishlist' | 'settings';
+type ClientView = 'details' | 'orders' | 'wishlist' | 'settings' | 'contracts';
+
+const mockContracts: Order[] = [
+    { id: 'VOLTIX-17212497', date: '2024-07-17T20:56:12.981Z', total: 850000, status: 'validated', signature: 'Client VOLTIX', items: [{ id: 'p1', name: 'iPhone 15 Pro Max', category: 'smartphones', price: 850000, image: 'https://placehold.co/600x400', dataAiHint: "iphone pro", description: 'Le smartphone le plus avancé d\'Apple...', quantity: 1}] },
+    { id: 'VOLTIX-17212423', date: '2024-07-15T18:32:10.111Z', total: 1380000, status: 'delivered', signature: 'Client VOLTIX', items: [{ id: 'p7', name: 'MacBook Pro 16" M3', category: 'laptops', price: 1200000, image: 'https://placehold.co/600x400', dataAiHint: "macbook pro", description: 'Ordinateur portable professionnel...', quantity: 1}, { id: 'p13', name: 'AirPods Pro 2', category: 'audio', price: 180000, image: 'https://placehold.co/600x400', dataAiHint: "airpods pro", description: 'Écouteurs sans fil...', quantity: 1}] },
+];
 
 const AccountDetails = () => {
     const { toast } = useToast();
@@ -121,6 +128,49 @@ const AccountDetails = () => {
     );
 };
 
+const AccountContracts = () => (
+    <Card className="bg-card/50 border-primary/20">
+        <CardHeader>
+            <CardTitle className="flex items-center gap-3"><FileSignature /> Mes Contrats</CardTitle>
+            <CardDescription>Consultez l'historique de vos contrats de vente signés.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+            {mockContracts.map(contract => (
+                 <Accordion type="single" collapsible key={contract.id}>
+                    <AccordionItem value={contract.id}>
+                        <AccordionTrigger className="text-lg font-semibold hover:no-underline p-4 bg-background/50 rounded-lg">
+                            <div className="flex-1 text-left">
+                                <p>Contrat #{contract.id}</p>
+                                <p className="text-sm font-normal text-muted-foreground">
+                                    Signé le {new Date(contract.date).toLocaleDateString('fr-FR')} - Total: {contract.total.toLocaleString()} FCFA
+                                </p>
+                            </div>
+                        </AccordionTrigger>
+                        <AccordionContent className="space-y-4 pt-4 px-4">
+                            <h4 className="font-bold">Détails de la commande :</h4>
+                             <ul className="list-disc list-inside text-muted-foreground">
+                                {contract.items.map(item => (
+                                    <li key={item.id}>{item.name} x {item.quantity}</li>
+                                ))}
+                            </ul>
+                            <p><strong>Signature enregistrée :</strong> {contract.signature}</p>
+                            <p><strong>Statut :</strong> <span className="font-bold text-accent">{contract.status}</span></p>
+                            <Button variant="link" className="p-0 h-auto">Télécharger le PDF</Button>
+                        </AccordionContent>
+                    </AccordionItem>
+                </Accordion>
+            ))}
+            {mockContracts.length === 0 && (
+                 <div className="h-48 flex flex-col items-center justify-center text-muted-foreground">
+                    <FileSignature size={48} className="mb-4"/>
+                    <p>Vous n'avez aucun contrat pour le moment.</p>
+                </div>
+            )}
+        </CardContent>
+    </Card>
+);
+
+
 const AccountSettings = () => (
     <Card className="bg-card/50 border-primary/20">
         <CardHeader>
@@ -219,6 +269,8 @@ export default function AccountPage() {
             return <AccountDetails />;
         case 'settings':
             return <AccountSettings />;
+        case 'contracts':
+            return <AccountContracts />;
         case 'orders':
             return <PlaceholderContent title="Mes Commandes" icon={ShoppingBag} />;
         case 'wishlist':
@@ -271,6 +323,7 @@ export default function AccountPage() {
                 <CardContent className="flex flex-col gap-3">
                     <NavButton view="details" label="Détails du Compte" icon={User}/>
                     <NavButton view="orders" label="Mes Commandes" icon={ShoppingBag}/>
+                    <NavButton view="contracts" label="Mes Contrats" icon={FileSignature}/>
                     <NavButton view="wishlist" label="Liste de Souhaits" icon={Heart}/>
                     <NavButton view="settings" label="Paramètres" icon={Settings}/>
 
@@ -291,4 +344,5 @@ export default function AccountPage() {
     </div>
   );
 }
+
     
