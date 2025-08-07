@@ -31,7 +31,13 @@ export const allProducts: Product[] = [
   {id: 'p21', name: 'Nintendo Switch OLED', category: 'gaming', price: 280000, image: 'https://placehold.co/600x400', dataAiHint: "nintendo switch", description: 'Console hybride avec écran OLED 7", dock amélioré et jeux exclusifs Nintendo.', badge: 'Portable'},
   {id: 'p22', name: 'Bose QuietComfort Ultra', category: 'audio', price: 320000, image: 'https://placehold.co/600x400', dataAiHint: "bose headphones", description: 'Casque premium avec réduction de bruit immersive et audio spatial Bose.', badge: 'Immersif'},
   {id: 'p23', name: 'DJI Mini 4 Pro', category: 'accessories', price: 750000, image: 'https://placehold.co/600x400', dataAiHint: "dji drone", description: 'Drone compact 4K avec détection d\'obstacles omnidirectionnelle et transmission 20km.', badge: 'Drone'},
-  {id: 'p24', name: 'Tesla Powerwall', category: 'home', price: 2200000, image: 'https://placehold.co/600x400', dataAiHint: "home battery", description: 'Batterie domestique intelligente pour stockage d\'énergie solaire et backup électrique.', badge: 'Énergie'}
+  {id: 'p24', name: 'Tesla Powerwall', category: 'home', price: 2200000, image: 'https://placehold.co/600x400', dataAiHint: "home battery", description: 'Batterie domestique intelligente pour stockage d\'énergie solaire et backup électrique.', badge: 'Énergie'},
+
+  // Nouveaux produits ajoutés
+  {id: 'p25', name: 'Projecteur Cinéma 4K VOLTIX', category: 'accessories', price: 250000, image: 'https://placehold.co/600x400', dataAiHint: "video projector", description: 'Transformez votre salon en salle de cinéma avec ce projecteur 4K UHD. Luminosité incroyable et couleurs vives.', badge: 'Cinéma'},
+  {id: 'p26', name: 'Caméra Solaire 360° VOLTIX', category: 'home', price: 120000, image: 'https://placehold.co/600x400', dataAiHint: "solar camera", description: 'Surveillance autonome avec énergie solaire. Angle de vue 360°, vision nocturne et détection de mouvement.', badge: 'Éco'},
+  {id: 'p27', name: 'Caméra Intérieure Wi-Fi VOLTIX', category: 'home', price: 65000, image: 'https://placehold.co/600x400', dataAiHint: "indoor camera", description: 'Gardez un oeil sur votre domicile avec cette caméra Wi-Fi. Audio bi-directionnel et alertes sur smartphone.', badge: 'Sécurité'},
+  {id: 'p28', name: 'Caméra Extérieure Pro VOLTIX', category: 'home', price: 95000, image: 'https://placehold.co/600x400', dataAiHint: "outdoor camera", description: 'Caméra de surveillance robuste pour l\'extérieur. Résistante aux intempéries (IP67), 4K et vision nocturne couleur.', badge: 'Robuste'}
 ];
 
 export const categories = [
