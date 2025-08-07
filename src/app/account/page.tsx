@@ -237,6 +237,10 @@ export default function AccountPage() {
           {label}
       </Button>
   );
+  
+  if (!localStorage.getItem('userFirstName')) {
+    return null; // Render nothing while redirecting
+  }
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-gradient-to-b from-black to-gray-900/80">
