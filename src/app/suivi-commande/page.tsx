@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -12,7 +13,7 @@ import { Progress } from "@/components/ui/progress";
 
 export default function OrderTrackingPage() {
   const [isContactModalOpen, setIsContactModalOpen] = React.useState(false);
-  const [orderId, setOrderId] = React.useState("VOLTIX-12345678");
+  const [orderId, setOrderId] = React.useState("");
   const [searchId, setSearchId] = React.useState("");
   const [orderStatus, setOrderStatus] = React.useState<number | null>(null);
   const [orderDate, setOrderDate] = React.useState<Date | null>(null);
@@ -84,6 +85,7 @@ export default function OrderTrackingPage() {
                   placeholder="Ex: VOLTIX-12345678" 
                   value={searchId}
                   onChange={(e) => setSearchId(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                 />
                 <Button onClick={handleSearch} className="bg-primary text-primary-foreground">
                     Suivre
@@ -140,5 +142,3 @@ export default function OrderTrackingPage() {
     </div>
   );
 }
-
-    
