@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
 import { Header } from "@/components/header";
 import { ContactBar } from "@/components/contact-bar";
 import { ContactModal } from "@/components/contact-modal";
@@ -19,12 +20,31 @@ type ClientView = 'details' | 'orders' | 'wishlist' | 'settings';
 
 const AccountDetails = () => {
     const { toast } = useToast();
+    const router = useRouter();
+    const [firstName, setFirstName] = React.useState("Client");
+    const [lastName, setLastName] = React.useState("VOLTIX");
+    const [email, setEmail] = React.useState("client@voltix.ci");
+    const [phone, setPhone] = React.useState("+225 01 02 03 04");
+    const [isSameAddress, setIsSameAddress] = React.useState(true);
+
+    React.useEffect(() => {
+        const storedFirstName = localStorage.getItem('userFirstName');
+        const storedLastName = localStorage.getItem('userLastName');
+        if (storedFirstName) setFirstName(storedFirstName);
+        if (storedLastName) setLastName(storedLastName);
+    }, []);
 
     const handleSaveChanges = () => {
+        localStorage.setItem('userFirstName', firstName);
+        localStorage.setItem('userLastName', lastName);
+        // Simulate a global state update for the header
+        window.dispatchEvent(new Event('storage'));
+        
         toast({
             title: "Modifications enregistrées !",
             description: "Vos informations ont été mises à jour avec succès.",
         });
+        setTimeout(() => router.push('/'), 1500);
     };
 
     return (
@@ -39,19 +59,19 @@ const AccountDetails = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                         <Label htmlFor="firstname">Prénom</Label>
-                        <Input id="firstname" defaultValue="Client" />
+                        <Input id="firstname" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="lastname">Nom</Label>
-                        <Input id="lastname" defaultValue="VOLTIX" />
+                        <Input id="lastname" value={lastName} onChange={(e) => setLastName(e.target.value)} />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="email">Adresse Email</Label>
-                        <Input id="email" type="email" defaultValue="client@voltix.ci" />
+                        <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="phone">Téléphone</Label>
-                        <Input id="phone" type="tel" defaultValue="+225 01 02 03 04" />
+                        <Input id="phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
                     </div>
                 </div>
             </div>
@@ -69,9 +89,17 @@ const AccountDetails = () => {
                     <div className="space-y-3 p-4 bg-background/50 rounded-lg">
                         <h4 className="font-bold flex items-center gap-2"><CreditCard/> Adresse de Facturation</h4>
                         <div className="flex items-center gap-2">
-                            <Switch id="same-address" defaultChecked/>
+                            <Switch id="same-address" checked={isSameAddress} onCheckedChange={setIsSameAddress}/>
                             <Label htmlFor="same-address">Identique à l'adresse de livraison</Label>
                         </div>
+                        {!isSameAddress && (
+                             <div className="space-y-3 pt-2">
+                                <Input placeholder="Adresse ligne 1"/>
+                                <Input placeholder="Adresse ligne 2 (Optionnel)"/>
+                                <Input placeholder="Ville"/>
+                                <Input placeholder="Code Postal"/>
+                            </div>
+                        )}
                     </div>
                  </div>
             </div>
@@ -164,6 +192,23 @@ const PlaceholderContent = ({ title, icon: Icon }: { title: string; icon: React.
 export default function ClientPage() {
   const [isContactModalOpen, setIsContactModalOpen] = React.useState(false);
   const [activeView, setActiveView] = React.useState<ClientView>('details');
+  const [userName, setUserName] = React.useState("Client VOLTIX");
+  const router = useRouter();
+
+  React.useEffect(() => {
+    const storedFirstName = localStorage.getItem('userFirstName');
+    const storedLastName = localStorage.getItem('userLastName');
+    if (storedFirstName && storedLastName) {
+      setUserName(`${storedFirstName} ${storedLastName}`);
+    }
+  }, []);
+
+  const handleLogout = () => {
+      localStorage.removeItem('userFirstName');
+      localStorage.removeItem('userLastName');
+      window.dispatchEvent(new Event('storage')); // Trigger update in header
+      router.push('/');
+  }
 
   const renderContent = () => {
     switch (activeView) {
@@ -212,7 +257,7 @@ export default function ClientPage() {
                 <CardHeader>
                     <CardTitle className="flex items-center gap-3">
                     <User />
-                    Bonjour, Client VOLTIX
+                    Bonjour, {userName}
                     </CardTitle>
                     <CardDescription>Bienvenue dans votre espace.</CardDescription>
                 </CardHeader>
@@ -222,7 +267,7 @@ export default function ClientPage() {
                     <NavButton view="wishlist" label="Liste de Souhaits" icon={Heart}/>
                     <NavButton view="settings" label="Paramètres" icon={Settings}/>
 
-                    <Button variant="destructive" className="justify-start p-6 text-lg mt-4">
+                    <Button variant="destructive" className="justify-start p-6 text-lg mt-4" onClick={handleLogout}>
                         <LogOut className="mr-4" />
                         Déconnexion
                     </Button>

@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
 import { Header } from "@/components/header";
 import { ContactBar } from "@/components/contact-bar";
 import { ContactModal } from "@/components/contact-modal";
@@ -117,6 +118,7 @@ export default function VendorPage() {
   const [isClientModalOpen, setIsClientModalOpen] = React.useState(false);
   
   const { toast } = useToast();
+  const router = useRouter();
 
   const handleLogin = () => {
     if (password === 'admin123') {
@@ -144,6 +146,7 @@ export default function VendorPage() {
        setNewPassword('');
        setResetCode('');
        setEmail('');
+       setTimeout(() => router.push('/'), 1500);
     } else {
        toast({ variant: "destructive", title: "Erreur", description: "Code de réinitialisation invalide ou mot de passe manquant." });
     }

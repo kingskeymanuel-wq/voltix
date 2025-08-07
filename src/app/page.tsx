@@ -15,8 +15,23 @@ export default function Home() {
   const [isCartOpen, setIsCartOpen] = React.useState(false);
   const [isContactModalOpen, setIsContactModalOpen] = React.useState(false);
   const [searchTerm, setSearchTerm] = React.useState("");
+  const [_, setUser] = React.useState(null); // Used to force re-render on storage change
 
   const { toast } = useToast();
+
+  React.useEffect(() => {
+    const handleStorageChange = () => {
+      const userFirstName = localStorage.getItem('userFirstName');
+      // A bit of a hack to force re-render of components that depend on this state
+      // @ts-ignore
+      setUser(userFirstName);
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
 
   const addToCart = React.useCallback((product: Product) => {
     setCart((prevCart) => {

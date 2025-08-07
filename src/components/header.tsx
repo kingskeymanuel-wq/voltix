@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { Search, ShoppingCart, User, Briefcase } from "lucide-react";
+import * as React from "react";
+import { useRouter } from "next/navigation";
+import { Search, ShoppingCart, User, Briefcase, LogOut } from "lucide-react";
 import { LightningIcon } from "./icons";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
@@ -16,11 +18,31 @@ interface HeaderProps {
 }
 
 export const Header = ({ cartCount, onCartClick, onContactClick, searchTerm, setSearchTerm }: HeaderProps) => {
-  const handleScrollTo = (id: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-  };
-  
+  const [userName, setUserName] = React.useState<string | null>(null);
+  const router = useRouter();
+
+  React.useEffect(() => {
+    const updateUserName = () => {
+      const storedFirstName = localStorage.getItem('userFirstName');
+      setUserName(storedFirstName);
+    }
+    
+    updateUserName();
+
+    window.addEventListener('storage', updateUserName);
+    return () => {
+      window.removeEventListener('storage', updateUserName);
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('userFirstName');
+    localStorage.removeItem('userLastName');
+    setUserName(null);
+    window.dispatchEvent(new Event('storage'));
+    router.push('/');
+  }
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-background/90 backdrop-blur-lg">
       <div className="container mx-auto px-4">
@@ -46,6 +68,15 @@ export const Header = ({ cartCount, onCartClick, onContactClick, searchTerm, set
           </nav>
           
           <div className="flex flex-1 items-center justify-end gap-2">
+            {userName && (
+              <div className="hidden sm:flex items-center gap-2 text-sm">
+                <span className="font-medium text-primary">Bonjour, {userName}</span>
+                <Button variant="ghost" size="icon" onClick={handleLogout} title="Déconnexion">
+                  <LogOut className="text-red-500" />
+                  <span className="sr-only">Déconnexion</span>
+                </Button>
+              </div>
+            )}
             <div className="relative hidden sm:block">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               <Input
@@ -64,12 +95,14 @@ export const Header = ({ cartCount, onCartClick, onContactClick, searchTerm, set
                 </Link>
             </Button>
 
-            <Button variant="ghost" size="icon" asChild>
-                <Link href="/client" title="Espace Client">
-                    <User />
-                    <span className="sr-only">Espace Client</span>
-                </Link>
-            </Button>
+            {!userName && (
+              <Button variant="ghost" size="icon" asChild>
+                  <Link href="/client" title="Espace Client">
+                      <User />
+                      <span className="sr-only">Espace Client</span>
+                  </Link>
+              </Button>
+            )}
 
             <Button onClick={onCartClick} className="relative rounded-full bg-gradient-to-r from-primary to-blue-600 text-primary-foreground font-bold hover:scale-105 hover:shadow-[0_0_25px_rgba(0,212,255,0.4)] transition-all duration-300">
               <ShoppingCart className="mr-2 h-5 w-5" />
@@ -86,5 +119,3 @@ export const Header = ({ cartCount, onCartClick, onContactClick, searchTerm, set
     </header>
   );
 };
-
-    
