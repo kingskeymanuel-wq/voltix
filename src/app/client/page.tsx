@@ -13,73 +13,85 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { useToast } from "@/hooks/use-toast";
 
 type ClientView = 'details' | 'orders' | 'wishlist' | 'settings';
 
-const AccountDetails = () => (
-  <Card className="bg-card/50 border-primary/20">
-    <CardHeader>
-      <CardTitle className="flex items-center gap-3"><User /> Détails du Compte</CardTitle>
-      <CardDescription>Gérez vos informations personnelles, adresses et moyens de paiement.</CardDescription>
-    </CardHeader>
-    <CardContent className="space-y-6">
-        <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-primary">Informations Personnelles</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                    <Label htmlFor="firstname">Prénom</Label>
-                    <Input id="firstname" defaultValue="Client" />
-                </div>
-                <div className="space-y-2">
-                    <Label htmlFor="lastname">Nom</Label>
-                    <Input id="lastname" defaultValue="VOLTIX" />
-                </div>
-                <div className="space-y-2">
-                    <Label htmlFor="email">Adresse Email</Label>
-                    <Input id="email" type="email" defaultValue="client@voltix.ci" />
-                </div>
-                <div className="space-y-2">
-                    <Label htmlFor="phone">Téléphone</Label>
-                    <Input id="phone" type="tel" defaultValue="+225 01 02 03 04" />
-                </div>
-            </div>
-        </div>
-        <Separator/>
-         <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-primary flex items-center gap-2"><Home/> Adresses</h3>
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-3 p-4 bg-background/50 rounded-lg">
-                    <h4 className="font-bold flex items-center gap-2"><Truck/> Adresse de Livraison</h4>
-                    <Input placeholder="Adresse ligne 1" defaultValue="123 Rue de la Technologie"/>
-                    <Input placeholder="Adresse ligne 2 (Optionnel)" defaultValue="Koumassi, Zone Industrielle"/>
-                    <Input placeholder="Ville" defaultValue="Abidjan"/>
-                    <Input placeholder="Code Postal" defaultValue="00225"/>
-                </div>
-                <div className="space-y-3 p-4 bg-background/50 rounded-lg">
-                    <h4 className="font-bold flex items-center gap-2"><CreditCard/> Adresse de Facturation</h4>
-                    <div className="flex items-center gap-2">
-                        <Switch id="same-address" defaultChecked/>
-                        <Label htmlFor="same-address">Identique à l'adresse de livraison</Label>
+const AccountDetails = () => {
+    const { toast } = useToast();
+
+    const handleSaveChanges = () => {
+        toast({
+            title: "Modifications enregistrées !",
+            description: "Vos informations ont été mises à jour avec succès.",
+        });
+    };
+
+    return (
+      <Card className="bg-card/50 border-primary/20">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-3"><User /> Détails du Compte</CardTitle>
+          <CardDescription>Gérez vos informations personnelles, adresses et moyens de paiement.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+            <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-primary">Informations Personnelles</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="firstname">Prénom</Label>
+                        <Input id="firstname" defaultValue="Client" />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="lastname">Nom</Label>
+                        <Input id="lastname" defaultValue="VOLTIX" />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="email">Adresse Email</Label>
+                        <Input id="email" type="email" defaultValue="client@voltix.ci" />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="phone">Téléphone</Label>
+                        <Input id="phone" type="tel" defaultValue="+225 01 02 03 04" />
                     </div>
                 </div>
-             </div>
-        </div>
-        <Separator/>
-        <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-primary">Informations de Paiement</h3>
-            <p className="text-sm text-muted-foreground">Vos informations de paiement sont sécurisées et ne sont jamais stockées sur nos serveurs.</p>
-             <div className="p-4 bg-background/50 rounded-lg">
-                <p>Aucun moyen de paiement enregistré.</p>
             </div>
-        </div>
+            <Separator/>
+             <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-primary flex items-center gap-2"><Home/> Adresses</h3>
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-3 p-4 bg-background/50 rounded-lg">
+                        <h4 className="font-bold flex items-center gap-2"><Truck/> Adresse de Livraison</h4>
+                        <Input placeholder="Adresse ligne 1" defaultValue="123 Rue de la Technologie"/>
+                        <Input placeholder="Adresse ligne 2 (Optionnel)" defaultValue="Koumassi, Zone Industrielle"/>
+                        <Input placeholder="Ville" defaultValue="Abidjan"/>
+                        <Input placeholder="Code Postal" defaultValue="00225"/>
+                    </div>
+                    <div className="space-y-3 p-4 bg-background/50 rounded-lg">
+                        <h4 className="font-bold flex items-center gap-2"><CreditCard/> Adresse de Facturation</h4>
+                        <div className="flex items-center gap-2">
+                            <Switch id="same-address" defaultChecked/>
+                            <Label htmlFor="same-address">Identique à l'adresse de livraison</Label>
+                        </div>
+                    </div>
+                 </div>
+            </div>
+            <Separator/>
+            <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-primary">Informations de Paiement</h3>
+                <p className="text-sm text-muted-foreground">Vos informations de paiement sont sécurisées et ne sont jamais stockées sur nos serveurs.</p>
+                 <div className="p-4 bg-background/50 rounded-lg">
+                    <p>Aucun moyen de paiement enregistré.</p>
+                </div>
+            </div>
 
-        <Button className="w-full font-bold text-lg p-6">
-            <Save className="mr-3"/>
-            Enregistrer les modifications
-        </Button>
-    </CardContent>
-  </Card>
-);
+            <Button className="w-full font-bold text-lg p-6" onClick={handleSaveChanges}>
+                <Save className="mr-3"/>
+                Enregistrer les modifications
+            </Button>
+        </CardContent>
+      </Card>
+    );
+};
 
 const AccountSettings = () => (
     <Card className="bg-card/50 border-primary/20">
