@@ -12,7 +12,7 @@ export default {
       fontFamily: {
         body: ['Inter', 'sans-serif'],
         headline: ['Inter', 'sans-serif'],
-        code: ['monospace'],
+        code: ['"Source Code Pro"', 'monospace'],
       },
       colors: {
         background: 'hsl(var(--background))',
@@ -88,10 +88,21 @@ export default {
             height: '0',
           },
         },
+        shine: {
+          '0%': { transform: 'translateX(-100%) translateY(-100%) rotate(45deg)' },
+          '50%': { transform: 'translateX(100%) translateY(100%) rotate(45deg)' },
+          '100%': { transform: 'translateX(-100%) translateY(-100%) rotate(45deg)' },
+        },
+        glow: {
+          'from': { 'text-shadow': '0 0 20px hsl(var(--primary) / 0.5)' },
+          'to': { 'text-shadow': '0 0 40px hsl(var(--primary) / 0.8), 0 0 60px hsl(var(--primary) / 0.6)' },
+        }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        shine: 'shine 3s ease-in-out infinite',
+        glow: 'glow 2s ease-in-out infinite alternate',
       },
     },
   },
