@@ -109,6 +109,7 @@ export default function VendorPage() {
   const [isContactModalOpen, setIsContactModalOpen] = React.useState(false);
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
   const [password, setPassword] = React.useState('');
+  const [vendorPassword, setVendorPassword] = React.useState('admin123');
   const [view, setView] = React.useState<VendorView>('login');
   const [email, setEmail] = React.useState('');
   const [resetCode, setResetCode] = React.useState('');
@@ -120,7 +121,7 @@ export default function VendorPage() {
   const router = useRouter();
 
   const handleLogin = () => {
-    if (password === 'admin123') {
+    if (password === vendorPassword) {
       setIsAuthenticated(true);
       toast({ title: "Connexion réussie", description: "Bienvenue dans l'espace vendeur." });
     } else {
@@ -140,6 +141,7 @@ export default function VendorPage() {
   const handleResetPassword = () => {
     if (resetCode === '123456' && newPassword) {
        toast({ title: "Mot de passe modifié", description: "Vous êtes maintenant connecté." });
+       setVendorPassword(newPassword);
        setIsAuthenticated(true); // Log in directly
        setPassword('');
        setNewPassword('');
