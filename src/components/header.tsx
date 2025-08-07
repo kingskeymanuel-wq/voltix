@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Search, ShoppingCart } from "lucide-react";
+import { Search, ShoppingCart, User } from "lucide-react";
 import { LightningIcon } from "./icons";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
@@ -34,15 +34,18 @@ export const Header = ({ cartCount, onCartClick, onContactClick, searchTerm, set
 
           <nav className="hidden md:flex items-center gap-1">
             <Button variant="ghost" asChild>
-              <a href="#home" onClick={handleScrollTo('home')}>Accueil</a>
+              <Link href="/">Accueil</Link>
             </Button>
             <Button variant="ghost" asChild>
-              <a href="#products" onClick={handleScrollTo('products')}>Produits</a>
+              <Link href="/#products">Produits</Link>
             </Button>
             <Button variant="ghost" onClick={onContactClick}>Contact</Button>
+             <Button variant="ghost" asChild>
+              <Link href="/suivi-commande">Suivi Commande</Link>
+            </Button>
           </nav>
           
-          <div className="flex flex-1 items-center justify-end gap-4">
+          <div className="flex flex-1 items-center justify-end gap-2">
             <div className="relative hidden sm:block">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               <Input
@@ -53,6 +56,13 @@ export const Header = ({ cartCount, onCartClick, onContactClick, searchTerm, set
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
+
+            <Button variant="ghost" size="icon" asChild>
+                <Link href="/client">
+                    <User />
+                    <span className="sr-only">Espace Client</span>
+                </Link>
+            </Button>
 
             <Button onClick={onCartClick} className="relative rounded-full bg-gradient-to-r from-primary to-blue-600 text-primary-foreground font-bold hover:scale-105 hover:shadow-[0_0_25px_rgba(0,212,255,0.4)] transition-all duration-300">
               <ShoppingCart className="mr-2 h-5 w-5" />
