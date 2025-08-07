@@ -7,7 +7,7 @@ import { ContactModal } from "@/components/contact-modal";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { PackageCheck, Truck, MapPin, CheckCircle, Clock } from "lucide-react";
+import { PackageCheck, Truck, MapPin, CheckCircle, Clock, CalendarIcon } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 
 export default function OrderTrackingPage() {
@@ -15,20 +15,21 @@ export default function OrderTrackingPage() {
   const [orderId, setOrderId] = React.useState("VOLTIX-12345678");
   const [searchId, setSearchId] = React.useState("");
   const [orderStatus, setOrderStatus] = React.useState<number | null>(null);
-
+  const [orderDate, setOrderDate] = React.useState<Date | null>(null);
   const [timeLeft, setTimeLeft] = React.useState({ hours: 0, minutes: 0, seconds: 0 });
 
   const handleSearch = () => {
     if (searchId) {
       setOrderId(searchId);
       setOrderStatus(2); // Simulating "In Transit"
+      setOrderDate(new Date()); // Set order date to now for simulation
     }
   };
 
   React.useEffect(() => {
-    if (orderStatus !== null && orderStatus < 3) {
-      const deliveryTime = new Date();
-      deliveryTime.setHours(deliveryTime.getHours() + 2); // 2 hours from now
+    if (orderStatus !== null && orderStatus < 3 && orderDate) {
+      const deliveryTime = new Date(orderDate);
+      deliveryTime.setHours(deliveryTime.getHours() + 2); // 2 hours from order time
 
       const interval = setInterval(() => {
         const now = new Date();
@@ -48,8 +49,7 @@ export default function OrderTrackingPage() {
 
       return () => clearInterval(interval);
     }
-  }, [orderStatus]);
-
+  }, [orderStatus, orderDate]);
 
   const statusSteps = [
     { name: "Validée", icon: PackageCheck },
@@ -91,11 +91,15 @@ export default function OrderTrackingPage() {
             </CardContent>
         </Card>
 
-        {orderStatus !== null && (
+        {orderStatus !== null && orderDate && (
             <Card className="max-w-2xl mx-auto bg-card/50 border-primary/20">
                 <CardHeader>
                     <CardTitle>Commande <span className="text-primary">{orderId}</span></CardTitle>
-                    <CardDescription>Statut actuel: <span className="font-bold text-accent">{statusSteps[orderStatus].name}</span></CardDescription>
+                    <div className="flex items-center text-sm text-muted-foreground pt-1">
+                      <CalendarIcon className="mr-2" size={16}/>
+                      <span>Commandé le: {orderDate.toLocaleDateString('fr-FR')} à {orderDate.toLocaleTimeString('fr-FR')}</span>
+                    </div>
+                    <CardDescription className="pt-2">Statut actuel: <span className="font-bold text-accent">{statusSteps[orderStatus].name}</span></CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-8">
                     <div>
@@ -136,3 +140,5 @@ export default function OrderTrackingPage() {
     </div>
   );
 }
+
+    

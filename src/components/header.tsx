@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Search, ShoppingCart, User } from "lucide-react";
+import { Search, ShoppingCart, User, Briefcase } from "lucide-react";
 import { LightningIcon } from "./icons";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
@@ -56,9 +56,16 @@ export const Header = ({ cartCount, onCartClick, onContactClick, searchTerm, set
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
+            
+            <Button variant="ghost" size="icon" asChild>
+                <Link href="/vendor" title="Espace Vendeur">
+                    <Briefcase />
+                    <span className="sr-only">Espace Vendeur</span>
+                </Link>
+            </Button>
 
             <Button variant="ghost" size="icon" asChild>
-                <Link href="/client">
+                <Link href="/client" title="Espace Client">
                     <User />
                     <span className="sr-only">Espace Client</span>
                 </Link>
@@ -79,3 +86,5 @@ export const Header = ({ cartCount, onCartClick, onContactClick, searchTerm, set
     </header>
   );
 };
+
+    
