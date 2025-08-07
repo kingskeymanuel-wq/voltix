@@ -79,10 +79,12 @@ export const Header = ({ cartCount, onCartClick, onContactClick, searchTerm, set
                 </Button>
               </div>
             ) : (
-                 <Button variant="ghost" size="icon" asChild>
+                 <Button variant="ghost" asChild>
                   <Link href="/login" title="Espace Client">
-                      <User />
-                      <span className="sr-only">Espace Client</span>
+                      <div className="flex items-center gap-2">
+                        <User />
+                        <span className="hidden lg:inline">Espace Client</span>
+                      </div>
                   </Link>
               </Button>
             )}

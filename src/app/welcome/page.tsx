@@ -18,7 +18,7 @@ const WelcomePage = () => {
     }, 3000); // Redirect after 3 seconds
 
     return () => clearTimeout(timer); // Cleanup timer on unmount
-  }, [router]);
+  }, [router, name]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-black to-gray-900/80 text-white">

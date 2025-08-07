@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { User, KeyRound, Mail, Phone, Home } from "lucide-react";
 import Link from "next/link";
 
 export default function SignupPage() {

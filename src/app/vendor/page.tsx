@@ -10,13 +10,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { DollarSign, ShoppingCart, Users, CreditCard, Lock, BarChart2, Mail, KeyRound, Eye, Phone, Bell, Truck } from "lucide-react";
+import { DollarSign, ShoppingCart, Users, CreditCard, Lock, BarChart2, Mail, KeyRound, Eye, Bell, Truck } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
-import { Separator } from "@/components/ui/separator";
 
 const salesData = [
   { name: 'Jan', Ventes: 4000, Benefices: 2400 },
@@ -146,7 +145,6 @@ export default function VendorPage() {
        setNewPassword('');
        setResetCode('');
        setEmail('');
-       setTimeout(() => router.push('/'), 1500);
     } else {
        toast({ variant: "destructive", title: "Erreur", description: "Code de réinitialisation invalide ou mot de passe manquant." });
     }
