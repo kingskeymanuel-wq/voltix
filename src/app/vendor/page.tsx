@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { DollarSign, ShoppingCart, CreditCard, Lock, BarChart2 } from "lucide-react";
+import { DollarSign, ShoppingCart, CreditCard, Lock, BarChart2, Mail, KeyRound } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const salesData = [
@@ -22,10 +22,17 @@ const salesData = [
   { name: 'Jui', Ventes: 3490, Benefices: 4300 },
 ];
 
+type VendorView = 'login' | 'forgot-password' | 'reset-password';
+
 export default function VendorPage() {
   const [isContactModalOpen, setIsContactModalOpen] = React.useState(false);
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
   const [password, setPassword] = React.useState('');
+  const [view, setView] = React.useState<VendorView>('login');
+  const [email, setEmail] = React.useState('');
+  const [resetCode, setResetCode] = React.useState('');
+  const [newPassword, setNewPassword] = React.useState('');
+  
   const { toast } = useToast();
 
   const handleLogin = () => {
@@ -38,28 +45,111 @@ export default function VendorPage() {
     }
   };
 
+  const handleForgotPassword = () => {
+    // In a real app, this would trigger a backend service to send an email
+    if (email) {
+      toast({ title: "Demande envoyée", description: `Un code de réinitialisation a été envoyé à ${email}.` });
+      setView('reset-password');
+    } else {
+      toast({ variant: "destructive", title: "Erreur", description: "Veuillez entrer une adresse email." });
+    }
+  };
+  
+  const handleResetPassword = () => {
+     // In a real app, this would validate the code and update the password
+    if (resetCode === '123456' && newPassword) {
+       toast({ title: "Mot de passe modifié", description: "Vous pouvez maintenant vous connecter avec votre nouveau mot de passe." });
+       setView('login');
+       setPassword('');
+       setNewPassword('');
+       setResetCode('');
+       setEmail('');
+    } else {
+       toast({ variant: "destructive", title: "Erreur", description: "Code de réinitialisation invalide ou mot de passe manquant." });
+    }
+  };
+
   if (!isAuthenticated) {
     return (
       <div className="flex min-h-screen w-full flex-col items-center justify-center bg-gradient-to-b from-black to-gray-900/80">
-        <Card className="w-full max-w-sm bg-card/50 border-primary/20">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2"><Lock /> Espace Vendeur Sécurisé</CardTitle>
-            <CardDescription>Veuillez entrer votre mot de passe pour continuer.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="password">Mot de passe</Label>
-              <Input 
-                id="password" 
-                type="password" 
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
-              />
-            </div>
-            <Button onClick={handleLogin} className="w-full">Se connecter</Button>
-          </CardContent>
-        </Card>
+        {view === 'login' && (
+          <Card className="w-full max-w-sm bg-card/50 border-primary/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2"><Lock /> Espace Vendeur Sécurisé</CardTitle>
+              <CardDescription>Veuillez entrer votre mot de passe pour continuer.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="password">Mot de passe</Label>
+                <Input 
+                  id="password" 
+                  type="password" 
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
+                />
+              </div>
+              <Button onClick={handleLogin} className="w-full">Se connecter</Button>
+              <Button variant="link" size="sm" className="w-full" onClick={() => setView('forgot-password')}>Mot de passe oublié ?</Button>
+            </CardContent>
+          </Card>
+        )}
+
+        {view === 'forgot-password' && (
+           <Card className="w-full max-w-sm bg-card/50 border-primary/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2"><Mail /> Mot de passe oublié</CardTitle>
+              <CardDescription>Entrez votre email pour recevoir un code de réinitialisation.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input 
+                  id="email" 
+                  type="email" 
+                  placeholder="vendeur@voltix.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleForgotPassword()}
+                />
+              </div>
+              <Button onClick={handleForgotPassword} className="w-full">Envoyer le code</Button>
+              <Button variant="link" size="sm" className="w-full" onClick={() => setView('login')}>Retour à la connexion</Button>
+            </CardContent>
+          </Card>
+        )}
+
+        {view === 'reset-password' && (
+           <Card className="w-full max-w-sm bg-card/50 border-primary/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2"><KeyRound /> Réinitialiser le mot de passe</CardTitle>
+              <CardDescription>Entrez le code reçu et votre nouveau mot de passe.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+               <div className="space-y-2">
+                <Label htmlFor="reset-code">Code de réinitialisation (Ex: 123456)</Label>
+                <Input 
+                  id="reset-code" 
+                  type="text" 
+                  value={resetCode}
+                  onChange={(e) => setResetCode(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="new-password">Nouveau mot de passe</Label>
+                <Input 
+                  id="new-password" 
+                  type="password" 
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleResetPassword()}
+                />
+              </div>
+              <Button onClick={handleResetPassword} className="w-full">Modifier le mot de passe</Button>
+              <Button variant="link" size="sm" className="w-full" onClick={() => setView('login')}>Retour à la connexion</Button>
+            </CardContent>
+          </Card>
+        )}
       </div>
     );
   }
