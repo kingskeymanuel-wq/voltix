@@ -20,12 +20,12 @@ export const LightningIcon = () => (
       </defs>
       <path 
         d="M20 3C30.4934 3 39 10.2969 39 19C39 27.7031 30.4934 35 20 35C9.50659 35 1 27.7031 1 19C1 10.2969 9.50659 3 20 3Z" 
-        stroke="hsl(var(--primary))" 
+        stroke="hsl(var(--foreground))" 
         strokeWidth="3"
       />
       <path 
         d="M20 7C28.2843 7 35 12.2843 35 19C35 25.7157 28.2843 31 20 31C11.7157 31 5 25.7157 5 19C5 12.2843 11.7157 7 20 7Z" 
-        fill="hsl(var(--primary))"
+        fill="hsl(var(--foreground))"
         style={{filter: 'url(#glow)'}}
       />
       <path 
