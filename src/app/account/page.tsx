@@ -238,7 +238,7 @@ export default function AccountPage() {
       </Button>
   );
   
-  if (!localStorage.getItem('userFirstName')) {
+  if (typeof window !== 'undefined' && !localStorage.getItem('userFirstName')) {
     return null; // Render nothing while redirecting
   }
 
