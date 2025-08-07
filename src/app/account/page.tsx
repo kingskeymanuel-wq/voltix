@@ -210,7 +210,7 @@ export default function AccountPage() {
       localStorage.removeItem('userFirstName');
       localStorage.removeItem('userLastName');
       window.dispatchEvent(new Event('storage')); // Trigger update in header
-      router.push('/');
+      router.push('/login');
   }
 
   const renderContent = () => {
@@ -287,4 +287,4 @@ export default function AccountPage() {
     </div>
   );
 }
-
+    

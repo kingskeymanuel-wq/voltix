@@ -40,7 +40,7 @@ export const Header = ({ cartCount, onCartClick, onContactClick, searchTerm, set
     localStorage.removeItem('userLastName');
     setUserName(null);
     window.dispatchEvent(new Event('storage'));
-    router.push('/');
+    router.push('/login');
   }
 
   return (
@@ -120,3 +120,4 @@ export const Header = ({ cartCount, onCartClick, onContactClick, searchTerm, set
     </header>
   );
 };
+    
