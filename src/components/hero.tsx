@@ -34,15 +34,6 @@ const featuredContent = [
     primaryCta: "Comparer les modèles",
     secondaryCta: "Contacter un expert",
   },
-  {
-    type: "video",
-    title: "Présentation VOLTIX",
-    description: "Découvrez l'expérience VOLTIX SMART en mouvement.",
-    mediaUrl: "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-    dataAiHint: "tech presentation",
-    primaryCta: "Explorer la gamme",
-    secondaryCta: "Notre vision",
-  },
 ];
 
 
@@ -102,7 +93,12 @@ export const Hero = () => {
                                         <Button 
                                             variant="outline" 
                                             size="lg" 
-                                            onClick={() => handleScrollTo('contact')}
+                                            onClick={() => {
+                                                const contactModal = document.querySelector('[data-radix-dialog-trigger]');
+                                                if (contactModal instanceof HTMLElement) {
+                                                    contactModal.click();
+                                                }
+                                            }}
                                             className="text-lg font-bold border-2 border-primary text-primary bg-transparent rounded-full px-10 py-7 hover:bg-primary hover:text-primary-foreground hover:scale-105 transition-all duration-300">
                                             {content.secondaryCta}
                                         </Button>
