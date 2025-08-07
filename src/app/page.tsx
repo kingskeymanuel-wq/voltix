@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -16,16 +17,15 @@ export default function Home() {
   const [isCartOpen, setIsCartOpen] = React.useState(false);
   const [isContactModalOpen, setIsContactModalOpen] = React.useState(false);
   const [searchTerm, setSearchTerm] = React.useState("");
-  const [_, setUser] = React.useState(null); // Used to force re-render on storage change
+  
+  // This state is just to trigger re-renders on storage events
+  const [_, setStorageChange] = React.useState(0);
 
   const { toast } = useToast();
 
   React.useEffect(() => {
     const handleStorageChange = () => {
-      const userFirstName = localStorage.getItem('userFirstName');
-      // A bit of a hack to force re-render of components that depend on this state
-      // @ts-ignore
-      setUser(userFirstName);
+      setStorageChange(c => c + 1);
     };
 
     window.addEventListener('storage', handleStorageChange);

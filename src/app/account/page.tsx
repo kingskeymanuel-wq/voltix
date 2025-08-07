@@ -242,7 +242,8 @@ const PlaceholderContent = ({ title, icon: Icon }: { title: string; icon: React.
 export default function AccountPage() {
   const [isContactModalOpen, setIsContactModalOpen] = React.useState(false);
   const [activeView, setActiveView] = React.useState<ClientView>('details');
-  const [userName, setUserName] = React.useState("Client VOLTIX");
+  const [userName, setUserName] = React.useState("");
+  const [isClient, setIsClient] = React.useState(false);
   const router = useRouter();
 
   React.useEffect(() => {
@@ -250,8 +251,8 @@ export default function AccountPage() {
     const storedLastName = localStorage.getItem('userLastName');
     if (storedFirstName && storedLastName) {
       setUserName(`${storedFirstName} ${storedLastName}`);
+      setIsClient(true);
     } else {
-        // If no user data, redirect to login
         router.push('/login');
     }
   }, [router]);
@@ -290,7 +291,7 @@ export default function AccountPage() {
       </Button>
   );
   
-  if (typeof window !== 'undefined' && !localStorage.getItem('userFirstName')) {
+  if (!isClient) {
     return null; // Render nothing while redirecting
   }
 
@@ -344,5 +345,3 @@ export default function AccountPage() {
     </div>
   );
 }
-
-    

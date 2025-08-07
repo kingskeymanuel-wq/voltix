@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -19,12 +20,14 @@ interface HeaderProps {
 
 export const Header = ({ cartCount, onCartClick, onContactClick, searchTerm, setSearchTerm }: HeaderProps) => {
   const [userName, setUserName] = React.useState<string | null>(null);
+  const [isClient, setIsClient] = React.useState(false);
   const router = useRouter();
 
   React.useEffect(() => {
     const updateUserName = () => {
       const storedFirstName = localStorage.getItem('userFirstName');
       setUserName(storedFirstName);
+      setIsClient(!!storedFirstName);
     }
     
     updateUserName();
@@ -39,6 +42,7 @@ export const Header = ({ cartCount, onCartClick, onContactClick, searchTerm, set
     localStorage.removeItem('userFirstName');
     localStorage.removeItem('userLastName');
     setUserName(null);
+    setIsClient(false);
     window.dispatchEvent(new Event('storage'));
     router.push('/login');
   }
@@ -68,7 +72,7 @@ export const Header = ({ cartCount, onCartClick, onContactClick, searchTerm, set
           </nav>
           
           <div className="flex flex-1 items-center justify-end gap-2">
-            {userName ? (
+            {isClient && userName ? (
                <div className="hidden sm:flex items-center gap-2 text-sm">
                 <Button variant="ghost" asChild className="text-primary font-bold">
                     <Link href="/account">Bonjour, {userName}</Link>
@@ -122,4 +126,3 @@ export const Header = ({ cartCount, onCartClick, onContactClick, searchTerm, set
     </header>
   );
 };
-    
