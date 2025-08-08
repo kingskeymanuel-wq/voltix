@@ -153,7 +153,7 @@ const AccountContracts = () => (
                             <div className="flex-1 text-left">
                                 <p>Contrat #{contract.id}</p>
                                 <p className="text-sm font-normal text-muted-foreground">
-                                    Signé le {new Date(contract.date).toLocaleDateString('fr-FR')} - Total: {contract.total.toLocaleString()} FCFA
+                                    Signé le {new Date(contract.date).toLocaleDateString('fr-FR')} - Total: {contract.total.toLocaleString('fr-FR')} FCFA
                                 </p>
                             </div>
                         </AccordionTrigger>

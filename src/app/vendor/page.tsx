@@ -131,7 +131,7 @@ const ClientDetailsModal = ({ client, isOpen, onOpenChange, onAlert, savTickets,
                             <Card>
                                 <CardHeader><CardTitle>Statistiques d'Achat</CardTitle></CardHeader>
                                 <CardContent className="space-y-2">
-                                    <p><strong>Dépense totale:</strong> {client.totalSpent.toLocaleString()} FCFA</p>
+                                    <p><strong>Dépense totale:</strong> {client.totalSpent.toLocaleString('fr-FR')} FCFA</p>
                                     <p><strong>Dernière commande:</strong> {client.lastOrder}</p>
                                     <p><strong>Nombre de commandes:</strong> {mockOrders.length}</p>
                                 </CardContent>
@@ -152,7 +152,7 @@ const ClientDetailsModal = ({ client, isOpen, onOpenChange, onAlert, savTickets,
                                         {mockOrders.map(order => (
                                             <TableRow key={order.id}>
                                                 <TableCell>{order.id}</TableCell>
-                                                <TableCell>{order.total.toLocaleString()} FCFA</TableCell>
+                                                <TableCell>{order.total.toLocaleString('fr-FR')} FCFA</TableCell>
                                                 <TableCell>{new Date(order.date).toLocaleDateString('fr-FR')}</TableCell>
                                                 <TableCell>{order.status}</TableCell>
                                             </TableRow>
@@ -181,7 +181,7 @@ const ClientDetailsModal = ({ client, isOpen, onOpenChange, onAlert, savTickets,
                                             </AccordionTrigger>
                                             <AccordionContent className="space-y-2 pt-3 px-3">
                                                 <p><strong>Articles:</strong> {contract.items.map(i => `${i.name} (x${i.quantity})`).join(', ')}</p>
-                                                <p><strong>Montant:</strong> {contract.total.toLocaleString()} FCFA</p>
+                                                <p><strong>Montant:</strong> {contract.total.toLocaleString('fr-FR')} FCFA</p>
                                             </AccordionContent>
                                         </AccordionItem>
                                     </Accordion>
@@ -621,7 +621,7 @@ export default function VendorPage() {
                                     <TableRow key={client.id}>
                                         <TableCell className="font-medium">{client.name}</TableCell>
                                         <TableCell className="hidden md:table-cell text-muted-foreground">{client.email}</TableCell>
-                                        <TableCell className="hidden lg:table-cell">{client.totalSpent.toLocaleString()} FCFA</TableCell>
+                                        <TableCell className="hidden lg:table-cell">{client.totalSpent.toLocaleString('fr-FR')} FCFA</TableCell>
                                         <TableCell><Badge variant={client.status === 'VIP' ? 'destructive' : client.status === 'Actif' ? 'default' : 'secondary'}>{client.status}</Badge></TableCell>
                                         <TableCell className="text-right">
                                             <Button variant="ghost" size="icon" onClick={() => handleViewClient(client)}>
@@ -661,7 +661,7 @@ export default function VendorPage() {
                                     <TableRow key={product.id}>
                                         <TableCell className="font-medium">{product.name}</TableCell>
                                         <TableCell className="hidden md:table-cell text-muted-foreground">{product.category}</TableCell>
-                                        <TableCell>{product.price.toLocaleString()} FCFA</TableCell>
+                                        <TableCell>{product.price.toLocaleString('fr-FR')} FCFA</TableCell>
                                         <TableCell className="text-right">
                                             <Button variant="ghost" size="icon" onClick={() => handleEditProduct(product)}>
                                                 <Edit className="h-4 w-4" />

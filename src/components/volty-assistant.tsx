@@ -135,7 +135,7 @@ export function VoltyAssistant({ addToCart }: VoltyAssistantProps) {
                                                             <div className="flex-1">
                                                                 <p className="font-bold text-xs">{p.name}</p>
                                                                 <p className="text-xs text-muted-foreground">{p.description}</p>
-                                                                <p className="text-primary font-bold text-sm mt-1">{p.price.toLocaleString()} FCFA</p>
+                                                                <p className="text-primary font-bold text-sm mt-1">{p.price.toLocaleString('fr-FR')} FCFA</p>
                                                             </div>
                                                             <Button size="icon" variant="ghost" onClick={() => handleAddProduct(p)} className="text-primary shrink-0"><ShoppingCart size={16}/></Button>
                                                         </CardContent>

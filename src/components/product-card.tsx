@@ -37,7 +37,7 @@ export const ProductCard = ({ product, addToCart, index }: ProductCardProps) => 
       <CardContent className="p-6">
         <p className="text-sm font-bold uppercase text-primary mb-2 tracking-wider">{getCategoryName(product.category)}</p>
         <CardTitle className="text-xl font-extrabold mb-2 h-14">{product.name}</CardTitle>
-        <p className="text-3xl font-black text-primary mb-4">{product.price.toLocaleString()} FCFA</p>
+        <p className="text-3xl font-black text-primary mb-4">{product.price.toLocaleString('fr-FR')} FCFA</p>
         <p className="text-muted-foreground text-sm h-20 overflow-hidden">{product.description}</p>
       </CardContent>
       <CardFooter className="p-6 pt-0 flex gap-2">

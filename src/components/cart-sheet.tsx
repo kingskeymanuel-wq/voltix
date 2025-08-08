@@ -124,7 +124,7 @@ export const CartSheet = ({
                       <Image src={item.image} alt={item.name} width={80} height={80} className="rounded-lg object-cover" data-ai-hint={item.dataAiHint}/>
                       <div className="flex-1">
                         <h4 className="font-bold">{item.name}</h4>
-                        <p className="text-primary font-semibold">{item.price.toLocaleString()} FCFA</p>
+                        <p className="text-primary font-semibold">{item.price.toLocaleString('fr-FR')} FCFA</p>
                         <div className="flex items-center gap-2 mt-2">
                           <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => updateCartQuantity(item.id, item.quantity - 1)}><Minus size={14}/></Button>
                           <span className="font-bold w-5 text-center">{item.quantity}</span>
@@ -207,13 +207,13 @@ export const CartSheet = ({
                                     {order.items.map(item => (
                                         <div key={item.id} className="flex justify-between">
                                             <span>{item.name} x {item.quantity}</span>
-                                            <span>{(item.price * item.quantity).toLocaleString()} FCFA</span>
+                                            <span>{(item.price * item.quantity).toLocaleString('fr-FR')} FCFA</span>
                                         </div>
                                     ))}
                                     <Separator className="my-2"/>
                                     <div className="flex justify-between font-bold text-base">
                                         <span>Total</span>
-                                        <span className="text-primary">{order.total.toLocaleString()} FCFA</span>
+                                        <span className="text-primary">{order.total.toLocaleString('fr-FR')} FCFA</span>
                                     </div>
                                 </div>
                                 <Separator/>
@@ -274,7 +274,7 @@ export const CartSheet = ({
             <div className="w-full space-y-4">
                 <div className="flex justify-between items-center text-2xl font-black">
                     <span>Total:</span>
-                    <span className="text-primary">{cartTotal.toLocaleString()} FCFA</span>
+                    <span className="text-primary">{cartTotal.toLocaleString('fr-FR')} FCFA</span>
                 </div>
                 <Button onClick={handleGoToPayment} size="lg" className="w-full font-bold bg-accent text-accent-foreground hover:bg-accent/90">
                     Procéder au paiement
