@@ -15,15 +15,13 @@ import { useToast } from "@/hooks/use-toast";
 import type { CartItem, Product } from "@/lib/types";
 import { CartSheet } from "@/components/cart-sheet";
 
-export default function ProductDetailPage({ params }: { params: { id: string } }) {
+function ProductDetailContent({ product }: { product: Product }) {
   const [isContactModalOpen, setIsContactModalOpen] = React.useState(false);
   const [cart, setCart] = React.useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = React.useState(false);
 
   const { toast } = useToast();
   const router = useRouter();
-
-  const product = allProducts.find(p => p.id === params.id);
 
   const similarProducts = React.useMemo(() => {
     if (!product) return [];
@@ -76,11 +74,6 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
   const cartTotal = React.useMemo(() => {
     return cart.reduce((total, item) => total + item.price * item.quantity, 0);
   }, [cart]);
-
-
-  if (!product) {
-    notFound();
-  }
 
   return (
      <div className="flex min-h-screen w-full flex-col bg-gradient-to-b from-black to-gray-900/80">
@@ -153,3 +146,13 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
   );
 }
 
+export default function ProductDetailPage({ params }: { params: { id: string } }) {
+  const productId = params.id;
+  const product = allProducts.find(p => p.id === productId);
+
+  if (!product) {
+    notFound();
+  }
+
+  return <ProductDetailContent product={product} />;
+}
