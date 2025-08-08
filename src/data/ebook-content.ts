@@ -6,30 +6,30 @@ export const allEbookContents: EbookContent[] = [
     id: 'ebook-jesus',
     chapters: [
       {
-        title: "Le Leader Serviteur",
+        title: "Le Leader Serviteur : Révolutionner le Pouvoir",
         points: [
-          "Laver les pieds de ses disciples : le contre-modèle du pouvoir.",
-          "Le plus grand est celui qui sert.",
-          "Le leadership n'est pas une position, mais une disposition.",
-          "L'autorité qui vient du service."
+          "Le lavement des pieds : Inverser la pyramide du pouvoir et de l'autorité.",
+          "Le service comme ADN du leadership : 'Je ne suis pas venu pour être servi, mais pour servir'.",
+          "De la position à la disposition : Le leadership comme un état d'être, pas un statut.",
+          "L'autorité de l'influence : Gagner le respect par le don de soi, pas par la contrainte."
         ]
       },
       {
-        title: "Diriger par l'Exemple",
+        title: "Diriger par l'Exemple : L'Intégrité Incarnée",
         points: [
-          "Faites ce que je dis ET ce que je fais.",
-          "L'intégrité inébranlable face à la tentation.",
-          "La compassion comme moteur de l'action.",
-          "La prière comme source de sagesse et de force."
+          "Une cohérence absolue : Aligner parfaitement les paroles, les pensées et les actes.",
+          "La gestion des tentations du pouvoir : Le désert comme test de caractère.",
+          "La compassion en action : Bouleversé par les besoins pour apporter la guérison.",
+          "La connexion comme source de décision : Le secret d'une direction claire et juste."
         ]
       },
       {
-        title: "Bâtir une Équipe et une Vision",
+        title: "Bâtir une Vision et une Équipe : L'Art du Mentorat",
         points: [
-          "L'appel des douze : voir le potentiel en chacun.",
-          "Multiplier son impact par la délégation.",
-          "Enseigner par des paraboles : communiquer une vision claire.",
-          "La Grande Commission : laisser un héritage qui transforme le monde."
+          "L'appel des Douze : Discerner et investir dans le potentiel humain brut.",
+          "La délégation de la mission : Former pour envoyer, faire confiance pour multiplier.",
+          "Le langage des paraboles : Communiquer des vérités complexes avec clarté et impact.",
+          "La Grande Commission : Définir un héritage qui transcende le temps et l'espace."
         ]
       }
     ]
@@ -38,30 +38,30 @@ export const allEbookContents: EbookContent[] = [
     id: 'ebook-comm',
     chapters: [
       {
-        title: "Fondations de la Communication Persuasive",
+        title: "Fondations de l'Influence et de la Persuasion",
         points: [
-          "Comprendre la psychologie de l'acheteur.",
-          "Le principe de Réciprocité : Donner pour recevoir.",
-          "Établir la confiance et la crédibilité instantanément.",
-          "L'écoute active comme outil de vente principal."
+          "La psychologie de la décision : Comprendre les leviers émotionnels et logiques de l'acheteur.",
+          "Le principe de Réciprocité Stratégique : Offrir une valeur tangible avant de demander la vente.",
+          "Le triangle de la confiance : Établir l'expertise, l'intégrité et la bienveillance.",
+          "L'écoute active diagnostique : Vendre moins, résoudre plus pour gagner la fidélité."
         ]
       },
       {
-        title: "Maîtriser le Storytelling",
+        title: "Maîtriser le Storytelling pour Vendre Sans Vendre",
         points: [
-          "Structurer une histoire de vente captivante.",
-          "Utiliser des témoignages clients pour illustrer la valeur.",
-          "Créer une connexion émotionnelle avec le produit.",
-          "Le parcours du héros : Votre client est le héros."
+          "L'arc narratif du client : Positionner votre client comme le héros de l'histoire.",
+          "Témoignages et études de cas : La preuve sociale comme argument de vente ultime.",
+          "Le marketing sensoriel : Utiliser les mots pour peindre des images et évoquer des émotions.",
+          "La structure 'Problème-Agitation-Solution' pour des messages percutants."
         ]
       },
       {
-        title: "Communication Non-Verbale et Digitale",
+        title: "Communication Omnicanale et Gestion des Objections",
         points: [
-          "Adapter son ton à l'écrit (email, SMS, réseaux sociaux).",
-          "L'art de la relance : Quand et comment recontacter un prospect.",
-          "Gérer les objections avec empathie et assurance.",
-          "Transformer un client mécontent en ambassadeur."
+          "Adapter son ton et son style : De l'email formel au message WhatsApp engageant.",
+          "L'art de la relance élégante : Maintenir le contact sans harceler.",
+          "Le cadre de gestion des objections : Écouter, Valider, Répondre, Confirmer (EVRC).",
+          "Transformer une plainte en opportunité : Le service client comme outil marketing."
         ]
       }
     ]
@@ -70,30 +70,30 @@ export const allEbookContents: EbookContent[] = [
     id: 'ebook-mkt',
     chapters: [
       {
-        title: "Définir sa Stratégie Digitale Locale",
+        title: "Stratégie de Visibilité Locale et E-Réputation",
         points: [
-          "Identifier sa niche et son client idéal.",
-          "Optimiser sa fiche Google My Business pour une visibilité maximale.",
-          "Stratégies de contenu pour les réseaux sociaux (Facebook, Instagram, TikTok).",
-          "Collecter des avis clients pour renforcer la e-réputation."
+          "Analyse concurrentielle et identification de sa Proposition de Valeur Unique (PVU).",
+          "Masterclass Google Business Profile : Devenir le choix n°1 dans votre zone de chalandise.",
+          "Stratégies de contenu pour chaque réseau social : Adapter le message à la plateforme (Facebook, Instagram, TikTok).",
+          "Mettre en place un système proactif de collecte d'avis clients 5 étoiles."
         ]
       },
       {
-        title: "Publicité Ciblée à Faible Coût",
+        title: "Publicité Ciblée à Haute Conversion et Faible Coût",
         points: [
-          "Principes de la publicité Facebook & Instagram Ads.",
-          "Cibler une audience locale avec précision.",
-          "Créer des visuels publicitaires qui convertissent.",
-          "Analyser le retour sur investissement (ROI) de ses campagnes."
+          "Les fondamentaux de Meta Ads (Facebook & Instagram) : Objectifs, audiences, budgets.",
+          "Le ciblage laser : Atteindre vos clients idéaux par démographie, intérêts et comportements.",
+          "Le modèle AIDA (Attention, Intérêt, Désir, Action) pour des créatifs publicitaires efficaces.",
+          "Mesurer et optimiser le ROI : Comprendre les métriques clés pour ne plus gaspiller un franc."
         ]
       },
       {
-        title: "Créer un Tunnel de Vente Simple",
+        title: "Bâtir sa Machine à Ventes Automatisée",
         points: [
-          "Utiliser WhatsApp Business pour capturer des leads.",
-          "Le marketing par email : Construire et segmenter sa liste.",
-          "Créer des offres irrésistibles et des promotions limitées.",
-          "Automatiser les suivis pour ne jamais perdre une vente."
+          "WhatsApp Business comme un CRM : Gestion des contacts, catalogues et réponses rapides.",
+          "Le lead nurturing par email et SMS : Créer des séquences qui éduquent et convertissent.",
+          "Créer des offres irrésistibles : Le pouvoir de l'urgence, de la rareté et des bonus.",
+          "Le funnel de vente simple : Attirer, Capturer, Convertir, Fidéliser."
         ]
       }
     ]
@@ -102,30 +102,30 @@ export const allEbookContents: EbookContent[] = [
     id: 'ebook-leadership',
     chapters: [
       {
-        title: "Le Leadership Serviteur : Le Modèle de Moïse",
+        title: "Le Leadership dans l'Adversité : Le Modèle de Moïse",
         points: [
-          "Diriger avec humilité et dépendance.",
-          "La vision : Conduire le peuple vers une terre promise.",
-          "La gestion des crises et des plaintes.",
-          "La délégation et la formation de nouveaux leaders (Josué)."
+          "De l'insécurité à la mission : Accepter l'appel malgré ses faiblesses.",
+          "La vision de la Terre Promise : Maintenir le cap face à 40 ans de désert.",
+          "La gestion de crise à grande échelle : Nourrir, guider et juger un peuple.",
+          "La transmission du manteau : Identifier et former son successeur (Josué)."
         ]
       },
       {
         title: "Le Cœur du Leader : Le Modèle de David",
         points: [
-          "De berger à roi : Le potentiel se révèle dans l'épreuve.",
-          "Diriger avec courage et foi (Goliath).",
-          "La gestion de l'échec et la repentance.",
-          "Composer une équipe loyale et compétente."
+          "Le leadership se forge dans l'anonymat : Les leçons des champs de brebis.",
+          "Le courage face aux géants : Oser défier le statu quo avec foi.",
+          "L'humilité dans la victoire, la repentance dans l'échec.",
+          "Attirer les talents : Créer une culture qui rallie les 'hommes vaillants'."
         ]
       },
       {
-        title: "Principes de Leadership pour Aujourd'hui",
+        title: "Principes de Leadership Biblique pour le 21e Siècle",
         points: [
-          "L'intégrité comme fondement.",
-          "La communication visionnaire.",
-          "La résilience face à l'opposition.",
-          "Laisser un héritage durable."
+          "L'intégrité : Votre crédibilité est votre capital le plus précieux.",
+          "La vision stratégique : Où Dieu veut-il que vous alliez et comment y arriver ?",
+          "La résilience spirituelle et émotionnelle pour durer.",
+          "L'héritage : Bâtir une œuvre qui vous survivra."
         ]
       }
     ]
@@ -134,30 +134,30 @@ export const allEbookContents: EbookContent[] = [
     id: 'ebook-resilience',
     chapters: [
       {
-        title: "L'Épreuve Inexpliquée",
+        title: "Anatomie d'une Crise : Quand le Ciel se Tais",
         points: [
-          "Comprendre la nature de la souffrance.",
-          "La perte et le deuil : Accepter l'inacceptable.",
-          "La question du 'Pourquoi ?'",
-          "Maintenir sa foi quand tout s'écroule."
+          "Faire face à la perte totale : Deuil, choc et désorientation.",
+          "La lutte avec la question du 'Pourquoi moi ?' et l'absence de réponses simples.",
+          "La souveraineté de Dieu face à la souffrance humaine.",
+          "Comment garder un cœur intègre quand tout pousse à maudire."
         ]
       },
       {
-        title: "La Force dans la Vulnérabilité",
+        title: "Le Combat de la Foi dans la Souffrance",
         points: [
-          "Le rôle de l'amitié et du conseil (et ses limites).",
-          "Exprimer sa douleur sans renier sa foi.",
-          "Le dialogue avec Dieu au cœur de la tempête.",
-          "Rejeter les faux diagnostics spirituels."
+          "Les pièges du conseil bien intentionné mais erroné.",
+          "La légitimité de la plainte : Le droit de crier sa douleur à Dieu.",
+          "Le dialogue honnête : Se débattre avec Dieu sans rompre la relation.",
+          "Rejeter la théologie de la rétribution simpliste."
         ]
       },
       {
-        title: "La Restauration et la Sagesse Acquise",
+        title: "La Restauration : Voir Dieu Autrement",
         points: [
-          "La perspective divine sur l'épreuve.",
-          "Le pardon et la libération.",
-          "Comment la souffrance forge le caractère.",
-          "Témoigner de la fidélité de Dieu après l'épreuve."
+          "La rencontre qui change tout : Dépasser la connaissance intellectuelle de Dieu.",
+          "Le pardon et la restauration des relations brisées.",
+          "La double portion : Comprendre la nature de la bénédiction divine.",
+          "Devenir un conseiller pour ceux qui souffrent, avec une sagesse née de l'épreuve."
         ]
       }
     ]
@@ -166,30 +166,30 @@ export const allEbookContents: EbookContent[] = [
     id: 'ebook-finance',
     chapters: [
       {
-        title: "Les Fondations de la Prospérité",
+        title: "Les Piliers de la Prospérité Intégrale",
         points: [
-          "La Sagesse : Le principal investissement.",
-          "Le travail et la diligence comme source de richesse.",
-          "Le principe de la semence et de la récolte (générosité).",
-          "Éviter les pièges de l'endettement et de la paresse."
+          "La Sagesse : Le véritable or. Comment l'acquérir et l'appliquer.",
+          "Le travail acharné et l'excellence : 'Vois-tu un homme habile dans son ouvrage ? Il se tiendra devant les rois'.",
+          "Les lois de la semence et de la récolte : La générosité comme stratégie d'investissement.",
+          "Les deux voleurs de richesse : La paresse et la dette. Comment les vaincre."
         ]
       },
       {
-        title: "Gestion et Multiplication des Actifs",
+        title: "Stratégies de Gestion et de Multiplication d'Actifs",
         points: [
-          "La diversification des sources de revenus.",
-          "Principes d'épargne et d'investissement à long terme.",
-          "La planification et l'établissement de budgets.",
-          "La puissance des intérêts composés."
+          "Le principe des 'sept parts et même huit' : La diversification intelligente.",
+          "La fourmi comme mentor : Principes d'épargne et de préparation pour l'avenir.",
+          "La planification à long terme : Bâtir sa maison avec sagesse.",
+          "Comprendre et appliquer le pouvoir des intérêts composés."
         ]
       },
       {
-        title: "L'Héritage d'un Royaume",
+        title: "De la Richesse à l'Héritage d'un Royaume",
         points: [
-          "La richesse au service d'une vision plus grande.",
-          "La transmission du savoir financier à la prochaine génération.",
-          "L'intégrité dans les affaires.",
-          "La différence entre être riche et avoir de l'abondance."
+          "Le but de la richesse : Financer une vision qui glorifie Dieu.",
+          "La transmission intergénérationnelle : Laisser un héritage de valeurs et de biens.",
+          "L'intégrité dans les transactions : 'Une balance juste est son plaisir'.",
+          "L'abondance véritable : Une vie riche en relations, en sagesse et en impact."
         ]
       }
     ]
