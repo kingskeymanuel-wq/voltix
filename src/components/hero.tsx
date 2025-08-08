@@ -56,7 +56,10 @@ export const Hero = ({ onContactClick, onFilterClick }: HeroProps) => {
             if (action === 'scrollAndFilter' && filter) {
                 onFilterClick(filter);
             }
-            document.querySelector(target)?.scrollIntoView({ behavior: 'smooth' });
+            const element = document.querySelector(target);
+            if (element) {
+              element.scrollIntoView({ behavior: 'smooth' });
+            }
         } else if (action === 'navigate' && target) {
             router.push(target);
         } else if (action === 'contact') {

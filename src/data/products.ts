@@ -32,6 +32,7 @@ export const categories = [
   { key: 'gaming', name: 'Gaming' },
   { key: 'audio', name: 'Audio' },
   { key: 'wearables', name: 'Objets Connectés' },
+  { key: 'accessories', name: 'Accessoires' },
 ] as const;
 
 export const getCategoryName = (key: string) => {
@@ -39,4 +40,3 @@ export const getCategoryName = (key: string) => {
   return category ? category.name : key;
 };
 
-    
