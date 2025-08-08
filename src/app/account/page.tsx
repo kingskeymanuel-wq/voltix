@@ -22,7 +22,7 @@ import { allEbooks } from "@/data/ebooks";
 import { allEbookContents } from "@/data/ebook-content";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MtnLogo, OrangeLogo, WaveLogo } from "@/components/icons";
+import { MtnLogo, OrangeLogo, WaveLogo, EagleIcon } from "@/components/icons";
 import { QrCode, Smartphone } from "lucide-react";
 import Image from "next/image";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -183,13 +183,13 @@ const EbookContentModal = ({ ebook, content, isOpen, onOpenChange }: { ebook: Eb
                             <div className="space-y-4">
                                <div className="flex items-start">
                                      <div className="p-3 rounded-lg bg-secondary flex items-center gap-2">
-                                        <Bot className="h-5 w-5 text-primary flex-shrink-0"/>
+                                        <EagleIcon className="h-5 w-5 text-primary flex-shrink-0"/>
                                         <span className="text-sm text-muted-foreground">Bonjour ! Posez-moi une question sur le contenu de cet e-book.</span>
                                      </div>
                                  </div>
                                 {conversation.map((msg, index) => (
                                     <div key={index} className={`flex items-start gap-2.5 ${msg.type === 'user' ? 'justify-end' : ''}`}>
-                                         {msg.type === 'tutor' && <Bot className="h-5 w-5 text-primary flex-shrink-0 mt-1"/>}
+                                         {msg.type === 'tutor' && <EagleIcon className="h-5 w-5 text-primary flex-shrink-0 mt-1"/>}
                                          <div className={`p-3 rounded-lg max-w-sm ${msg.type === 'user' ? 'bg-primary text-primary-foreground' : 'bg-secondary'}`}>
                                             <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
                                          </div>
@@ -301,7 +301,7 @@ const AccountEbooks = () => {
                             </CardContent>
                             <CardFooter>
                                 <Button className="w-full" onClick={() => handlePurchaseClick(ebook)}>
-                                    {purchasedEbooks.has(ebook.id) ? "Ouvrir l'E-book" : (ebook.price === 0 ? "Lire gratuitement" : "Acheter cet E-book")}
+                                    {purchasedEbooks.has(ebook.id) || ebook.price === 0 ? "Ouvrir l'E-book" : "Acheter cet E-book"}
                                 </Button>
                             </CardFooter>
                         </Card>

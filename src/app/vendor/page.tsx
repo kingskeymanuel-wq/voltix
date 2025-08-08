@@ -25,7 +25,7 @@ import { allProducts as initialProducts, categories } from "@/data/products";
 import { mockClients, mockOrders, initialSavTickets, salesData } from "@/data/vendor";
 import { allEbooks } from "@/data/ebooks";
 import { allEbookContents } from "@/data/ebook-content";
-import { MtnLogo, OrangeLogo, WaveLogo } from "@/components/icons";
+import { MtnLogo, OrangeLogo, WaveLogo, EagleIcon } from "@/components/icons";
 import Image from "next/image";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -481,13 +481,13 @@ const EbookContentModal = ({ ebook, content, isOpen, onOpenChange }: { ebook: Eb
                             <div className="space-y-4">
                                <div className="flex items-start">
                                      <div className="p-3 rounded-lg bg-secondary flex items-center gap-2">
-                                        <Bot className="h-5 w-5 text-primary flex-shrink-0"/>
+                                        <EagleIcon className="h-5 w-5 text-primary flex-shrink-0"/>
                                         <span className="text-sm text-muted-foreground">Bonjour ! Posez-moi une question sur le contenu de cet e-book.</span>
                                      </div>
                                  </div>
                                 {conversation.map((msg, index) => (
                                     <div key={index} className={`flex items-start gap-2.5 ${msg.type === 'user' ? 'justify-end' : ''}`}>
-                                         {msg.type === 'tutor' && <Bot className="h-5 w-5 text-primary flex-shrink-0 mt-1"/>}
+                                         {msg.type === 'tutor' && <EagleIcon className="h-5 w-5 text-primary flex-shrink-0 mt-1"/>}
                                          <div className={`p-3 rounded-lg max-w-sm ${msg.type === 'user' ? 'bg-primary text-primary-foreground' : 'bg-secondary'}`}>
                                             <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
                                          </div>

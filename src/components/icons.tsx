@@ -90,3 +90,24 @@ export const MtnLogo = () => (
         </svg>
     </div>
 );
+
+export const EagleIcon = ({className}: {className?: string}) => (
+    <svg 
+        xmlns="http://www.w3.org/2000/svg" 
+        viewBox="0 0 24 24" 
+        fill="none" 
+        stroke="currentColor" 
+        strokeWidth="2" 
+        strokeLinecap="round" 
+        strokeLinejoin="round" 
+        className={cn("h-5 w-5", className)}
+    >
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+        <path d="M15.22 3.88 22 10.66 18 14.66 14 10.66"/>
+        <path d="M15.22 3.88 12 7.1 8.78 3.88"/>
+        <path d="m14 10.66-2.5 2.5"/>
+        <path d="M10 16H6"/>
+        <path d="M8 13v8"/>
+        <path d="M12.72 12.72 18 18"/>
+    </svg>
+);
