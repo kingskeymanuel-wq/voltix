@@ -14,6 +14,7 @@ import {
   Store,
   Truck,
   HelpCircle,
+  Briefcase,
 } from "lucide-react";
 import { LightningIcon } from "./icons";
 import { AnimatePresence, motion } from "framer-motion";
@@ -172,6 +173,7 @@ export const Header = ({
                 ) : (
                     <Button variant="ghost" className="justify-start gap-2" asChild><Link href="/login"><User/>Connexion</Link></Button>
                 )}
+                 <Button variant="ghost" className="justify-start gap-2" asChild><Link href="/vendor"><Briefcase/>Espace Vendeur</Link></Button>
                  <Button variant="ghost" className="justify-start gap-2" onClick={onCartClick}>
                     <ShoppingCart /> Panier ({cartCount})
                 </Button>
@@ -183,5 +185,3 @@ export const Header = ({
     </header>
   );
 };
-
-    
