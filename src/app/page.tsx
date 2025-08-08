@@ -10,7 +10,7 @@ import { ContactBar } from "@/components/contact-bar";
 import { ContactModal } from "@/components/contact-modal";
 import { VoltyAssistant } from "@/components/volty-assistant";
 import { useToast } from "@/hooks/use-toast";
-import type { Product, CartItem } from "@/lib/types";
+import type { Product, CartItem, Category } from "@/lib/types";
 import { allProducts as initialProducts } from "@/data/products";
 import { AnimatePresence, motion } from "framer-motion";
 import { ShoppingCart } from "lucide-react";
@@ -21,6 +21,7 @@ function HomePageContent() {
   const [isContactModalOpen, setIsContactModalOpen] = React.useState(false);
   const [cartItems, setCartItems] = React.useState<CartItem[]>([]);
   const [searchTerm, setSearchTerm] = React.useState('');
+  const [activeFilter, setActiveFilter] = React.useState<Category>('all');
   
   const [products, setProducts] = React.useState<Product[]>([]);
   
@@ -97,8 +98,14 @@ function HomePageContent() {
         setSearchTerm={setSearchTerm}
       />
       <main className="flex-1">
-        <Hero onContactClick={() => setIsContactModalOpen(true)} />
-        <ProductsSection allProducts={products} addToCart={addToCart} searchTerm={searchTerm} />
+        <Hero onContactClick={() => setIsContactModalOpen(true)} onFilterClick={setActiveFilter} />
+        <ProductsSection 
+          allProducts={products} 
+          addToCart={addToCart} 
+          searchTerm={searchTerm} 
+          activeFilter={activeFilter}
+          setActiveFilter={setActiveFilter}
+        />
       </main>
       <CartSheet
         isOpen={isCartOpen}

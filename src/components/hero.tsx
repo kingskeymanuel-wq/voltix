@@ -6,6 +6,7 @@ import { Button } from "./ui/button"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "./ui/carousel"
 import Autoplay from "embla-carousel-autoplay"
 import { useRouter } from "next/navigation";
+import type { Category } from "@/lib/types";
 
 const featuredContent = [
   {
@@ -14,14 +15,14 @@ const featuredContent = [
     description: "La technologie de demain, aujourd'hui. Explorez notre sélection premium de smartphones, laptops et gadgets high-tech.",
     mediaUrl: "https://videos.pexels.com/video-files/8570415/8570415-hd_1920_1080_25fps.mp4",
     primaryCta: { text: "Explorer les Produits", action: 'scroll', target: '#products' },
-    secondaryCta: { text: "Nos accessoires", action: 'scroll', target: '#products' },
+    secondaryCta: { text: "Nos accessoires", action: 'scrollAndFilter', target: '#products', filter: 'accessories' as Category },
   },
   {
     type: "video",
     title: "Performance & Puissance",
     description: "Des composants de pointe pour une expérience utilisateur sans compromis, que vous soyez gamer, créatif ou professionnel.",
     mediaUrl: "https://videos.pexels.com/video-files/854124/854124-hd_1920_1080_30fps.mp4",
-    primaryCta: { text: "Voir les Laptops", action: 'scroll', target: '#products' },
+    primaryCta: { text: "Voir les Laptops", action: 'scrollAndFilter', target: '#products', filter: 'laptops' as Category },
     secondaryCta: { text: "Comparer les modèles", action: 'scroll', target: '#products' },
   },
   {
@@ -29,8 +30,8 @@ const featuredContent = [
     title: "Capturez l'Instant",
     description: "Des appareils photos et drones équipés des dernières technologies pour des images à couper le souffle.",
     mediaUrl: "https://videos.pexels.com/video-files/5993339/5993339-hd_1920_1080_25fps.mp4",
-    primaryCta: { text: "Découvrir les caméras", action: 'scroll', target: '#products' },
-    secondaryCta: { text: "Voir les drones", action: 'scroll', target: '#products' },
+    primaryCta: { text: "Découvrir les caméras", action: 'scrollAndFilter', target: '#products', filter: 'cameras' as Category },
+    secondaryCta: { text: "Voir les drones", action: 'scrollAndFilter', target: '#products', filter: 'drones' as Category },
   },
   {
     type: "video",
@@ -44,13 +45,17 @@ const featuredContent = [
 
 interface HeroProps {
   onContactClick: () => void;
+  onFilterClick: (category: Category) => void;
 }
 
-export const Hero = ({ onContactClick }: HeroProps) => {
+export const Hero = ({ onContactClick, onFilterClick }: HeroProps) => {
     const router = useRouter();
 
-    const handleAction = (action: 'scroll' | 'navigate' | 'contact', target?: string) => {
-        if (action === 'scroll' && target) {
+    const handleAction = (action: 'scroll' | 'navigate' | 'contact' | 'scrollAndFilter', target?: string, filter?: Category) => {
+        if ((action === 'scroll' || action === 'scrollAndFilter') && target) {
+            if (action === 'scrollAndFilter' && filter) {
+                onFilterClick(filter);
+            }
             document.querySelector(target)?.scrollIntoView({ behavior: 'smooth' });
         } else if (action === 'navigate' && target) {
             router.push(target);
@@ -90,14 +95,14 @@ export const Hero = ({ onContactClick }: HeroProps) => {
                                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                                         <Button 
                                           size="lg" 
-                                          onClick={() => handleAction(content.primaryCta.action, content.primaryCta.target)}
+                                          onClick={() => handleAction(content.primaryCta.action, content.primaryCta.target, (content.primaryCta as any).filter)}
                                           className="text-lg font-bold bg-gradient-to-r from-primary to-blue-600 text-white rounded-full px-10 py-7 hover:scale-105 hover:shadow-[0_0_35px_rgba(59,130,246,0.6)] transition-all duration-300">
                                             {content.primaryCta.text}
                                         </Button>
                                         <Button 
                                             size="lg" 
                                             variant="outline" 
-                                            onClick={() => handleAction(content.secondaryCta.action, content.secondaryCta.target)}
+                                            onClick={() => handleAction(content.secondaryCta.action, content.secondaryCta.target, (content.secondaryCta as any).filter)}
                                             className="text-lg font-bold bg-transparent border-2 border-white text-white rounded-full px-10 py-7 hover:bg-white hover:text-black transition-colors duration-300">
                                             {content.secondaryCta.text}
                                         </Button>

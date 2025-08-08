@@ -13,10 +13,11 @@ interface ProductsSectionProps {
   allProducts: Product[];
   addToCart: (product: Product) => void;
   searchTerm: string;
+  activeFilter: Category;
+  setActiveFilter: (category: Category) => void;
 }
 
-export const ProductsSection = ({ allProducts, addToCart, searchTerm }: ProductsSectionProps) => {
-  const [activeFilter, setActiveFilter] = React.useState<Category>('all');
+export const ProductsSection = ({ allProducts, addToCart, searchTerm, activeFilter, setActiveFilter }: ProductsSectionProps) => {
   const [visibleProducts, setVisibleProducts] = React.useState(9);
   const [wishlist, setWishlist] = React.useState<Set<string>>(new Set());
   const { toast } = useToast();
