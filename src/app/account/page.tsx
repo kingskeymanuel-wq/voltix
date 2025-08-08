@@ -6,9 +6,9 @@ import { useRouter } from "next/navigation";
 import { Header } from "@/components/header";
 import { ContactBar } from "@/components/contact-bar";
 import { ContactModal } from "@/components/contact-modal";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { User, ShoppingBag, Heart, Settings, Bell, Lock, Globe, LogOut, Home, Truck, CreditCard, Save, FileSignature } from "lucide-react";
+import { User, ShoppingBag, Heart, Settings, Bell, Lock, Globe, LogOut, Home, Truck, CreditCard, Save, FileSignature, BookOpen, Sparkles, CornerDownLeft, Bot } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -16,15 +16,301 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import type { Order } from "@/lib/types";
+import type { Order, Ebook, EbookContent } from "@/lib/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { allEbooks } from "@/data/ebooks";
+import { allEbookContents } from "@/data/ebook-content";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { MtnLogo, OrangeLogo, WaveLogo } from "@/components/icons";
+import { QrCode, Smartphone } from "lucide-react";
+import Image from "next/image";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Textarea } from "@/components/ui/textarea";
 
-type ClientView = 'details' | 'orders' | 'wishlist' | 'settings' | 'contracts';
+type ConversationMessage = {
+    type: 'user' | 'tutor';
+    text: string;
+};
+
+const EbookPaymentModal = ({ ebook, isOpen, onOpenChange, onPaymentSuccess }: { ebook: Ebook | null, isOpen: boolean, onOpenChange: (open: boolean) => void, onPaymentSuccess: (ebookId: string) => void }) => {
+    const [isProcessing, setIsProcessing] = React.useState(false);
+    const { toast } = useToast();
+    if (!ebook) return null;
+
+    const handleProcessPayment = (method: string) => {
+        setIsProcessing(true);
+        toast({ title: "Vérification du paiement...", description: `Paiement de ${ebook.title} en cours via ${method}.` });
+
+        setTimeout(() => {
+            setIsProcessing(false);
+            onOpenChange(false);
+            onPaymentSuccess(ebook.id);
+            toast({
+                title: "Paiement réussi !",
+                description: `Vous avez maintenant accès à "${ebook.title}".`
+            });
+        }, 2000);
+    };
+    
+    return (
+        <Dialog open={isOpen} onOpenChange={onOpenChange}>
+            <DialogContent className="max-w-md bg-background/95 backdrop-blur-xl">
+                 <DialogHeader>
+                    <DialogTitle className="text-primary text-2xl flex items-center gap-3"><BookOpen /> Acheter l'E-book</DialogTitle>
+                    <DialogDescription>
+                        Finalisez l'achat de <span className="font-bold text-white">{ebook.title}</span> pour {ebook.price.toLocaleString('fr-FR')} FCFA.
+                    </DialogDescription>
+                </DialogHeader>
+                 <Tabs defaultValue="orange" className="w-full">
+                    <TabsList className="grid w-full grid-cols-3 bg-gray-800/50">
+                        <TabsTrigger value="orange"><OrangeLogo /></TabsTrigger>
+                        <TabsTrigger value="wave"><WaveLogo /></TabsTrigger>
+                        <TabsTrigger value="mtn"><MtnLogo /></TabsTrigger>
+                    </TabsList>
+                    <PaymentFormWrapper method="orange" onPay={handleProcessPayment} isProcessing={isProcessing} ebook={ebook} />
+                    <PaymentFormWrapper method="wave" onPay={handleProcessPayment} isProcessing={isProcessing} ebook={ebook} />
+                    <PaymentFormWrapper method="mtn" onPay={handleProcessPayment} isProcessing={isProcessing} ebook={ebook} />
+                </Tabs>
+            </DialogContent>
+        </Dialog>
+    )
+}
+
+const PaymentFormWrapper = ({ method, onPay, isProcessing, ebook }: { method: 'orange' | 'wave' | 'mtn', onPay: (method: string) => void, isProcessing: boolean, ebook: Ebook }) => {
+  const titles = {
+    orange: 'Orange Money',
+    wave: 'Wave',
+    mtn: 'MTN Mobile Money'
+  };
+  
+  return (
+    <TabsContent value={method}>
+      <Card className="bg-gray-800/50 border-white/20">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Smartphone size={20}/>
+            Paiement {titles[method]}
+          </CardTitle>
+          <CardDescription>Entrez votre numéro pour payer {ebook.price.toLocaleString('fr-FR')} FCFA.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor={`${method}-phone`}>Numéro de téléphone</Label>
+            <Input id={`${method}-phone`} type="tel" placeholder="0X XX XX XX XX" />
+          </div>
+          <Button onClick={() => onPay(method)} disabled={isProcessing} className="w-full bg-accent text-accent-foreground hover:bg-accent/90">
+            {isProcessing ? "Vérification..." : `Payer avec ${titles[method]}`}
+          </Button>
+        </CardContent>
+      </Card>
+    </TabsContent>
+  );
+};
+
+
+const EbookContentModal = ({ ebook, content, isOpen, onOpenChange }: { ebook: Ebook | null, content: EbookContent | null, isOpen: boolean, onOpenChange: (open: boolean) => void }) => {
+    const [query, setQuery] = React.useState("");
+    const [isLoading, setIsLoading] = React.useState(false);
+    const [conversation, setConversation] = React.useState<ConversationMessage[]>([]);
+
+    React.useEffect(() => {
+        if (isOpen) {
+            setConversation([]);
+            setQuery("");
+        }
+    }, [isOpen]);
+
+    if (!ebook || !content) return null;
+
+    const handleSubmit = async (e?: React.FormEvent) => {
+        e?.preventDefault();
+        if (!query.trim() || isLoading) return;
+
+        const newConversation = [...conversation, { type: 'user' as const, text: query }];
+        setConversation(newConversation);
+        setIsLoading(true);
+        setQuery("");
+
+        // Mock AI response
+        setTimeout(() => {
+            const aiResponse: ConversationMessage = {
+                type: 'tutor',
+                text: `Ceci est une réponse simulée concernant "${query}" pour l'e-book "${ebook.title}". Dans une version réelle, une IA spécialisée répondrait en se basant sur le contenu de l'e-book.`
+            };
+            setConversation([...newConversation, aiResponse]);
+            setIsLoading(false);
+        }, 1500);
+    };
+
+    return (
+        <Dialog open={isOpen} onOpenChange={onOpenChange}>
+            <DialogContent className="max-w-4xl h-[90vh] bg-background/95 backdrop-blur-xl flex flex-col p-0">
+                <DialogHeader className="p-4 border-b">
+                    <DialogTitle className="text-primary text-2xl flex items-center gap-3"><BookOpen /> {ebook.title}</DialogTitle>
+                    <DialogDescription>{ebook.description}</DialogDescription>
+                </DialogHeader>
+
+                <div className="flex-1 grid md:grid-cols-2 gap-2 overflow-hidden p-4">
+                    {/* E-book Content */}
+                    <div className="flex flex-col gap-4">
+                        <h3 className="font-bold text-lg">Plan du Livre</h3>
+                        <ScrollArea className="flex-1 pr-4">
+                            <Accordion type="multiple" defaultValue={[content.chapters[0]?.title || '']} className="w-full">
+                                {content.chapters.map((chapter, index) => (
+                                    <AccordionItem key={index} value={chapter.title}>
+                                        <AccordionTrigger>{index + 1}. {chapter.title}</AccordionTrigger>
+                                        <AccordionContent className="pl-4">
+                                            <ul className="list-disc list-inside text-muted-foreground space-y-1">
+                                                {chapter.points.map((point, pIndex) => (
+                                                    <li key={pIndex}>{point}</li>
+                                                ))}
+                                            </ul>
+                                        </AccordionContent>
+                                    </AccordionItem>
+                                ))}
+                            </Accordion>
+                        </ScrollArea>
+                    </div>
+
+                    {/* AI Tutor */}
+                    <div className="flex flex-col border rounded-lg overflow-hidden">
+                        <header className="flex items-center gap-2 p-3 bg-primary/10">
+                            <Sparkles className="text-primary" />
+                            <h3 className="font-bold">Tuteur IA Personnalisé</h3>
+                        </header>
+                        <ScrollArea className="flex-1 p-4 bg-background/50">
+                            <div className="space-y-4">
+                               <div className="flex items-start">
+                                     <div className="p-3 rounded-lg bg-secondary flex items-center gap-2">
+                                        <Bot className="h-5 w-5 text-primary flex-shrink-0"/>
+                                        <span className="text-sm text-muted-foreground">Bonjour ! Posez-moi une question sur le contenu de cet e-book.</span>
+                                     </div>
+                                 </div>
+                                {conversation.map((msg, index) => (
+                                    <div key={index} className={`flex items-start gap-2.5 ${msg.type === 'user' ? 'justify-end' : ''}`}>
+                                         {msg.type === 'tutor' && <Bot className="h-5 w-5 text-primary flex-shrink-0 mt-1"/>}
+                                         <div className={`p-3 rounded-lg max-w-sm ${msg.type === 'user' ? 'bg-primary text-primary-foreground' : 'bg-secondary'}`}>
+                                            <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
+                                         </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </ScrollArea>
+                        <footer className="p-2 border-t">
+                             <form onSubmit={handleSubmit} className="flex items-center gap-2">
+                                <Input
+                                    value={query}
+                                    onChange={(e) => setQuery(e.target.value)}
+                                    placeholder="Posez votre question ici..."
+                                    className="flex-1"
+                                    disabled={isLoading}
+                                />
+                                <Button type="submit" size="icon" disabled={isLoading || !query.trim()}>
+                                    <CornerDownLeft />
+                                </Button>
+                            </form>
+                        </footer>
+                    </div>
+                </div>
+
+                <DialogFooter className="p-4 border-t">
+                    <DialogClose asChild>
+                        <Button type="button" variant="secondary">Fermer</Button>
+                    </DialogClose>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
+};
+
+type ClientView = 'details' | 'orders' | 'wishlist' | 'settings' | 'contracts' | 'ebooks';
 
 const mockContracts: Order[] = [
     { id: 'VOLTIX-17212497', date: '2024-07-17T20:56:12.981Z', total: 850000, status: 'validated', signature: 'Client VOLTIX', items: [{ id: 'p1', name: 'iPhone 15 Pro Max', category: 'smartphones', price: 850000, image: 'https://images.unsplash.com/photo-1695026901844-f1737f374e6a?q=80&w=2670&auto=format&fit=crop', dataAiHint: "iphone pro", description: 'Le smartphone le plus avancé d\'Apple...', quantity: 1}] },
     { id: 'VOLTIX-17212423', date: '2024-07-15T18:32:10.111Z', total: 1380000, status: 'delivered', signature: 'Client VOLTIX', items: [{ id: 'p7', name: 'MacBook Pro 16" M3', category: 'laptops', price: 1200000, image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=2526&auto=format&fit=crop', dataAiHint: "macbook pro", description: 'Ordinateur portable professionnel...', quantity: 1}, { id: 'p13', name: 'AirPods Pro 2', category: 'audio', price: 180000, image: 'https://images.unsplash.com/photo-1694650523737-233454792039?q=80&w=2670&auto=format&fit=crop', dataAiHint: "airpods pro", description: 'Écouteurs sans fil...', quantity: 1}] },
 ];
+
+const AccountEbooks = () => {
+    const { toast } = useToast();
+    const [purchasedEbooks, setPurchasedEbooks] = React.useState<Set<string>>(new Set());
+    const [selectedEbook, setSelectedEbook] = React.useState<Ebook | null>(null);
+    const [isEbookPaymentModalOpen, setIsEbookPaymentModalOpen] = React.useState(false);
+    const [currentEbookContent, setCurrentEbookContent] = React.useState<{ ebook: Ebook, content: EbookContent } | null>(null);
+    const [isEbookContentModalOpen, setIsEbookContentModalOpen] = React.useState(false);
+    
+    React.useEffect(() => {
+        const storedPurchases = localStorage.getItem('voltix-ebook-purchases');
+        if (storedPurchases) {
+            setPurchasedEbooks(new Set(JSON.parse(storedPurchases)));
+        }
+    }, []);
+
+    const handlePurchaseClick = (ebook: Ebook) => {
+        if (purchasedEbooks.has(ebook.id)) {
+            handleOpenEbook(ebook.id);
+        } else {
+            setSelectedEbook(ebook);
+            setIsEbookPaymentModalOpen(true);
+        }
+    };
+
+    const handlePaymentSuccess = (ebookId: string) => {
+        const newPurchases = new Set(purchasedEbooks).add(ebookId);
+        setPurchasedEbooks(newPurchases);
+        localStorage.setItem('voltix-ebook-purchases', JSON.stringify(Array.from(newPurchases)));
+        handleOpenEbook(ebookId);
+    };
+
+    const handleOpenEbook = (ebookId: string) => {
+        const ebook = allEbooks.find(e => e.id === ebookId);
+        const content = allEbookContents.find(c => c.id === ebookId);
+        if (ebook && content) {
+            setCurrentEbookContent({ ebook, content });
+            setIsEbookContentModalOpen(true);
+        } else {
+            toast({ variant: "destructive", title: "Erreur", description: "Contenu de l'e-book introuvable." });
+        }
+    };
+
+    return (
+        <>
+            <Card className="bg-card/50 border-primary/20">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-3"><BookOpen /> Formations & E-books</CardTitle>
+                    <CardDescription>Développez vos compétences avec nos guides stratégiques exclusifs.</CardDescription>
+                </CardHeader>
+                <CardContent className="grid md:grid-cols-2 gap-6">
+                    {allEbooks.map((ebook) => (
+                         <Card key={ebook.id} className="bg-background/50 flex flex-col">
+                            <CardHeader>
+                                <CardTitle className="flex items-start gap-4">
+                                    <div className="p-3 rounded-lg bg-primary/20 text-primary">
+                                        <BookOpen size={24}/>
+                                    </div>
+                                    <div>
+                                        {ebook.title}
+                                        <p className="text-lg font-bold text-primary mt-1">{ebook.price.toLocaleString('fr-FR')} FCFA</p>
+                                    </div>
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="flex-1">
+                                <p className="text-muted-foreground">{ebook.description}</p>
+                            </CardContent>
+                            <CardFooter>
+                                <Button className="w-full" onClick={() => handlePurchaseClick(ebook)}>
+                                    {purchasedEbooks.has(ebook.id) ? "Ouvrir l'E-book" : "Acheter cet E-book"}
+                                </Button>
+                            </CardFooter>
+                        </Card>
+                    ))}
+                </CardContent>
+            </Card>
+             <EbookPaymentModal ebook={selectedEbook} isOpen={isEbookPaymentModalOpen} onOpenChange={setIsEbookPaymentModalOpen} onPaymentSuccess={handlePaymentSuccess} />
+             <EbookContentModal ebook={currentEbookContent?.ebook ?? null} content={currentEbookContent?.content ?? null} isOpen={isEbookContentModalOpen} onOpenChange={setIsEbookContentModalOpen} />
+        </>
+    );
+};
 
 const AccountDetails = () => {
     const { toast } = useToast();
@@ -287,6 +573,8 @@ export default function AccountPage() {
             return <AccountSettings />;
         case 'contracts':
             return <AccountContracts />;
+        case 'ebooks':
+            return <AccountEbooks />;
         case 'orders':
             return <PlaceholderContent title="Mes Commandes" icon={ShoppingBag} />;
         case 'wishlist':
@@ -344,6 +632,7 @@ export default function AccountPage() {
                     <NavButton view="details" label="Détails du Compte" icon={User}/>
                     <NavButton view="orders" label="Mes Commandes" icon={ShoppingBag}/>
                     <NavButton view="contracts" label="Mes Contrats" icon={FileSignature}/>
+                    <NavButton view="ebooks" label="Mes Formations" icon={BookOpen}/>
                     <NavButton view="wishlist" label="Liste de Souhaits" icon={Heart}/>
                     <NavButton view="settings" label="Paramètres" icon={Settings}/>
 
