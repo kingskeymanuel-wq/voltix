@@ -53,7 +53,7 @@ export const Header = ({ cartCount, onCartClick, onContactClick, searchTerm, set
         <div className="flex h-20 items-center justify-between gap-4">
           <Link href="/" className="flex items-center gap-3">
             <LightningIcon />
-            <span className="text-2xl font-black text-primary hidden sm:inline-block">
+            <span className="text-2xl font-black text-primary hidden sm:inline-block animate-glow">
               VOLTIX SMART
             </span>
           </Link>

@@ -11,8 +11,8 @@ export const LightningIcon = () => (
       className="group-hover/logo:animate-rotate-y"
     >
       <defs>
-        <filter id="glow">
-          <feGaussianBlur stdDeviation="3.5" result="coloredBlur" />
+        <filter id="icon-glow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="3" result="coloredBlur" />
           <feMerge>
             <feMergeNode in="coloredBlur" />
             <feMergeNode in="SourceGraphic" />
@@ -33,7 +33,7 @@ export const LightningIcon = () => (
       <path 
         d="M20 7C28.2843 7 35 12.2843 35 19C35 25.7157 28.2843 31 20 31C11.7157 31 5 25.7157 5 19C5 12.2843 11.7157 7 20 7Z" 
         fill="hsl(var(--foreground))"
-        style={{filter: 'url(#glow)'}}
+        style={{filter: 'url(#icon-glow)'}}
       />
       <path 
         d="M20 11C25.5228 11 30 15.0228 30 19C30 22.9772 25.5228 27 20 27C14.4772 27 10 22.9772 10 19C10 15.0228 14.4772 11 20 11Z"
