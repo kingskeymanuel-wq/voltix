@@ -13,7 +13,7 @@ const featuredContent = [
     description: "La technologie de demain, aujourd'hui. Explorez notre sélection premium de smartphones, laptops et gadgets high-tech.",
     mediaUrl: "https://videos.pexels.com/video-files/8570415/8570415-hd_1920_1080_25fps.mp4",
     primaryCta: "Explorer les Produits",
-    secondaryCta: "Nos Services",
+    secondaryCta: "Nos accessoires",
   },
   {
     type: "video",
@@ -21,7 +21,7 @@ const featuredContent = [
     description: "Des composants de pointe pour une expérience utilisateur sans compromis, que vous soyez gamer, créatif ou professionnel.",
     mediaUrl: "https://videos.pexels.com/video-files/854124/854124-hd_1920_1080_30fps.mp4",
     primaryCta: "Voir les Laptops",
-    secondaryCta: "Nos accessoires",
+    secondaryCta: "Comparer les modèles",
   },
   {
     type: "video",
