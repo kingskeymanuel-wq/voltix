@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -14,21 +15,21 @@ import {z} from 'genkit';
 const AccessoryRecommendationsInputSchema = z.object({
   cartItems: z.array(
     z.object({
-      name: z.string().describe('The name of the product in the cart.'),
-      category: z.string().describe('The category of the product.'),
-      description: z.string().describe('A short description of the product.'),
+      name: z.string().describe('Le nom du produit dans le panier.'),
+      category: z.string().describe('La catégorie du produit.'),
+      description: z.string().describe('Une courte description du produit.'),
     })
-  ).describe('The items currently in the user\'s cart.'),
+  ).describe('Les articles actuellement dans le panier de l\'utilisateur.'),
 });
 export type AccessoryRecommendationsInput = z.infer<typeof AccessoryRecommendationsInputSchema>;
 
 const AccessoryRecommendationsOutputSchema = z.object({
   recommendations: z.array(
     z.object({
-      name: z.string().describe('The name of the recommended accessory.'),
-      description: z.string().describe('A short description of the accessory.'),
+      name: z.string().describe('Le nom de l\'accessoire recommandé.'),
+      description: z.string().describe('Une courte description de l\'accessoire.'),
     })
-  ).describe('A list of recommended accessories for the products in the cart.'),
+  ).describe('Une liste d\'accessoires recommandés pour les produits dans le panier.'),
 });
 export type AccessoryRecommendationsOutput = z.infer<typeof AccessoryRecommendationsOutputSchema>;
 
@@ -40,13 +41,13 @@ const accessoryRecommendationsPrompt = ai.definePrompt({
   name: 'accessoryRecommendationsPrompt',
   input: {schema: AccessoryRecommendationsInputSchema},
   output: {schema: AccessoryRecommendationsOutputSchema},
-  prompt: `You are an AI assistant specializing in recommending accessories for electronic products.
+  prompt: `Tu es un assistant IA spécialisé dans la recommandation d'accessoires pour les produits électroniques.
 
-  Given the products in the user's cart, suggest relevant accessories that would enhance their experience.
+  Étant donné les produits dans le panier de l'utilisateur, suggère des accessoires pertinents qui amélioreraient son expérience.
 
-  The response must be a list of product names and descriptions.
+  La réponse doit être une liste de noms de produits et de descriptions.
 
-  Products in cart:
+  Produits dans le panier :
   {{#each cartItems}}
   - {{this.name}} ({{this.category}}): {{this.description}}
   {{/each}}`,

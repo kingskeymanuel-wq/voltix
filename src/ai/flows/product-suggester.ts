@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -14,23 +15,23 @@ import { allProducts } from '@/data/products';
 import { findClientByName, getClientOrders, getSavTickets } from '@/ai/tools/vendor-tools';
 
 const ProductSuggesterInputSchema = z.object({
-  query: z.string().describe('The user\'s request describing what they are looking for.'),
+  query: z.string().describe('La requête de l\'utilisateur décrivant ce qu\'il recherche.'),
 });
 export type ProductSuggesterInput = z.infer<typeof ProductSuggesterInputSchema>;
 
 const ProductSuggesterOutputSchema = z.object({
-  thought: z.string().describe("A brief thought process explaining why the following products were chosen or the answer provided."),
+  thought: z.string().describe("Un bref processus de réflexion expliquant pourquoi les produits suivants ont été choisis ou la réponse fournie."),
   products: z.array(
     z.object({
-      id: z.string().describe('The product ID.'),
-      name: z.string().describe('The name of the suggested product.'),
-      description: z.string().describe('A short, compelling description of the product and why it fits the user\'s need.'),
-      price: z.number().describe('The price of the product.'),
-      image: z.string().describe('The image URL for the product.'),
-      dataAiHint: z.string().describe('The AI hint for the product image.'),
+      id: z.string().describe('L\'ID du produit.'),
+      name: z.string().describe('Le nom du produit suggéré.'),
+      description: z.string().describe('Une description courte et convaincante du produit et pourquoi il correspond aux besoins de l\'utilisateur.'),
+      price: z.number().describe('Le prix du produit.'),
+      image: z.string().describe('L\'URL de l\'image du produit.'),
+      dataAiHint: z.string().describe('L\'indice IA pour l\'image du produit.'),
     })
-  ).optional().describe('A list of recommended products for the user.'),
-  answer: z.string().optional().describe('A direct answer to the user\'s question if no products are suggested.'),
+  ).optional().describe('Une liste de produits recommandés pour l\'utilisateur.'),
+  answer: z.string().optional().describe('Une réponse directe à la question de l\'utilisateur si aucun produit n\'est suggéré.'),
 });
 export type ProductSuggesterOutput = z.infer<typeof ProductSuggesterOutputSchema>;
 
@@ -45,19 +46,19 @@ const productSuggesterPrompt = ai.definePrompt({
   input: { schema: ProductSuggesterInputSchema },
   output: { schema: ProductSuggesterOutputSchema },
   tools: [findClientByName, getClientOrders, getSavTickets],
-  prompt: `You are VOLTY, a friendly and expert AI assistant for VOLTIX SMART, a premium electronics store in Côte d'Ivoire.
-Your goal is to help users find the perfect product based on their needs, or answer questions about clients, orders, and after-sales service (SAV).
+  prompt: `Tu es VOLTY, un assistant IA sympathique et expert pour VOLTIX SMART, un magasin d'électronique premium en Côte d'Ivoire.
+Ton objectif est d'aider les utilisateurs à trouver le produit parfait en fonction de leurs besoins, ou de répondre aux questions sur les clients, les commandes et le service après-vente (SAV).
 
-- If the user is asking for product recommendations, analyze their request and suggest 2 to 4 relevant products from the list below. Your response should start with a brief, friendly thought process. Provide the list of suggested products with their correct ID, name, price, and image URL. The description for each product should be rewritten to be compelling and directly address the user's query.
+- Si l'utilisateur demande des recommandations de produits, analyse sa demande et suggère 2 à 4 produits pertinents de la liste ci-dessous. Ta réponse doit commencer par un bref processus de réflexion amical. Fournis la liste des produits suggérés avec leur ID, nom, prix et URL d'image corrects. La description de chaque produit doit être réécrite pour être convaincante et répondre directement à la requête de l'utilisateur.
 
-- If the user asks about a specific client, their orders, or SAV tickets, use the available tools to find the information and provide a clear, concise answer. Summarize the information found by the tools in the 'answer' field. Do not suggest products in this case.
+- Si l'utilisateur pose une question sur un client spécifique, ses commandes ou ses tickets SAV, utilise les outils disponibles pour trouver l'information et fournir une réponse claire et concise. Résume les informations trouvées par les outils dans le champ 'answer'. Ne suggère pas de produits dans ce cas.
 
-- If you cannot fulfill the request, politely explain why.
+- Si tu ne peux pas répondre à la demande, explique poliment pourquoi.
 
-Here is the list of available products:
+Voici la liste des produits disponibles :
 ${productContext}
 
-User's request:
+Requête de l'utilisateur :
 "{{query}}"`,
 });
 
