@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { DollarSign, ShoppingCart, Users, CreditCard, Lock, BarChart2, Mail, KeyRound, Eye, Bell, Truck, FileSignature, Wrench, PackagePlus, Edit } from "lucide-react";
+import { DollarSign, ShoppingCart, Users, CreditCard, Lock, BarChart2, Mail, KeyRound, Eye, Bell, Truck, FileSignature, Wrench, PackagePlus, Edit, Package } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -566,15 +566,25 @@ export default function VendorPage() {
                 <TabsTrigger value="products"><ShoppingCart className="mr-2"/> Gestion Produits</TabsTrigger>
             </TabsList>
             <TabsContent value="dashboard">
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
                     <Card className="bg-card/50 border-white/10">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Total des Ventes</CardTitle>
+                            <CardTitle className="text-sm font-medium">Revenu Total</CardTitle>
                             <DollarSign className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold">45,231,890 FCFA</div>
                             <p className="text-xs text-muted-foreground">+20.1% depuis le mois dernier</p>
+                        </CardContent>
+                    </Card>
+                    <Card className="bg-card/50 border-white/10">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">Nombre de Ventes</CardTitle>
+                            <Package className="h-4 w-4 text-muted-foreground" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold">+123</div>
+                            <p className="text-xs text-muted-foreground">+15.3% depuis le mois dernier</p>
                         </CardContent>
                     </Card>
                     <Card className="bg-card/50 border-white/10">
@@ -589,7 +599,7 @@ export default function VendorPage() {
                     </Card>
                     <Card className="bg-card/50 border-white/10">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Crédits</CardTitle>
+                            <CardTitle className="text-sm font-medium">Crédits Actifs</CardTitle>
                             <CreditCard className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
