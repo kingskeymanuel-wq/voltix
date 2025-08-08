@@ -5,17 +5,24 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "./ui/card";
-import { BookMarked } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import type { Product } from "@/lib/types";
 import { Badge } from "./ui/badge";
 import { getCategoryName } from "@/data/products";
 
 interface ProductCardProps {
   product: Product;
+  addToCart: (product: Product) => void;
   index: number;
 }
 
-export const ProductCard = ({ product, index }: ProductCardProps) => {
+export const ProductCard = ({ product, addToCart, index }: ProductCardProps) => {
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    addToCart(product);
+  }
 
   return (
     <Link href={`/product/${product.id}`} className="group block">
@@ -40,15 +47,18 @@ export const ProductCard = ({ product, index }: ProductCardProps) => {
         <CardContent className="p-6 flex-1">
           <p className="text-sm font-bold uppercase text-primary mb-2 tracking-wider">{getCategoryName(product.category)}</p>
           <CardTitle className="text-xl font-headline font-extrabold mb-2 h-14">{product.name}</CardTitle>
+          <p className="text-3xl font-black text-primary mb-4">{product.price.toLocaleString('fr-FR')} FCFA</p>
           <p className="text-muted-foreground text-sm h-20 overflow-hidden">{product.description}</p>
         </CardContent>
-        <CardFooter className="p-6 pt-0 flex gap-2 mt-auto">
-          <Button className="w-full font-bold bg-gradient-to-r from-primary to-yellow-600 text-primary-foreground hover:scale-105 transition-transform duration-300">
-            <BookMarked className="mr-2 h-4 w-4"/>
-            Commencer l'Aventure
+        <CardFooter className="p-6 pt-0 flex gap-2">
+          <Button onClick={handleAddToCart} className="w-full font-bold bg-gradient-to-r from-primary to-blue-600 text-white hover:scale-105 transition-transform duration-300">
+            <ShoppingCart className="mr-2 h-4 w-4"/>
+            Ajouter au panier
           </Button>
         </CardFooter>
       </Card>
     </Link>
   );
 };
+
+    

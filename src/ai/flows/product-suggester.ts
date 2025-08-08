@@ -2,9 +2,9 @@
 'use server';
 
 /**
- * @fileOverview Un agent IA qui agit comme un guide spirituel pour BIBLE AVENTURE.
+ * @fileOverview Un agent IA qui agit comme un vendeur expert et un consultant pour VOLTIX SMART.
  * 
- * - suggestProducts - Une fonction qui prend une question d'utilisateur et retourne des réponses ou des suggestions d'histoires bibliques.
+ * - suggestProducts - Une fonction qui prend une question d'utilisateur et retourne soit des suggestions de produits, soit des réponses commerciales/marketing.
  * - ProductSuggesterInput - Le type d'entrée pour la fonction suggestProducts.
  * - ProductSuggesterOutput - Le type de retour pour la fonction suggestProducts.
  */
@@ -12,24 +12,25 @@
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 import { allProducts } from '@/data/products';
+import { findClientByName, getClientOrders, getSavTickets } from '../tools/vendor-tools';
 
 const ProductSuggesterInputSchema = z.object({
-  query: z.string().describe("La question de l'utilisateur sur la Bible."),
+  query: z.string().describe("La question de l'utilisateur sur les produits, les clients ou des stratégies commerciales."),
 });
 export type ProductSuggesterInput = z.infer<typeof ProductSuggesterInputSchema>;
 
 const ProductSuggesterOutputSchema = z.object({
   products: z.array(
     z.object({
-      id: z.string().describe("L'ID de l'aventure biblique."),
-      name: z.string().describe("Le titre de l'aventure."),
-      description: z.string().describe("Une description courte et inspirante de l'aventure et pourquoi elle est pertinente pour la question de l'utilisateur."),
-      price: z.number().describe('Le prix du produit (sera toujours 0).'),
-      image: z.string().describe("L'URL de l'image de l'aventure."),
+      id: z.string().describe("L'ID du produit."),
+      name: z.string().describe("Le nom du produit."),
+      description: z.string().describe("Une description courte et percutante du produit et pourquoi il est pertinent pour la demande de l'utilisateur."),
+      price: z.number().describe('Le prix du produit.'),
+      image: z.string().describe("L'URL de l'image du produit."),
       dataAiHint: z.string().describe("L'indice IA pour l'image."),
     })
-  ).optional().describe("Une liste d'aventures bibliques recommandées."),
-  answer: z.string().optional().describe("Une réponse directe et sage à la question de l'utilisateur, basée sur les connaissances bibliques."),
+  ).optional().describe('Une liste de produits suggérés.'),
+  answer: z.string().optional().describe("Une réponse directe à la question de l'utilisateur si elle ne concerne pas une suggestion de produit."),
 });
 export type ProductSuggesterOutput = z.infer<typeof ProductSuggesterOutputSchema>;
 
@@ -43,24 +44,28 @@ const productSuggesterPrompt = ai.definePrompt({
   name: 'productSuggesterPrompt',
   input: { schema: ProductSuggesterInputSchema },
   output: { schema: ProductSuggesterOutputSchema },
-  prompt: `Tu es un Guide Spirituel pour l'application "BIBLE AVENTURE". Tu es sage, patient et bienveillant.
-Ton rôle est d'éclairer les utilisateurs sur les Saintes Écritures.
+  tools: [findClientByName, getClientOrders, getSavTickets],
+  prompt: `Tu es VOLTY, l'assistant IA expert de "VOLTIX SMART", une boutique en ligne spécialisée dans les produits électroniques haut de gamme. Tu es serviable, compétent et commercial.
 
 Tes rôles sont :
 
-1.  **Guide d'Histoires Bibliques**:
-    *   Si l'utilisateur cherche une histoire ou un personnage, suggère 1 à 3 aventures pertinentes de la liste ci-dessous.
-    *   La description de chaque aventure doit être réécrite pour être inspirante et répondre à la curiosité de l'utilisateur.
+1.  **Conseiller de Vente Expert**:
+    *   Si la question de l'utilisateur concerne une recherche de produit (ex: "je cherche un téléphone puissant", "un laptop pour le design"), suggère 1 à 3 produits pertinents de la liste ci-dessous.
+    *   La description de chaque produit doit être réécrite pour être percutante et mettre en avant les points forts répondant au besoin de l'utilisateur.
 
-2.  **Expert Théologique**:
-    *   Si l'utilisateur pose une question sur un concept, une leçon ou une interprétation (ex: "Que signifie la foi ?", "Pourquoi David a-t-il écrit des psaumes ?"), fournis une réponse claire, sage et bienveillante dans le champ 'answer'.
-    *   Base tes réponses sur une connaissance profonde de la Bible.
-    *   Ne suggère pas d'aventures listées, mais tu peux faire référence aux histoires pertinentes dans ta réponse textuelle.
+2.  **Assistant de Service Client**:
+    *   Si l'utilisateur pose une question sur un client spécifique (par ex. "infos sur Ali Koné"), ses commandes ou ses tickets SAV, utilise les outils disponibles (findClientByName, getClientOrders, getSavTickets) pour trouver l'information.
+    *   Résume les informations trouvées par les outils dans le champ 'answer'.
+    *   Ne suggère pas de produits dans ce cas.
 
-- Si tu ne peux pas répondre, explique avec humilité et encourage l'utilisateur à chercher dans la prière ou auprès de sa communauté.
-- Ta tonalité doit toujours être encourageante et respectueuse.
+3.  **Consultant Commercial et Marketing**:
+    *   Si la question est d'ordre général, commercial ou marketing (ex: "quelle promotion pour la fête des pères ?", "fais un post pour le nouvel iPhone"), fournis une réponse créative et pertinente dans le champ 'answer'.
+    *   Tu peux te baser sur la liste de produits pour inspirer tes stratégies.
 
-Voici la liste des aventures disponibles :
+- Si tu ne peux pas répondre, admets-le poliment.
+- Sois toujours direct et professionnel dans tes réponses.
+
+Voici la liste des produits disponibles :
 ${productContext}
 
 Question de l'utilisateur :
@@ -81,9 +86,9 @@ const productSuggesterFlow = ai.defineFlow(
           const fullProduct = allProducts.find(item => item.id === p.id);
           return {
               ...p,
-              price: 0,
+              price: fullProduct?.price || 0,
               image: fullProduct?.image || 'https://placehold.co/600x400',
-              dataAiHint: fullProduct?.dataAiHint || 'biblical scene'
+              dataAiHint: fullProduct?.dataAiHint || 'tech product'
           };
       });
       return { ...output, products: enrichedProducts };
@@ -92,3 +97,5 @@ const productSuggesterFlow = ai.defineFlow(
     return output!;
   }
 );
+
+    

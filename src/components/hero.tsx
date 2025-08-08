@@ -10,34 +10,46 @@ import Image from "next/image"
 const featuredContent = [
   {
     type: "image",
-    title: "BIBLE AVENTURE",
-    description: "Plongez au cœur des récits sacrés. Explorez les vies des prophètes, revivez les grands miracles et comprenez les enseignements intemporels de la Bible.",
-    mediaUrl: "https://images.unsplash.com/photo-1504052434569-70ad5836ab65?q=80&w=2670&auto=format&fit=crop",
-    dataAiHint: "ancient scroll bible",
-    primaryCta: "Commencer une Aventure",
+    title: "VOLTIX SMART",
+    description: "La technologie de demain, aujourd'hui. Explorez notre sélection premium de smartphones, laptops et gadgets high-tech.",
+    mediaUrl: "https://images.unsplash.com/photo-1550009158-94ae76552485?q=80&w=2586&auto=format&fit=crop",
+    dataAiHint: "modern electronics desk",
+    primaryCta: "Explorer les Produits",
+    secondaryCta: "Nos Services",
   },
   {
     type: "image",
-    title: "La Sagesse de Salomon",
-    description: "Découvrez les proverbes et les décisions qui ont fait de Salomon le roi le plus sage de tous les temps. Une quête de discernement et de justice.",
-    mediaUrl: "https://images.unsplash.com/photo-1610623379963-782f254f15e0?q=80&w=2670&auto=format&fit=crop",
-    dataAiHint: "king throne gold",
-    primaryCta: "Explorer la Sagesse",
+    title: "iPhone 15 Pro Max",
+    description: "Titane. Si robuste. Si léger. Si Pro. Le summum de la technologie Apple entre vos mains.",
+    mediaUrl: "https://images.unsplash.com/photo-1695026901844-f1737f374e6a?q=80&w=2670&auto=format&fit=crop",
+    dataAiHint: "iphone pro",
+    primaryCta: "Acheter Maintenant",
+    secondaryCta: "En savoir plus",
   },
   {
     type: "image",
-    title: "La Traversée de la Mer Rouge",
-    description: "Soyez témoin de la puissance divine et guidez le peuple hébreu à travers les eaux partagées, fuyant l'armée du pharaon.",
-    mediaUrl: "https://images.unsplash.com/photo-1590079019245-3ff1c833532f?q=80&w=2574&auto=format&fit=crop",
-    dataAiHint: "ocean waves parting",
-    primaryCta: "Revivre le Miracle",
+    title: "MacBook Pro M3",
+    description: "Une puissance monstre. Une autonomie qui change la donne. L'ordinateur portable pro par excellence.",
+    mediaUrl: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=2526&auto=format&fit=crop",
+    dataAiHint: "macbook pro",
+    primaryCta: "Découvrir la gamme",
+    secondaryCta: "Comparer les modèles",
+  },
+  {
+    type: "image",
+    title: "Livraison Express 24H",
+    description: "Commandez aujourd'hui, recevez demain. Notre service de livraison ultra-rapide sur Abidjan.",
+    mediaUrl: "https://images.unsplash.com/photo-1588961732739-e95843d4c794?q=80&w=2670&auto=format&fit=crop",
+    dataAiHint: "delivery truck city",
+    primaryCta: "Suivre ma commande",
+    secondaryCta: "Zones de livraison",
   },
 ];
 
 
 export const Hero = () => {
-    const handleScrollTo = (id: string) => {
-        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    const handleScrollToProducts = () => {
+        document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' });
     };
 
     return (
@@ -72,9 +84,12 @@ export const Hero = () => {
                                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                                         <Button 
                                           size="lg" 
-                                          onClick={() => handleScrollTo('adventures')}
-                                          className="text-lg font-bold bg-gradient-to-r from-primary to-yellow-600 text-primary-foreground rounded-full px-10 py-7 hover:scale-105 hover:shadow-[0_0_35px_rgba(217,163,65,0.6)] transition-all duration-300">
+                                          onClick={handleScrollToProducts}
+                                          className="text-lg font-bold bg-gradient-to-r from-primary to-blue-600 text-white rounded-full px-10 py-7 hover:scale-105 hover:shadow-[0_0_35px_rgba(59,130,246,0.6)] transition-all duration-300">
                                             {content.primaryCta}
+                                        </Button>
+                                        <Button size="lg" variant="outline" className="text-lg font-bold bg-transparent border-2 border-white text-white rounded-full px-10 py-7 hover:bg-white hover:text-black transition-colors duration-300">
+                                            {content.secondaryCta}
                                         </Button>
                                     </div>
                                 </div>
@@ -89,3 +104,5 @@ export const Hero = () => {
     </section>
     );
 };
+
+    

@@ -11,8 +11,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        body: ['Taviraj', 'serif'],
-        headline: ['Cinzel', 'serif'],
+        body: ['Roboto', 'sans-serif'],
+        headline: ['Orbitron', 'sans-serif'],
         code: ['"Source Code Pro"', 'monospace'],
       },
       colors: {
@@ -95,8 +95,8 @@ export default {
           '100%': { transform: 'translateX(-100%) translateY(-100%) rotate(45deg)' },
         },
         glow: {
-          'from': { 'text-shadow': '0 0 10px hsl(var(--primary) / 0.6)' },
-          'to': { 'text-shadow': '0 0 25px hsl(var(--primary) / 0.9), 0 0 40px hsl(var(--primary) / 0.7)' },
+          'from': { 'text-shadow': '0 0 5px hsl(var(--primary) / 0.5), 0 0 10px hsl(var(--primary) / 0.4)' },
+          'to': { 'text-shadow': '0 0 10px hsl(var(--primary) / 0.8), 0 0 20px hsl(var(--primary) / 0.6)' },
         },
         'rotate-y': {
             '0%': { transform: 'rotateY(0deg)' },
@@ -113,7 +113,7 @@ export default {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         shine: 'shine 3s ease-in-out infinite',
-        glow: 'glow 2s ease-in-out infinite alternate',
+        glow: 'glow 1.5s ease-in-out infinite alternate',
         'rotate-y': 'rotate-y 0.8s ease-in-out forwards',
         'flash-boom': 'flash-boom 0.8s ease-in-out forwards',
       },
@@ -121,3 +121,5 @@ export default {
   },
   plugins: [require('tailwindcss-animate')],
 } satisfies Config;
+
+    

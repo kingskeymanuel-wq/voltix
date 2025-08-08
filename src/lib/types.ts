@@ -10,4 +10,31 @@ export interface Product {
   dataAiHint: string;
 }
 
-export type Category = 'all' | 'genesis' | 'prophets' | 'gospels' | 'acts';
+export interface CartItem extends Product {
+  quantity: number;
+}
+
+export type Category = 'all' | 'smartphones' | 'laptops' | 'cameras' | 'drones' | 'gaming' | 'audio' | 'wearables' | 'accessories';
+
+
+export interface Order {
+  id: string;
+  clientId?: string;
+  date: string;
+  items: CartItem[];
+  total: number;
+  status: 'pending' | 'validated' | 'preparing' | 'in_transit' | 'delivered' | 'cancelled';
+  signature: string;
+}
+
+export interface SAVTicket {
+    id: string;
+    clientId: string;
+    orderId: string;
+    product: string;
+    issue: string;
+    status: 'Ouvert' | 'En cours' | 'Résolu' | 'Fermé';
+    date: string;
+}
+
+    

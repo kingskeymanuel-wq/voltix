@@ -6,18 +6,19 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
-import { CornerDownLeft, Loader2, Sparkles, X, BookOpen } from "lucide-react";
+import { CornerDownLeft, Loader2, Sparkles, X, Bot, User } from "lucide-react";
 import { Textarea } from "./ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { suggestProducts } from "@/ai/flows/product-suggester";
 import type { ProductSuggesterOutput } from "@/ai/flows/product-suggester";
 import type { Product } from "@/lib/types";
 import Link from "next/link";
+import { LightningIcon } from "./icons";
 
 interface VoltyAssistantProps {}
 
 type ConversationMessage = {
-    type: 'user' | 'guide';
+    type: 'user' | 'volty';
     content: string;
     products?: ProductSuggesterOutput['products'];
     answer?: string;
@@ -44,19 +45,19 @@ export function VoltyAssistant({}: VoltyAssistantProps) {
         try {
             const result = await suggestProducts({ query });
             const voltyMessage: ConversationMessage = { 
-                type: 'guide' as const, 
-                content: result.answer || (result.products ? "Voici quelques récits qui pourraient vous intéresser :" : "Comment puis-je vous guider aujourd'hui ?"),
+                type: 'volty' as const, 
+                content: result.answer || (result.products ? "Voici ce que je vous propose :" : "Comment puis-je vous aider ?"),
                 products: result.products,
                 answer: result.answer
             };
             setConversation(prev => [...prev, voltyMessage]);
         } catch (error) {
             console.error("AI suggestion error:", error);
-            const errorMessage = { type: 'guide' as const, content: "Désolé, une erreur s'est produite. Veuillez reformuler votre question ou réessayer plus tard."};
+            const errorMessage = { type: 'volty' as const, content: "Désolé, une erreur s'est produite. Veuillez reformuler votre question ou réessayer plus tard."};
             setConversation(prev => [...prev, errorMessage]);
             toast({
                 variant: "destructive",
-                title: "Erreur du Guide",
+                title: "Erreur de VOLTY",
                 description: "Une erreur est survenue lors de la communication avec l'IA.",
             });
         } finally {
@@ -75,10 +76,10 @@ export function VoltyAssistant({}: VoltyAssistantProps) {
             >
                 <Button 
                     onClick={handleToggle} 
-                    className="rounded-full w-20 h-20 bg-gradient-to-br from-primary to-yellow-600 shadow-2xl shadow-primary/40 hover:scale-110 transition-transform duration-300 flex flex-col items-center justify-center text-primary-foreground"
+                    className="rounded-full w-20 h-20 bg-gradient-to-br from-primary to-blue-600 shadow-2xl shadow-primary/40 hover:scale-110 transition-transform duration-300 flex flex-col items-center justify-center text-white"
                 >
-                    <BookOpen size={32} />
-                    <span className="text-xs font-bold">Guide</span>
+                    <Bot size={32} />
+                    <span className="text-xs font-bold">VOLTY</span>
                 </Button>
             </motion.div>
 
@@ -95,19 +96,18 @@ export function VoltyAssistant({}: VoltyAssistantProps) {
                         <header className="flex items-center justify-between p-4 border-b border-primary/20">
                             <div className="flex items-center gap-2">
                                 <Sparkles className="text-primary"/>
-                                <h3 className="font-bold font-headline text-lg">Votre Guide Spirituel</h3>
+                                <h3 className="font-bold font-headline text-lg">Assistant VOLTY</h3>
                             </div>
                             <Button variant="ghost" size="icon" onClick={handleToggle}><X/></Button>
                         </header>
                         <div className="flex-1 p-4 overflow-y-auto space-y-4">
                             <div className="p-3 rounded-lg bg-primary/10 text-sm">
-                                <p className="font-bold">Shalom !</p>
-                                <p>Posez-moi une question sur une histoire, un personnage, ou un concept biblique. Je suis là pour vous éclairer.</p>
+                                <p>Bonjour ! Je suis VOLTY, votre expert high-tech. Que cherchez-vous aujourd'hui ?</p>
                             </div>
                             {conversation.map((msg, index) => (
                                 <div key={index} className={`flex flex-col ${msg.type === 'user' ? 'items-end' : 'items-start'}`}>
                                     <div className={`p-3 rounded-lg max-w-xs ${msg.type === 'user' ? 'bg-primary text-primary-foreground' : 'bg-secondary'}`}>
-                                        <p className="text-sm font-semibold text-muted-foreground">{msg.type === 'guide' ? "Guide" : "Vous"}</p>
+                                        <p className="text-sm font-semibold text-muted-foreground">{msg.type === 'volty' ? "VOLTY" : "Vous"}</p>
                                         
                                         <p className="text-sm whitespace-pre-wrap">{msg.answer || msg.content}</p>
 
@@ -120,7 +120,7 @@ export function VoltyAssistant({}: VoltyAssistantProps) {
                                                             <Image src={p.image} alt={p.name} width={50} height={50} className="rounded" data-ai-hint={p.dataAiHint} />
                                                             <div className="flex-1">
                                                                 <p className="font-bold text-xs">{p.name}</p>
-                                                                <p className="text-xs text-muted-foreground">{p.description}</p>
+                                                                <p className="text-xs text-primary font-bold">{p.price.toLocaleString('fr-FR')} FCFA</p>
                                                             </div>
                                                         </CardContent>
                                                       </Link>
@@ -135,7 +135,7 @@ export function VoltyAssistant({}: VoltyAssistantProps) {
                                  <div className="flex items-start">
                                      <div className="p-3 rounded-lg bg-secondary flex items-center gap-2">
                                         <Loader2 className="animate-spin h-5 w-5 text-primary"/>
-                                        <span className="text-sm text-muted-foreground">Le Guide médite...</span>
+                                        <span className="text-sm text-muted-foreground">VOLTY réfléchit...</span>
                                      </div>
                                  </div>
                             )}
@@ -151,7 +151,7 @@ export function VoltyAssistant({}: VoltyAssistantProps) {
                                             handleSubmit();
                                         }
                                     }}
-                                    placeholder="Ex: Qui était Moïse ?"
+                                    placeholder="Ex: Un téléphone avec une bonne caméra..."
                                     className="flex-1 min-h-[40px] max-h-24 resize-none"
                                     disabled={isLoading}
                                 />
@@ -167,3 +167,5 @@ export function VoltyAssistant({}: VoltyAssistantProps) {
         </>
     );
 }
+
+    
