@@ -5,44 +5,39 @@ import * as React from "react"
 import { Button } from "./ui/button"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "./ui/carousel"
 import Autoplay from "embla-carousel-autoplay"
-import Image from "next/image"
 
 const featuredContent = [
   {
-    type: "image",
+    type: "video",
     title: "VOLTIX SMART",
     description: "La technologie de demain, aujourd'hui. Explorez notre sélection premium de smartphones, laptops et gadgets high-tech.",
-    mediaUrl: "https://images.unsplash.com/photo-1550009158-94ae76552485?q=80&w=2586&auto=format&fit=crop",
-    dataAiHint: "modern electronics desk",
+    mediaUrl: "https://videos.pexels.com/video-files/8570415/8570415-hd_1920_1080_25fps.mp4",
     primaryCta: "Explorer les Produits",
     secondaryCta: "Nos Services",
   },
   {
-    type: "image",
-    title: "iPhone 15 Pro Max",
-    description: "Titane. Si robuste. Si léger. Si Pro. Le summum de la technologie Apple entre vos mains.",
-    mediaUrl: "https://images.unsplash.com/photo-1695026901844-f1737f374e6a?q=80&w=2670&auto=format&fit=crop",
-    dataAiHint: "iphone pro",
-    primaryCta: "Acheter Maintenant",
-    secondaryCta: "En savoir plus",
+    type: "video",
+    title: "Performance & Puissance",
+    description: "Des composants de pointe pour une expérience utilisateur sans compromis, que vous soyez gamer, créatif ou professionnel.",
+    mediaUrl: "https://videos.pexels.com/video-files/854124/854124-hd_1920_1080_30fps.mp4",
+    primaryCta: "Voir les Laptops",
+    secondaryCta: "Nos accessoires",
   },
   {
-    type: "image",
-    title: "MacBook Pro M3",
-    description: "Une puissance monstre. Une autonomie qui change la donne. L'ordinateur portable pro par excellence.",
-    mediaUrl: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=2526&auto=format&fit=crop",
-    dataAiHint: "macbook pro",
-    primaryCta: "Découvrir la gamme",
-    secondaryCta: "Comparer les modèles",
+    type: "video",
+    title: "Capturez l'Instant",
+    description: "Des appareils photos et drones équipés des dernières technologies pour des images à couper le souffle.",
+    mediaUrl: "https://videos.pexels.com/video-files/5993339/5993339-hd_1920_1080_25fps.mp4",
+    primaryCta: "Découvrir les caméras",
+    secondaryCta: "Voir les drones",
   },
   {
-    type: "image",
-    title: "Livraison Express 24H",
-    description: "Commandez aujourd'hui, recevez demain. Notre service de livraison ultra-rapide sur Abidjan.",
-    mediaUrl: "https://images.unsplash.com/photo-1588961732739-e95843d4c794?q=80&w=2670&auto=format&fit=crop",
-    dataAiHint: "delivery truck city",
-    primaryCta: "Suivre ma commande",
-    secondaryCta: "Zones de livraison",
+    type: "video",
+    title: "Service Client Dédié",
+    description: "Une question ? Un besoin ? Notre équipe est à votre écoute 24h/7j pour vous accompagner.",
+    mediaUrl: "https://videos.pexels.com/video-files/7578553/7578553-hd_1920_1080_25fps.mp4",
+    primaryCta: "Nous Contacter",
+    secondaryCta: "Suivre ma commande",
   },
 ];
 
@@ -63,15 +58,14 @@ export const Hero = () => {
                 {featuredContent.map((content, index) => (
                     <CarouselItem key={index} className="h-full">
                         <div className="relative w-full h-full">
-                            <Image
-                                src={content.mediaUrl}
-                                alt={content.title}
-                                fill
-                                objectFit="cover"
-                                className="brightness-50"
-                                data-ai-hint={content.dataAiHint}
-                                priority={index === 0}
-                            />
+                           <video
+                              src={content.mediaUrl}
+                              autoPlay
+                              loop
+                              muted
+                              playsInline
+                              className="w-full h-full object-cover brightness-50"
+                           />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
                             <div className="absolute inset-0 flex items-center justify-center">
                                 <div className="container mx-auto px-4 text-center text-white z-10">
@@ -104,5 +98,3 @@ export const Hero = () => {
     </section>
     );
 };
-
-    
