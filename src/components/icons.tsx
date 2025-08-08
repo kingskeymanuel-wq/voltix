@@ -1,13 +1,14 @@
 import { cn } from "@/lib/utils";
 
 export const LightningIcon = () => (
-  <div className="p-2">
+  <div className="p-2 group/logo">
     <svg 
       width="40" 
       height="40" 
       viewBox="0 0 40 40" 
       fill="none" 
       xmlns="http://www.w3.org/2000/svg"
+      className="group-hover/logo:animate-rotate-y"
     >
       <defs>
         <filter id="glow">
@@ -17,7 +18,13 @@ export const LightningIcon = () => (
             <feMergeNode in="SourceGraphic" />
           </feMerge>
         </filter>
+        <radialGradient id="flash-gradient">
+            <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.8" />
+            <stop offset="70%" stopColor="hsl(var(--primary))" stopOpacity="0.2" />
+            <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0" />
+        </radialGradient>
       </defs>
+      <circle cx="20" cy="20" r="1" fill="url(#flash-gradient)" className="group-hover/logo:animate-flash-boom" />
       <path 
         d="M20 3C30.4934 3 39 10.2969 39 19C39 27.7031 30.4934 35 20 35C9.50659 35 1 27.7031 1 19C1 10.2969 9.50659 3 20 3Z" 
         stroke="hsl(var(--foreground))" 
