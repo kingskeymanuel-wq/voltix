@@ -3,6 +3,12 @@ import type { Ebook } from '@/lib/types';
 
 export const allEbooks: Ebook[] = [
   {
+    id: 'ebook-jesus',
+    title: 'Le Leadership selon Jésus',
+    description: "Découvrez les principes de leadership révolutionnaires enseignés par Jésus-Christ : le service, l'humilité et l'amour comme fondements d'une influence durable.",
+    price: 0,
+  },
+  {
     id: 'ebook-comm',
     title: 'Stratégies de Communication Efficace',
     description: "Maîtrisez l'art de la persuasion, du storytelling et de la communication client pour créer des relations durables et booster vos ventes.",

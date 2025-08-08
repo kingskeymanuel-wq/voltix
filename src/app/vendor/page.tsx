@@ -643,12 +643,12 @@ export default function VendorPage() {
   };
   
   const handlePurchaseClick = (ebook: Ebook) => {
-    if (purchasedEbooks.has(ebook.id)) {
-        handleOpenEbook(ebook.id);
-    } else {
-        setSelectedEbook(ebook);
-        setIsEbookPaymentModalOpen(true);
-    }
+      if (purchasedEbooks.has(ebook.id) || ebook.price === 0) {
+          handleOpenEbook(ebook.id);
+      } else {
+          setSelectedEbook(ebook);
+          setIsEbookPaymentModalOpen(true);
+      }
   };
 
   const handlePaymentSuccess = (ebookId: string) => {
@@ -930,7 +930,9 @@ export default function VendorPage() {
                                         </div>
                                         <div>
                                             {ebook.title}
-                                            <p className="text-lg font-bold text-primary mt-1">{ebook.price.toLocaleString('fr-FR')} FCFA</p>
+                                            <p className="text-lg font-bold text-primary mt-1">
+                                              {ebook.price > 0 ? `${ebook.price.toLocaleString('fr-FR')} FCFA` : 'Gratuit'}
+                                            </p>
                                         </div>
                                     </CardTitle>
                                 </CardHeader>
@@ -939,7 +941,7 @@ export default function VendorPage() {
                                 </CardContent>
                                 <CardFooter>
                                     <Button className="w-full" onClick={() => handlePurchaseClick(ebook)}>
-                                        {purchasedEbooks.has(ebook.id) ? "Ouvrir l'E-book" : "Acheter cet E-book"}
+                                        {purchasedEbooks.has(ebook.id) ? "Ouvrir l'E-book" : (ebook.price === 0 ? "Lire gratuitement" : "Acheter cet E-book")}
                                     </Button>
                                 </CardFooter>
                             </Card>

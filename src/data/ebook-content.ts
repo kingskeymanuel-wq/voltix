@@ -3,6 +3,38 @@ import type { EbookContent } from '@/lib/types';
 
 export const allEbookContents: EbookContent[] = [
   {
+    id: 'ebook-jesus',
+    chapters: [
+      {
+        title: "Le Leader Serviteur",
+        points: [
+          "Laver les pieds de ses disciples : le contre-modèle du pouvoir.",
+          "Le plus grand est celui qui sert.",
+          "Le leadership n'est pas une position, mais une disposition.",
+          "L'autorité qui vient du service."
+        ]
+      },
+      {
+        title: "Diriger par l'Exemple",
+        points: [
+          "Faites ce que je dis ET ce que je fais.",
+          "L'intégrité inébranlable face à la tentation.",
+          "La compassion comme moteur de l'action.",
+          "La prière comme source de sagesse et de force."
+        ]
+      },
+      {
+        title: "Bâtir une Équipe et une Vision",
+        points: [
+          "L'appel des douze : voir le potentiel en chacun.",
+          "Multiplier son impact par la délégation.",
+          "Enseigner par des paraboles : communiquer une vision claire.",
+          "La Grande Commission : laisser un héritage qui transforme le monde."
+        ]
+      }
+    ]
+  },
+  {
     id: 'ebook-comm',
     chapters: [
       {
