@@ -11,18 +11,22 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { DollarSign, ShoppingCart, Users, CreditCard, Lock, BarChart2, Mail, KeyRound, Eye, Bell, Truck, FileSignature, Wrench, PackagePlus, Edit, Package } from "lucide-react";
+import { DollarSign, ShoppingCart, Users, CreditCard, Lock, BarChart2, Mail, KeyRound, Eye, Bell, Truck, FileSignature, Wrench, PackagePlus, Edit, Package, BookOpen, Smartphone, QrCode } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
-import type { Order, SAVTicket, Product } from "@/lib/types";
+import type { Order, SAVTicket, Product, Ebook } from "@/lib/types";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { allProducts as initialProducts, categories } from "@/data/products";
 import { mockClients, mockOrders, initialSavTickets, salesData } from "@/data/vendor";
+import { allEbooks } from "@/data/ebooks";
+import { MtnLogo, OrangeLogo, WaveLogo } from "@/components/icons";
+import Image from "next/image";
+
 
 type VendorView = 'login' | 'forgot-password' | 'reset-password';
 type SelectedClient = typeof mockClients[0] | null;
@@ -321,6 +325,87 @@ const ProductEditModal = ({ product, isOpen, onOpenChange, onProductUpdate }: { 
     );
 };
 
+const EbookPaymentModal = ({ ebook, isOpen, onOpenChange }: { ebook: Ebook | null, isOpen: boolean, onOpenChange: (open: boolean) => void }) => {
+    const [isProcessing, setIsProcessing] = React.useState(false);
+    const { toast } = useToast();
+    if (!ebook) return null;
+
+    const handleProcessPayment = (method: string) => {
+        setIsProcessing(true);
+        toast({ title: "Vérification du paiement...", description: `Paiement de ${ebook.title} en cours via ${method}.` });
+
+        setTimeout(() => {
+            setIsProcessing(false);
+            onOpenChange(false);
+            toast({
+                title: "Paiement réussi !",
+                description: `Vous avez accès à "${ebook.title}". Le téléchargement va commencer.`
+            });
+            // Simulate download
+            const link = document.createElement('a');
+            link.href = '/ebook-placeholder.pdf';
+            link.download = `${ebook.title.replace(/\s/g, '_')}.pdf`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }, 2000);
+    };
+    
+    return (
+        <Dialog open={isOpen} onOpenChange={onOpenChange}>
+            <DialogContent className="max-w-md bg-background/95 backdrop-blur-xl">
+                 <DialogHeader>
+                    <DialogTitle className="text-primary text-2xl flex items-center gap-3"><BookOpen /> Acheter l'E-book</DialogTitle>
+                    <DialogDescription>
+                        Finalisez l'achat de <span className="font-bold text-white">{ebook.title}</span> pour {ebook.price.toLocaleString('fr-FR')} FCFA.
+                    </DialogDescription>
+                </DialogHeader>
+                 <Tabs defaultValue="orange" className="w-full">
+                    <TabsList className="grid w-full grid-cols-3 bg-gray-800/50">
+                        <TabsTrigger value="orange"><OrangeLogo /></TabsTrigger>
+                        <TabsTrigger value="wave"><WaveLogo /></TabsTrigger>
+                        <TabsTrigger value="mtn"><MtnLogo /></TabsTrigger>
+                    </TabsList>
+                    <PaymentFormWrapper method="orange" onPay={handleProcessPayment} isProcessing={isProcessing} ebook={ebook} />
+                    <PaymentFormWrapper method="wave" onPay={handleProcessPayment} isProcessing={isProcessing} ebook={ebook} />
+                    <PaymentFormWrapper method="mtn" onPay={handleProcessPayment} isProcessing={isProcessing} ebook={ebook} />
+                </Tabs>
+            </DialogContent>
+        </Dialog>
+    )
+}
+
+const PaymentFormWrapper = ({ method, onPay, isProcessing, ebook }: { method: 'orange' | 'wave' | 'mtn', onPay: (method: string) => void, isProcessing: boolean, ebook: Ebook }) => {
+  const titles = {
+    orange: 'Orange Money',
+    wave: 'Wave',
+    mtn: 'MTN Mobile Money'
+  };
+  
+  return (
+    <TabsContent value={method}>
+      <Card className="bg-gray-800/50 border-white/20">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Smartphone size={20}/>
+            Paiement {titles[method]}
+          </CardTitle>
+          <CardDescription>Entrez votre numéro pour payer {ebook.price.toLocaleString('fr-FR')} FCFA.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor={`${method}-phone`}>Numéro de téléphone</Label>
+            <Input id={`${method}-phone`} type="tel" placeholder="0X XX XX XX XX" />
+          </div>
+          <Button onClick={() => onPay(method)} disabled={isProcessing} className="w-full bg-accent text-accent-foreground hover:bg-accent/90">
+            {isProcessing ? "Vérification..." : `Payer avec ${titles[method]}`}
+          </Button>
+        </CardContent>
+      </Card>
+    </TabsContent>
+  );
+};
+
 
 export default function VendorPage() {
   const [isContactModalOpen, setIsContactModalOpen] = React.useState(false);
@@ -337,6 +422,8 @@ export default function VendorPage() {
   const [products, setProducts] = React.useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = React.useState<SelectedProduct>(null);
   const [isProductModalOpen, setIsProductModalOpen] = React.useState(false);
+  const [selectedEbook, setSelectedEbook] = React.useState<Ebook | null>(null);
+  const [isEbookModalOpen, setIsEbookModalOpen] = React.useState(false);
   
   const { toast } = useToast();
   const router = useRouter();
@@ -349,7 +436,6 @@ export default function VendorPage() {
   const persistProducts = (updatedProducts: Product[]) => {
     setProducts(updatedProducts);
     localStorage.setItem('voltix-products', JSON.stringify(updatedProducts));
-    // Dispatch a storage event to notify other tabs/pages (like home)
     window.dispatchEvent(new Event('storage'));
   };
 
@@ -419,15 +505,18 @@ export default function VendorPage() {
   const handleProductUpdate = (product: Product) => {
     let updatedProducts;
     if (products.some(p => p.id === product.id)) {
-        // Update existing product
         updatedProducts = products.map(p => p.id === product.id ? product : p);
         toast({ title: "Produit mis à jour", description: `${product.name} a été modifié.` });
     } else {
-        // Add new product
         updatedProducts = [product, ...products];
         toast({ title: "Produit ajouté", description: `${product.name} est maintenant en vente.` });
     }
     persistProducts(updatedProducts);
+  };
+
+  const handleBuyEbook = (ebook: Ebook) => {
+    setSelectedEbook(ebook);
+    setIsEbookModalOpen(true);
   };
 
 
@@ -527,14 +616,15 @@ export default function VendorPage() {
       <main className="flex-1 container mx-auto px-4 py-12">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-black text-primary">Tableau de Bord Vendeur</h1>
-          <p className="text-lg text-muted-foreground mt-2">Suivi des performances et gestion des clients.</p>
+          <p className="text-lg text-muted-foreground mt-2">Suivi des performances, gestion des clients et ressources.</p>
         </div>
         
         <Tabs defaultValue="dashboard" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 max-w-2xl mx-auto bg-gray-800/50 mb-8">
+            <TabsList className="grid w-full grid-cols-4 max-w-3xl mx-auto bg-gray-800/50 mb-8">
                 <TabsTrigger value="dashboard"><BarChart2 className="mr-2"/> Tableau de Bord</TabsTrigger>
                 <TabsTrigger value="clients"><Users className="mr-2"/> Gestion Clients</TabsTrigger>
                 <TabsTrigger value="products"><ShoppingCart className="mr-2"/> Gestion Produits</TabsTrigger>
+                <TabsTrigger value="ebooks"><BookOpen className="mr-2"/> E-books</TabsTrigger>
             </TabsList>
             <TabsContent value="dashboard">
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
@@ -674,13 +764,48 @@ export default function VendorPage() {
                     </CardContent>
                 </Card>
             </TabsContent>
+            <TabsContent value="ebooks">
+                <Card className="bg-card/50 border-primary/20">
+                    <CardHeader>
+                        <CardTitle>Ressources Premium pour Vendeurs</CardTitle>
+                        <CardDescription>Devenez un expert de la vente avec nos guides stratégiques. Chaque achat vous donne un accès à vie.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="grid md:grid-cols-2 gap-6">
+                        {allEbooks.map((ebook) => (
+                             <Card key={ebook.id} className="bg-background/50 flex flex-col">
+                                <CardHeader>
+                                    <CardTitle className="flex items-start gap-4">
+                                        <div className="p-3 rounded-lg bg-primary/20 text-primary">
+                                            <BookOpen size={24}/>
+                                        </div>
+                                        <div>
+                                            {ebook.title}
+                                            <p className="text-lg font-bold text-primary mt-1">{ebook.price.toLocaleString('fr-FR')} FCFA</p>
+                                        </div>
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent className="flex-1">
+                                    <p className="text-muted-foreground">{ebook.description}</p>
+                                </CardContent>
+                                <CardContent>
+                                    <Button className="w-full" onClick={() => handleBuyEbook(ebook)}>
+                                        Acheter cet E-book
+                                    </Button>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </CardContent>
+                </Card>
+            </TabsContent>
         </Tabs>
       </main>
       <ContactBar onContactClick={() => setIsContactModalOpen(true)} />
       <ClientDetailsModal client={selectedClient} isOpen={isClientModalOpen} onOpenChange={setIsClientModalOpen} onAlert={handleAlert} savTickets={savTickets} onTicketCreated={handleCreateTicket} />
       <ProductEditModal product={selectedProduct} isOpen={isProductModalOpen} onOpenChange={setIsProductModalOpen} onProductUpdate={handleProductUpdate} />
+      <EbookPaymentModal ebook={selectedEbook} isOpen={isEbookModalOpen} onOpenChange={setIsEbookModalOpen} />
       <ContactModal isOpen={isContactModalOpen} onOpenChange={setIsContactModalOpen} />
     </div>
     </>
   );
 }
+

@@ -37,4 +37,10 @@ export interface SAVTicket {
     date: string;
 }
 
+export interface Ebook {
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+}
     
