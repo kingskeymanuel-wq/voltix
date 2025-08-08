@@ -1,3 +1,4 @@
+
 import type {Config} from 'tailwindcss';
 
 export default {
@@ -10,8 +11,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        body: ['Inter', 'sans-serif'],
-        headline: ['Inter', 'sans-serif'],
+        body: ['Taviraj', 'serif'],
+        headline: ['Cinzel', 'serif'],
         code: ['"Source Code Pro"', 'monospace'],
       },
       colors: {
@@ -94,8 +95,8 @@ export default {
           '100%': { transform: 'translateX(-100%) translateY(-100%) rotate(45deg)' },
         },
         glow: {
-          'from': { 'text-shadow': '0 0 20px hsl(var(--primary) / 0.5)' },
-          'to': { 'text-shadow': '0 0 40px hsl(var(--primary) / 0.8), 0 0 60px hsl(var(--primary) / 0.6)' },
+          'from': { 'text-shadow': '0 0 10px hsl(var(--primary) / 0.6)' },
+          'to': { 'text-shadow': '0 0 25px hsl(var(--primary) / 0.9), 0 0 40px hsl(var(--primary) / 0.7)' },
         },
         'rotate-y': {
             '0%': { transform: 'rotateY(0deg)' },

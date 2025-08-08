@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -5,25 +6,24 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
-import { CornerDownLeft, Loader2, Sparkles, X, ShoppingCart } from "lucide-react";
+import { CornerDownLeft, Loader2, Sparkles, X, BookOpen } from "lucide-react";
 import { Textarea } from "./ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { suggestProducts } from "@/ai/flows/product-suggester";
 import type { ProductSuggesterOutput } from "@/ai/flows/product-suggester";
 import type { Product } from "@/lib/types";
+import Link from "next/link";
 
-interface VoltyAssistantProps {
-    addToCart: (product: Product) => void;
-}
+interface VoltyAssistantProps {}
 
 type ConversationMessage = {
-    type: 'user' | 'volty';
+    type: 'user' | 'guide';
     content: string;
     products?: ProductSuggesterOutput['products'];
     answer?: string;
 };
 
-export function VoltyAssistant({ addToCart }: VoltyAssistantProps) {
+export function VoltyAssistant({}: VoltyAssistantProps) {
     const [isOpen, setIsOpen] = React.useState(false);
     const [query, setQuery] = React.useState("");
     const [isLoading, setIsLoading] = React.useState(false);
@@ -44,38 +44,25 @@ export function VoltyAssistant({ addToCart }: VoltyAssistantProps) {
         try {
             const result = await suggestProducts({ query });
             const voltyMessage: ConversationMessage = { 
-                type: 'volty' as const, 
-                content: result.answer || (result.products ? "Voici ce que j'ai trouvé pour vous :" : "Je peux vous aider ?"),
+                type: 'guide' as const, 
+                content: result.answer || (result.products ? "Voici quelques récits qui pourraient vous intéresser :" : "Comment puis-je vous guider aujourd'hui ?"),
                 products: result.products,
                 answer: result.answer
             };
             setConversation(prev => [...prev, voltyMessage]);
         } catch (error) {
             console.error("AI suggestion error:", error);
-            const errorMessage = { type: 'volty' as const, content: "Désolé, une erreur s'est produite. Veuillez reformuler votre question ou réessayer plus tard."};
+            const errorMessage = { type: 'guide' as const, content: "Désolé, une erreur s'est produite. Veuillez reformuler votre question ou réessayer plus tard."};
             setConversation(prev => [...prev, errorMessage]);
             toast({
                 variant: "destructive",
-                title: "Erreur de l'assistant",
+                title: "Erreur du Guide",
                 description: "Une erreur est survenue lors de la communication avec l'IA.",
             });
         } finally {
             setIsLoading(false);
             setQuery("");
         }
-    };
-    
-    const handleAddProduct = (product: ProductSuggesterOutput['products'][0]) => {
-        const fullProduct: Product = {
-            id: product.id,
-            name: product.name,
-            description: product.description,
-            price: product.price,
-            image: product.image,
-            dataAiHint: product.dataAiHint,
-            category: 'suggested' // This could be improved
-        };
-        addToCart(fullProduct);
     };
 
     return (
@@ -88,9 +75,10 @@ export function VoltyAssistant({ addToCart }: VoltyAssistantProps) {
             >
                 <Button 
                     onClick={handleToggle} 
-                    className="rounded-full w-20 h-20 bg-gradient-to-br from-primary to-blue-600 shadow-2xl shadow-primary/40 hover:scale-110 transition-transform duration-300"
+                    className="rounded-full w-20 h-20 bg-gradient-to-br from-primary to-yellow-600 shadow-2xl shadow-primary/40 hover:scale-110 transition-transform duration-300 flex flex-col items-center justify-center text-primary-foreground"
                 >
-                    <Image src="/volty-assistant.png" alt="Assistant VOLTY" width={70} height={70} />
+                    <BookOpen size={32} />
+                    <span className="text-xs font-bold">Guide</span>
                 </Button>
             </motion.div>
 
@@ -107,37 +95,35 @@ export function VoltyAssistant({ addToCart }: VoltyAssistantProps) {
                         <header className="flex items-center justify-between p-4 border-b border-primary/20">
                             <div className="flex items-center gap-2">
                                 <Sparkles className="text-primary"/>
-                                <h3 className="font-bold text-lg">Assistant VOLTY</h3>
+                                <h3 className="font-bold font-headline text-lg">Votre Guide Spirituel</h3>
                             </div>
                             <Button variant="ghost" size="icon" onClick={handleToggle}><X/></Button>
                         </header>
                         <div className="flex-1 p-4 overflow-y-auto space-y-4">
                             <div className="p-3 rounded-lg bg-primary/10 text-sm">
-                                <p className="font-bold">Salut ! Je suis VOLTY.</p>
-                                <p>Je peux vous aider à trouver un produit, ou répondre à vos questions sur les clients et commandes (ex: "commandes de Ali Koné").</p>
+                                <p className="font-bold">Shalom !</p>
+                                <p>Posez-moi une question sur une histoire, un personnage, ou un concept biblique. Je suis là pour vous éclairer.</p>
                             </div>
                             {conversation.map((msg, index) => (
                                 <div key={index} className={`flex flex-col ${msg.type === 'user' ? 'items-end' : 'items-start'}`}>
                                     <div className={`p-3 rounded-lg max-w-xs ${msg.type === 'user' ? 'bg-primary text-primary-foreground' : 'bg-secondary'}`}>
-                                        <p className="text-sm font-semibold text-muted-foreground">{msg.type === 'volty' ? "VOLTY" : "Vous"}</p>
+                                        <p className="text-sm font-semibold text-muted-foreground">{msg.type === 'guide' ? "Guide" : "Vous"}</p>
                                         
-                                        {msg.answer && (
-                                            <p className="text-sm whitespace-pre-wrap">{msg.answer}</p>
-                                        )}
+                                        <p className="text-sm whitespace-pre-wrap">{msg.answer || msg.content}</p>
 
                                         {msg.products && (
                                             <div className="mt-3 space-y-2">
                                                 {msg.products.map(p => (
                                                     <Card key={p.id} className="bg-background/50">
+                                                      <Link href={`/product/${p.id}`} onClick={handleToggle}>
                                                         <CardContent className="p-2 flex gap-2 items-center">
                                                             <Image src={p.image} alt={p.name} width={50} height={50} className="rounded" data-ai-hint={p.dataAiHint} />
                                                             <div className="flex-1">
                                                                 <p className="font-bold text-xs">{p.name}</p>
                                                                 <p className="text-xs text-muted-foreground">{p.description}</p>
-                                                                <p className="text-primary font-bold text-sm mt-1">{p.price.toLocaleString('fr-FR')} FCFA</p>
                                                             </div>
-                                                            <Button size="icon" variant="ghost" onClick={() => handleAddProduct(p)} className="text-primary shrink-0"><ShoppingCart size={16}/></Button>
                                                         </CardContent>
+                                                      </Link>
                                                     </Card>
                                                 ))}
                                             </div>
@@ -149,7 +135,7 @@ export function VoltyAssistant({ addToCart }: VoltyAssistantProps) {
                                  <div className="flex items-start">
                                      <div className="p-3 rounded-lg bg-secondary flex items-center gap-2">
                                         <Loader2 className="animate-spin h-5 w-5 text-primary"/>
-                                        <span className="text-sm text-muted-foreground">VOLTY réfléchit...</span>
+                                        <span className="text-sm text-muted-foreground">Le Guide médite...</span>
                                      </div>
                                  </div>
                             )}
@@ -165,7 +151,7 @@ export function VoltyAssistant({ addToCart }: VoltyAssistantProps) {
                                             handleSubmit();
                                         }
                                     }}
-                                    placeholder="Décrivez votre besoin..."
+                                    placeholder="Ex: Qui était Moïse ?"
                                     className="flex-1 min-h-[40px] max-h-24 resize-none"
                                     disabled={isLoading}
                                 />
