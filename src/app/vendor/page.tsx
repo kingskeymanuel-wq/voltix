@@ -454,16 +454,21 @@ const EbookContentModal = ({ ebook, content, isOpen, onOpenChange }: { ebook: Eb
                     <div className="flex flex-col gap-4 min-h-0">
                         <h3 className="font-bold text-lg">Plan du Livre</h3>
                         <ScrollArea className="flex-1 pr-4">
-                            <Accordion type="multiple" defaultValue={[content.chapters[0]?.title || '']} className="w-full">
+                             <Accordion type="multiple" defaultValue={[content.chapters[0]?.title || '']} className="w-full">
                                 {content.chapters.map((chapter, index) => (
                                     <AccordionItem key={index} value={chapter.title}>
                                         <AccordionTrigger>{index + 1}. {chapter.title}</AccordionTrigger>
-                                        <AccordionContent className="pl-4">
-                                            <ul className="list-disc list-inside text-muted-foreground space-y-1">
-                                                {chapter.points.map((point, pIndex) => (
-                                                    <li key={pIndex}>{point}</li>
+                                        <AccordionContent className="pl-4 space-y-2">
+                                            <Accordion type="multiple" className="w-full">
+                                                {chapter.sections.map((section, pIndex) => (
+                                                    <AccordionItem key={pIndex} value={section.title}>
+                                                        <AccordionTrigger className="text-sm hover:no-underline">{section.title}</AccordionTrigger>
+                                                        <AccordionContent className="pl-4 text-muted-foreground whitespace-pre-wrap text-sm">
+                                                            {section.content}
+                                                        </AccordionContent>
+                                                    </AccordionItem>
                                                 ))}
-                                            </ul>
+                                            </Accordion>
                                         </AccordionContent>
                                     </AccordionItem>
                                 ))}

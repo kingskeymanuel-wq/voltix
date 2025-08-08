@@ -48,7 +48,10 @@ export interface EbookContent {
     id: string;
     chapters: {
         title: string;
-        points: string[];
+        sections: {
+            title: string;
+            content: string;
+        }[];
     }[];
 }
     
