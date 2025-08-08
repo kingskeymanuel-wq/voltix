@@ -11,11 +11,25 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { User } from "lucide-react";
 
 export default function SignupPage() {
   const [isContactModalOpen, setIsContactModalOpen] = React.useState(false);
+  const [photoPreview, setPhotoPreview] = React.useState<string | null>(null);
   const router = useRouter();
   const { toast } = useToast();
+
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPhotoPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSignup = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -30,6 +44,9 @@ export default function SignupPage() {
         // Store user info in localStorage for the demo
         localStorage.setItem('userFirstName', firstName);
         localStorage.setItem('userLastName', lastName);
+        if (photoPreview) {
+          localStorage.setItem('userPhoto', photoPreview);
+        }
         
         toast({
             title: "Inscription réussie !",
@@ -65,6 +82,17 @@ export default function SignupPage() {
           </CardHeader>
           <CardContent>
             <form className="space-y-6" onSubmit={handleSignup}>
+              <div className="space-y-4 flex flex-col items-center">
+                <Label htmlFor="photo">Photo de Profil</Label>
+                <Avatar className="h-24 w-24">
+                    <AvatarImage src={photoPreview || undefined} alt="Aperçu photo de profil" />
+                    <AvatarFallback>
+                        <User className="h-12 w-12 text-muted-foreground"/>
+                    </AvatarFallback>
+                </Avatar>
+                <Input id="photo" name="photo" type="file" accept="image/*" onChange={handlePhotoChange} className="w-auto text-sm file:text-primary file:font-semibold" />
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                  <div className="space-y-2">
                     <Label htmlFor="firstname">Prénom</Label>
