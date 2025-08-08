@@ -314,7 +314,6 @@ export default function AccountPage() {
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-gradient-to-b from-black to-gray-900/80">
-      <ContactBar onContactClick={() => setIsContactModalOpen(true)} />
       <Header
         cartCount={0}
         onCartClick={() => {}}
@@ -363,6 +362,7 @@ export default function AccountPage() {
           </div>
         </div>
       </main>
+      <ContactBar onContactClick={() => setIsContactModalOpen(true)} />
       <ContactModal isOpen={isContactModalOpen} onOpenChange={setIsContactModalOpen} />
     </div>
   );

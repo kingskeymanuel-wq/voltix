@@ -517,7 +517,6 @@ export default function VendorPage() {
   return (
     <>
     <div className="flex min-h-screen w-full flex-col bg-gradient-to-b from-black to-gray-900/80">
-      <ContactBar onContactClick={() => setIsContactModalOpen(true)} />
       <Header
         cartCount={0}
         onCartClick={() => {}}
@@ -677,6 +676,7 @@ export default function VendorPage() {
             </TabsContent>
         </Tabs>
       </main>
+      <ContactBar onContactClick={() => setIsContactModalOpen(true)} />
       <ClientDetailsModal client={selectedClient} isOpen={isClientModalOpen} onOpenChange={setIsClientModalOpen} onAlert={handleAlert} savTickets={savTickets} onTicketCreated={handleCreateTicket} />
       <ProductEditModal product={selectedProduct} isOpen={isProductModalOpen} onOpenChange={setIsProductModalOpen} onProductUpdate={handleProductUpdate} />
       <ContactModal isOpen={isContactModalOpen} onOpenChange={setIsContactModalOpen} />

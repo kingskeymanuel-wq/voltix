@@ -89,7 +89,6 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen w-full flex-col">
-      <ContactBar onContactClick={() => setIsContactModalOpen(true)} />
       <Header
         cartCount={cartCount}
         onCartClick={() => setIsCartOpen(true)}
@@ -101,6 +100,7 @@ export default function Home() {
         <Hero />
         <ProductsSection allProducts={products} addToCart={addToCart} searchTerm={searchTerm} />
       </main>
+      <ContactBar onContactClick={() => setIsContactModalOpen(true)} />
       <CartSheet
         isOpen={isCartOpen}
         onOpenChange={setIsCartOpen}
