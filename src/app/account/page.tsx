@@ -151,9 +151,9 @@ const EbookContentModal = ({ ebook, content, isOpen, onOpenChange }: { ebook: Eb
                     <DialogDescription>{ebook.description}</DialogDescription>
                 </DialogHeader>
 
-                <div className="flex-1 grid md:grid-cols-2 gap-2 overflow-hidden p-4">
+                <div className="flex-1 grid md:grid-cols-2 gap-2 p-4 min-h-0">
                     {/* E-book Content */}
-                    <div className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-4 min-h-0">
                         <h3 className="font-bold text-lg">Plan du Livre</h3>
                         <ScrollArea className="flex-1 pr-4">
                             <Accordion type="multiple" defaultValue={[content.chapters[0]?.title || '']} className="w-full">
