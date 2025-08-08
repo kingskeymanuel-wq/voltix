@@ -43,4 +43,12 @@ export interface Ebook {
   description: string;
   price: number;
 }
+
+export interface EbookContent {
+    id: string;
+    chapters: {
+        title: string;
+        points: string[];
+    }[];
+}
     

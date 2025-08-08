@@ -6,31 +6,37 @@ import { useRouter } from "next/navigation";
 import { Header } from "@/components/header";
 import { ContactBar } from "@/components/contact-bar";
 import { ContactModal } from "@/components/contact-modal";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { DollarSign, ShoppingCart, Users, CreditCard, Lock, BarChart2, Mail, KeyRound, Eye, Bell, Truck, FileSignature, Wrench, PackagePlus, Edit, Package, BookOpen, Smartphone, QrCode } from "lucide-react";
+import { DollarSign, ShoppingCart, Users, CreditCard, Lock, BarChart2, Mail, KeyRound, Eye, Bell, Truck, FileSignature, Wrench, PackagePlus, Edit, Package, BookOpen, Smartphone, QrCode, Sparkles, CornerDownLeft, Bot } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
-import type { Order, SAVTicket, Product, Ebook } from "@/lib/types";
+import type { Order, SAVTicket, Product, Ebook, EbookContent } from "@/lib/types";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { allProducts as initialProducts, categories } from "@/data/products";
 import { mockClients, mockOrders, initialSavTickets, salesData } from "@/data/vendor";
 import { allEbooks } from "@/data/ebooks";
+import { allEbookContents } from "@/data/ebook-content";
 import { MtnLogo, OrangeLogo, WaveLogo } from "@/components/icons";
 import Image from "next/image";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 
 type VendorView = 'login' | 'forgot-password' | 'reset-password';
 type SelectedClient = typeof mockClients[0] | null;
 type SelectedProduct = Product | null;
+type ConversationMessage = {
+    type: 'user' | 'tutor';
+    text: string;
+};
 
 const CreateSavTicketModal = ({ client, isOpen, onOpenChange, onTicketCreated }: { client: SelectedClient, isOpen: boolean, onOpenChange: (open: boolean) => void, onTicketCreated: (ticket: SAVTicket) => void }) => {
     if (!client) return null;
@@ -325,7 +331,7 @@ const ProductEditModal = ({ product, isOpen, onOpenChange, onProductUpdate }: { 
     );
 };
 
-const EbookPaymentModal = ({ ebook, isOpen, onOpenChange }: { ebook: Ebook | null, isOpen: boolean, onOpenChange: (open: boolean) => void }) => {
+const EbookPaymentModal = ({ ebook, isOpen, onOpenChange, onPaymentSuccess }: { ebook: Ebook | null, isOpen: boolean, onOpenChange: (open: boolean) => void, onPaymentSuccess: (ebookId: string) => void }) => {
     const [isProcessing, setIsProcessing] = React.useState(false);
     const { toast } = useToast();
     if (!ebook) return null;
@@ -337,17 +343,11 @@ const EbookPaymentModal = ({ ebook, isOpen, onOpenChange }: { ebook: Ebook | nul
         setTimeout(() => {
             setIsProcessing(false);
             onOpenChange(false);
+            onPaymentSuccess(ebook.id);
             toast({
                 title: "Paiement réussi !",
-                description: `Vous avez accès à "${ebook.title}". Le téléchargement va commencer.`
+                description: `Vous avez maintenant accès à "${ebook.title}".`
             });
-            // Simulate download
-            const link = document.createElement('a');
-            link.href = '/ebook-placeholder.pdf';
-            link.download = `${ebook.title.replace(/\s/g, '_')}.pdf`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
         }, 2000);
     };
     
@@ -407,6 +407,122 @@ const PaymentFormWrapper = ({ method, onPay, isProcessing, ebook }: { method: 'o
 };
 
 
+const EbookContentModal = ({ ebook, content, isOpen, onOpenChange }: { ebook: Ebook | null, content: EbookContent | null, isOpen: boolean, onOpenChange: (open: boolean) => void }) => {
+    const [query, setQuery] = React.useState("");
+    const [isLoading, setIsLoading] = React.useState(false);
+    const [conversation, setConversation] = React.useState<ConversationMessage[]>([]);
+
+    React.useEffect(() => {
+        if (isOpen) {
+            setConversation([]);
+            setQuery("");
+        }
+    }, [isOpen]);
+
+    if (!ebook || !content) return null;
+
+    const handleSubmit = async (e?: React.FormEvent) => {
+        e?.preventDefault();
+        if (!query.trim() || isLoading) return;
+
+        const newConversation = [...conversation, { type: 'user' as const, text: query }];
+        setConversation(newConversation);
+        setIsLoading(true);
+        setQuery("");
+
+        // Mock AI response
+        setTimeout(() => {
+            const aiResponse: ConversationMessage = {
+                type: 'tutor',
+                text: `Ceci est une réponse simulée concernant "${query}" pour l'e-book "${ebook.title}". Dans une version réelle, une IA spécialisée répondrait en se basant sur le contenu de l'e-book.`
+            };
+            setConversation([...newConversation, aiResponse]);
+            setIsLoading(false);
+        }, 1500);
+    };
+
+    return (
+        <Dialog open={isOpen} onOpenChange={onOpenChange}>
+            <DialogContent className="max-w-4xl h-[90vh] bg-background/95 backdrop-blur-xl flex flex-col p-0">
+                <DialogHeader className="p-4 border-b">
+                    <DialogTitle className="text-primary text-2xl flex items-center gap-3"><BookOpen /> {ebook.title}</DialogTitle>
+                    <DialogDescription>{ebook.description}</DialogDescription>
+                </DialogHeader>
+
+                <div className="flex-1 grid md:grid-cols-2 gap-2 overflow-hidden p-4">
+                    {/* E-book Content */}
+                    <div className="flex flex-col gap-4">
+                        <h3 className="font-bold text-lg">Plan du Livre</h3>
+                        <ScrollArea className="flex-1 pr-4">
+                            <Accordion type="multiple" defaultValue={[content.chapters[0]?.title || '']} className="w-full">
+                                {content.chapters.map((chapter, index) => (
+                                    <AccordionItem key={index} value={chapter.title}>
+                                        <AccordionTrigger>{index + 1}. {chapter.title}</AccordionTrigger>
+                                        <AccordionContent className="pl-4">
+                                            <ul className="list-disc list-inside text-muted-foreground space-y-1">
+                                                {chapter.points.map((point, pIndex) => (
+                                                    <li key={pIndex}>{point}</li>
+                                                ))}
+                                            </ul>
+                                        </AccordionContent>
+                                    </AccordionItem>
+                                ))}
+                            </Accordion>
+                        </ScrollArea>
+                    </div>
+
+                    {/* AI Tutor */}
+                    <div className="flex flex-col border rounded-lg overflow-hidden">
+                        <header className="flex items-center gap-2 p-3 bg-primary/10">
+                            <Sparkles className="text-primary" />
+                            <h3 className="font-bold">Tuteur IA Personnalisé</h3>
+                        </header>
+                        <ScrollArea className="flex-1 p-4 bg-background/50">
+                            <div className="space-y-4">
+                               <div className="flex items-start">
+                                     <div className="p-3 rounded-lg bg-secondary flex items-center gap-2">
+                                        <Bot className="h-5 w-5 text-primary flex-shrink-0"/>
+                                        <span className="text-sm text-muted-foreground">Bonjour ! Posez-moi une question sur le contenu de cet e-book.</span>
+                                     </div>
+                                 </div>
+                                {conversation.map((msg, index) => (
+                                    <div key={index} className={`flex items-start gap-2.5 ${msg.type === 'user' ? 'justify-end' : ''}`}>
+                                         {msg.type === 'tutor' && <Bot className="h-5 w-5 text-primary flex-shrink-0 mt-1"/>}
+                                         <div className={`p-3 rounded-lg max-w-sm ${msg.type === 'user' ? 'bg-primary text-primary-foreground' : 'bg-secondary'}`}>
+                                            <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
+                                         </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </ScrollArea>
+                        <footer className="p-2 border-t">
+                             <form onSubmit={handleSubmit} className="flex items-center gap-2">
+                                <Input
+                                    value={query}
+                                    onChange={(e) => setQuery(e.target.value)}
+                                    placeholder="Posez votre question ici..."
+                                    className="flex-1"
+                                    disabled={isLoading}
+                                />
+                                <Button type="submit" size="icon" disabled={isLoading || !query.trim()}>
+                                    <CornerDownLeft />
+                                </Button>
+                            </form>
+                        </footer>
+                    </div>
+                </div>
+
+                <DialogFooter className="p-4 border-t">
+                    <DialogClose asChild>
+                        <Button type="button" variant="secondary">Fermer</Button>
+                    </DialogClose>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
+};
+
+
 export default function VendorPage() {
   const [isContactModalOpen, setIsContactModalOpen] = React.useState(false);
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
@@ -422,8 +538,14 @@ export default function VendorPage() {
   const [products, setProducts] = React.useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = React.useState<SelectedProduct>(null);
   const [isProductModalOpen, setIsProductModalOpen] = React.useState(false);
+  
+  // Ebook states
+  const [purchasedEbooks, setPurchasedEbooks] = React.useState<Set<string>>(new Set());
   const [selectedEbook, setSelectedEbook] = React.useState<Ebook | null>(null);
-  const [isEbookModalOpen, setIsEbookModalOpen] = React.useState(false);
+  const [isEbookPaymentModalOpen, setIsEbookPaymentModalOpen] = React.useState(false);
+  const [currentEbookContent, setCurrentEbookContent] = React.useState<{ ebook: Ebook, content: EbookContent } | null>(null);
+  const [isEbookContentModalOpen, setIsEbookContentModalOpen] = React.useState(false);
+
   
   const { toast } = useToast();
   const router = useRouter();
@@ -431,6 +553,12 @@ export default function VendorPage() {
   React.useEffect(() => {
     const storedProducts = localStorage.getItem('voltix-products');
     setProducts(storedProducts ? JSON.parse(storedProducts) : initialProducts);
+    
+    const storedPurchases = localStorage.getItem('voltix-ebook-purchases');
+    if (storedPurchases) {
+        setPurchasedEbooks(new Set(JSON.parse(storedPurchases)));
+    }
+
   }, []);
 
   const persistProducts = (updatedProducts: Product[]) => {
@@ -513,10 +641,32 @@ export default function VendorPage() {
     }
     persistProducts(updatedProducts);
   };
+  
+  const handlePurchaseClick = (ebook: Ebook) => {
+    if (purchasedEbooks.has(ebook.id)) {
+        handleOpenEbook(ebook.id);
+    } else {
+        setSelectedEbook(ebook);
+        setIsEbookPaymentModalOpen(true);
+    }
+  };
 
-  const handleBuyEbook = (ebook: Ebook) => {
-    setSelectedEbook(ebook);
-    setIsEbookModalOpen(true);
+  const handlePaymentSuccess = (ebookId: string) => {
+    const newPurchases = new Set(purchasedEbooks).add(ebookId);
+    setPurchasedEbooks(newPurchases);
+    localStorage.setItem('voltix-ebook-purchases', JSON.stringify(Array.from(newPurchases)));
+    handleOpenEbook(ebookId);
+  };
+  
+  const handleOpenEbook = (ebookId: string) => {
+      const ebook = allEbooks.find(e => e.id === ebookId);
+      const content = allEbookContents.find(c => c.id === ebookId);
+      if (ebook && content) {
+          setCurrentEbookContent({ ebook, content });
+          setIsEbookContentModalOpen(true);
+      } else {
+          toast({ variant: "destructive", title: "Erreur", description: "Contenu de l'e-book introuvable." });
+      }
   };
 
 
@@ -787,11 +937,11 @@ export default function VendorPage() {
                                 <CardContent className="flex-1">
                                     <p className="text-muted-foreground">{ebook.description}</p>
                                 </CardContent>
-                                <CardContent>
-                                    <Button className="w-full" onClick={() => handleBuyEbook(ebook)}>
-                                        Acheter cet E-book
+                                <CardFooter>
+                                    <Button className="w-full" onClick={() => handlePurchaseClick(ebook)}>
+                                        {purchasedEbooks.has(ebook.id) ? "Ouvrir l'E-book" : "Acheter cet E-book"}
                                     </Button>
-                                </CardContent>
+                                </CardFooter>
                             </Card>
                         ))}
                     </CardContent>
@@ -802,10 +952,10 @@ export default function VendorPage() {
       <ContactBar onContactClick={() => setIsContactModalOpen(true)} />
       <ClientDetailsModal client={selectedClient} isOpen={isClientModalOpen} onOpenChange={setIsClientModalOpen} onAlert={handleAlert} savTickets={savTickets} onTicketCreated={handleCreateTicket} />
       <ProductEditModal product={selectedProduct} isOpen={isProductModalOpen} onOpenChange={setIsProductModalOpen} onProductUpdate={handleProductUpdate} />
-      <EbookPaymentModal ebook={selectedEbook} isOpen={isEbookModalOpen} onOpenChange={setIsEbookModalOpen} />
+      <EbookPaymentModal ebook={selectedEbook} isOpen={isEbookPaymentModalOpen} onOpenChange={setIsEbookPaymentModalOpen} onPaymentSuccess={handlePaymentSuccess} />
+      <EbookContentModal ebook={currentEbookContent?.ebook ?? null} content={currentEbookContent?.content ?? null} isOpen={isEbookContentModalOpen} onOpenChange={setIsEbookContentModalOpen} />
       <ContactModal isOpen={isContactModalOpen} onOpenChange={setIsContactModalOpen} />
     </div>
     </>
   );
 }
-
