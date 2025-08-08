@@ -5,6 +5,7 @@ import * as React from "react"
 import { Button } from "./ui/button"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "./ui/carousel"
 import Autoplay from "embla-carousel-autoplay"
+import { useRouter } from "next/navigation";
 
 const featuredContent = [
   {
@@ -12,39 +13,50 @@ const featuredContent = [
     title: "VOLTIX SMART",
     description: "La technologie de demain, aujourd'hui. Explorez notre sélection premium de smartphones, laptops et gadgets high-tech.",
     mediaUrl: "https://videos.pexels.com/video-files/8570415/8570415-hd_1920_1080_25fps.mp4",
-    primaryCta: "Explorer les Produits",
-    secondaryCta: "Nos accessoires",
+    primaryCta: { text: "Explorer les Produits", action: 'scroll', target: '#products' },
+    secondaryCta: { text: "Nos accessoires", action: 'scroll', target: '#products' },
   },
   {
     type: "video",
     title: "Performance & Puissance",
     description: "Des composants de pointe pour une expérience utilisateur sans compromis, que vous soyez gamer, créatif ou professionnel.",
     mediaUrl: "https://videos.pexels.com/video-files/854124/854124-hd_1920_1080_30fps.mp4",
-    primaryCta: "Voir les Laptops",
-    secondaryCta: "Comparer les modèles",
+    primaryCta: { text: "Voir les Laptops", action: 'scroll', target: '#products' },
+    secondaryCta: { text: "Comparer les modèles", action: 'scroll', target: '#products' },
   },
   {
     type: "video",
     title: "Capturez l'Instant",
     description: "Des appareils photos et drones équipés des dernières technologies pour des images à couper le souffle.",
     mediaUrl: "https://videos.pexels.com/video-files/5993339/5993339-hd_1920_1080_25fps.mp4",
-    primaryCta: "Découvrir les caméras",
-    secondaryCta: "Voir les drones",
+    primaryCta: { text: "Découvrir les caméras", action: 'scroll', target: '#products' },
+    secondaryCta: { text: "Voir les drones", action: 'scroll', target: '#products' },
   },
   {
     type: "video",
     title: "Service Client Dédié",
     description: "Une question ? Un besoin ? Notre équipe est à votre écoute 24h/7j pour vous accompagner.",
     mediaUrl: "https://videos.pexels.com/video-files/7578553/7578553-hd_1920_1080_25fps.mp4",
-    primaryCta: "Nous Contacter",
-    secondaryCta: "Suivre ma commande",
+    primaryCta: { text: "Nous Contacter", action: 'contact' },
+    secondaryCta: { text: "Suivre ma commande", action: 'navigate', target: '/suivi-commande' },
   },
 ];
 
+interface HeroProps {
+  onContactClick: () => void;
+}
 
-export const Hero = () => {
-    const handleScrollToProducts = () => {
-        document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' });
+export const Hero = ({ onContactClick }: HeroProps) => {
+    const router = useRouter();
+
+    const handleAction = (action: 'scroll' | 'navigate' | 'contact', target?: string) => {
+        if (action === 'scroll' && target) {
+            document.querySelector(target)?.scrollIntoView({ behavior: 'smooth' });
+        } else if (action === 'navigate' && target) {
+            router.push(target);
+        } else if (action === 'contact') {
+            onContactClick();
+        }
     };
 
     return (
@@ -78,12 +90,16 @@ export const Hero = () => {
                                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                                         <Button 
                                           size="lg" 
-                                          onClick={handleScrollToProducts}
+                                          onClick={() => handleAction(content.primaryCta.action, content.primaryCta.target)}
                                           className="text-lg font-bold bg-gradient-to-r from-primary to-blue-600 text-white rounded-full px-10 py-7 hover:scale-105 hover:shadow-[0_0_35px_rgba(59,130,246,0.6)] transition-all duration-300">
-                                            {content.primaryCta}
+                                            {content.primaryCta.text}
                                         </Button>
-                                        <Button size="lg" variant="outline" className="text-lg font-bold bg-transparent border-2 border-white text-white rounded-full px-10 py-7 hover:bg-white hover:text-black transition-colors duration-300">
-                                            {content.secondaryCta}
+                                        <Button 
+                                            size="lg" 
+                                            variant="outline" 
+                                            onClick={() => handleAction(content.secondaryCta.action, content.secondaryCta.target)}
+                                            className="text-lg font-bold bg-transparent border-2 border-white text-white rounded-full px-10 py-7 hover:bg-white hover:text-black transition-colors duration-300">
+                                            {content.secondaryCta.text}
                                         </Button>
                                     </div>
                                 </div>

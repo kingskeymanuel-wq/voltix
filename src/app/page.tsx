@@ -97,7 +97,7 @@ function HomePageContent() {
         setSearchTerm={setSearchTerm}
       />
       <main className="flex-1">
-        <Hero />
+        <Hero onContactClick={() => setIsContactModalOpen(true)} />
         <ProductsSection allProducts={products} addToCart={addToCart} searchTerm={searchTerm} />
       </main>
       <CartSheet
@@ -146,5 +146,3 @@ export default function Home() {
     </React.Suspense>
   )
 }
-
-    
