@@ -8,7 +8,7 @@ import { ContactBar } from "@/components/contact-bar";
 import { ContactModal } from "@/components/contact-modal";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { User, ShoppingBag, Heart, Settings, Bell, Lock, Globe, LogOut, Home, Truck, CreditCard, Save, FileSignature, BookOpen, Sparkles, CornerDownLeft, Bot } from "lucide-react";
+import { User, ShoppingBag, Heart, Settings, Bell, Lock, Globe, LogOut, Home, Truck, CreditCard, Save, FileSignature, BookOpen, Sparkles, CornerDownLeft, Bot, SearchX } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -16,7 +16,7 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import type { Order, Ebook, EbookContent } from "@/lib/types";
+import type { Order, Ebook, EbookContent, Product } from "@/lib/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { allEbooks } from "@/data/ebooks";
 import { allEbookContents } from "@/data/ebook-content";
@@ -27,6 +27,8 @@ import { QrCode, Smartphone } from "lucide-react";
 import Image from "next/image";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
+import { allProducts } from "@/data/products";
+import { ProductCard } from "@/components/product-card";
 
 type ConversationMessage = {
     type: 'user' | 'tutor';
@@ -153,30 +155,28 @@ const EbookContentModal = ({ ebook, content, isOpen, onOpenChange }: { ebook: Eb
 
                 <div className="flex-1 grid md:grid-cols-2 gap-2 p-4 min-h-0">
                     {/* E-book Content */}
-                    <div className="flex flex-col gap-4 min-h-0">
+                    <ScrollArea className="flex flex-col gap-4 min-h-0 pr-4">
                         <h3 className="font-bold text-lg">Plan du Livre</h3>
-                        <ScrollArea className="flex-1 pr-4">
-                            <Accordion type="multiple" defaultValue={[content.chapters[0]?.title || '']} className="w-full">
-                                {content.chapters.map((chapter, index) => (
-                                    <AccordionItem key={index} value={chapter.title}>
-                                        <AccordionTrigger>{index + 1}. {chapter.title}</AccordionTrigger>
-                                        <AccordionContent className="pl-4 space-y-2">
-                                            <Accordion type="multiple" className="w-full">
-                                                {chapter.sections.map((section, pIndex) => (
-                                                    <AccordionItem key={pIndex} value={section.title}>
-                                                        <AccordionTrigger className="text-sm hover:no-underline">{section.title}</AccordionTrigger>
-                                                        <AccordionContent className="pl-4 text-muted-foreground whitespace-pre-wrap text-sm">
-                                                            {section.content}
-                                                        </AccordionContent>
-                                                    </AccordionItem>
-                                                ))}
-                                            </Accordion>
-                                        </AccordionContent>
-                                    </AccordionItem>
-                                ))}
-                            </Accordion>
-                        </ScrollArea>
-                    </div>
+                        <Accordion type="multiple" defaultValue={[content.chapters[0]?.title || '']} className="w-full">
+                            {content.chapters.map((chapter, index) => (
+                                <AccordionItem key={index} value={chapter.title}>
+                                    <AccordionTrigger>{index + 1}. {chapter.title}</AccordionTrigger>
+                                    <AccordionContent className="pl-4 space-y-2">
+                                        <Accordion type="multiple" className="w-full">
+                                            {chapter.sections.map((section, pIndex) => (
+                                                <AccordionItem key={pIndex} value={section.title}>
+                                                    <AccordionTrigger className="text-sm hover:no-underline">{section.title}</AccordionTrigger>
+                                                    <AccordionContent className="pl-4 text-muted-foreground whitespace-pre-wrap text-sm">
+                                                        {section.content}
+                                                    </AccordionContent>
+                                                </AccordionItem>
+                                            ))}
+                                        </Accordion>
+                                    </AccordionContent>
+                                </AccordionItem>
+                            ))}
+                        </Accordion>
+                    </ScrollArea>
 
                     {/* AI Tutor */}
                     <div className="flex flex-col border rounded-lg overflow-hidden">
@@ -530,6 +530,87 @@ const AccountSettings = () => (
     </Card>
 );
 
+const AccountWishlist = () => {
+    const [wishlist, setWishlist] = React.useState<Set<string>>(new Set());
+    const { toast } = useToast();
+
+    React.useEffect(() => {
+        const storedWishlist = localStorage.getItem('voltix-wishlist');
+        if (storedWishlist) {
+            setWishlist(new Set(JSON.parse(storedWishlist)));
+        }
+        
+        const handleStorageChange = () => {
+            const updatedStoredWishlist = localStorage.getItem('voltix-wishlist');
+            setWishlist(updatedStoredWishlist ? new Set(JSON.parse(updatedStoredWishlist)) : new Set());
+        };
+        window.addEventListener('storage', handleStorageChange);
+        return () => window.removeEventListener('storage', handleStorageChange);
+
+    }, []);
+
+    const toggleWishlist = (productId: string) => {
+        setWishlist(prev => {
+            const newWishlist = new Set(prev);
+            if (newWishlist.has(productId)) {
+                newWishlist.delete(productId);
+                 toast({ title: "Retiré des favoris", description: "Le produit a été retiré de votre liste de souhaits." });
+            } else {
+                newWishlist.add(productId);
+                 toast({ title: "Ajouté aux favoris!", description: "Le produit a été ajouté à votre liste de souhaits." });
+            }
+            localStorage.setItem('voltix-wishlist', JSON.stringify(Array.from(newWishlist)));
+            // Manually dispatch storage event to sync other components like product card
+            window.dispatchEvent(new Event('storage'));
+            return newWishlist;
+        });
+    };
+
+    const wishlistedProducts = React.useMemo(() => {
+        return allProducts.filter(p => wishlist.has(p.id));
+    }, [wishlist]);
+    
+     // A dummy addToCart function since it's not the primary action here
+    const addToCart = (product: Product) => {
+       toast({
+         title: `${product.name} ajouté !`,
+         description: "Votre panier a été mis à jour (simulation).",
+       });
+    };
+
+    return (
+        <Card className="bg-card/50 border-primary/20">
+            <CardHeader>
+                <CardTitle className="flex items-center gap-3"><Heart /> Ma Liste de Souhaits</CardTitle>
+                <CardDescription>Vos produits favoris, sauvegardés pour plus tard.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                {wishlistedProducts.length > 0 ? (
+                    <div className="grid md:grid-cols-2 gap-6">
+                        {wishlistedProducts.map((product, index) => (
+                            <ProductCard 
+                                key={product.id} 
+                                product={product} 
+                                addToCart={addToCart} 
+                                index={index}
+                                wishlist={wishlist}
+                                toggleWishlist={toggleWishlist}
+                            />
+                        ))}
+                    </div>
+                ) : (
+                    <div className="h-64 flex flex-col items-center justify-center text-muted-foreground">
+                        <Heart size={48} className="mb-4"/>
+                        <p className="text-lg mb-2">Votre liste de souhaits est vide.</p>
+                        <p>Cliquez sur le cœur sur un produit pour l'ajouter ici.</p>
+                    </div>
+                )}
+            </CardContent>
+        </Card>
+    );
+};
+
+
 const PlaceholderContent = ({ title, icon: Icon }: { title: string; icon: React.ElementType }) => (
     <Card className="bg-card/50 border-primary/20">
         <CardHeader>
@@ -582,10 +663,10 @@ export default function AccountPage() {
             return <AccountContracts />;
         case 'ebooks':
             return <AccountEbooks />;
+        case 'wishlist':
+            return <AccountWishlist />;
         case 'orders':
             return <PlaceholderContent title="Mes Commandes" icon={ShoppingBag} />;
-        case 'wishlist':
-            return <PlaceholderContent title="Liste de Souhaits" icon={Heart} />;
         default:
             return <AccountDetails />;
     }

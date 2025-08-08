@@ -5,24 +5,34 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "./ui/card";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, Heart } from "lucide-react";
 import type { Product } from "@/lib/types";
 import { Badge } from "./ui/badge";
 import { getCategoryName } from "@/data/products";
+import { cn } from "@/lib/utils";
 
 interface ProductCardProps {
   product: Product;
   addToCart: (product: Product) => void;
   index: number;
+  wishlist?: Set<string>;
+  toggleWishlist?: (productId: string) => void;
 }
 
-export const ProductCard = ({ product, addToCart, index }: ProductCardProps) => {
-
+export const ProductCard = ({ product, addToCart, index, wishlist, toggleWishlist }: ProductCardProps) => {
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     addToCart(product);
-  }
+  };
+
+  const handleToggleWishlist = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleWishlist?.(product.id);
+  };
+
+  const isWishlisted = wishlist?.has(product.id);
 
   return (
     <Link href={`/product/${product.id}`} className="group block">
@@ -42,6 +52,19 @@ export const ProductCard = ({ product, addToCart, index }: ProductCardProps) => 
                 {product.badge}
               </Badge>
             )}
+             {toggleWishlist && (
+                <Button
+                    onClick={handleToggleWishlist}
+                    size="icon"
+                    className={cn(
+                        "absolute top-3 left-3 rounded-full bg-black/30 text-white backdrop-blur-sm transition-all hover:bg-black/50 hover:scale-110",
+                        isWishlisted && "text-red-500"
+                    )}
+                    variant="ghost"
+                >
+                    <Heart className={cn("transition-transform", isWishlisted && "fill-current")} />
+                </Button>
+            )}
           </div>
         </CardHeader>
         <CardContent className="p-6 flex-1">
@@ -60,5 +83,3 @@ export const ProductCard = ({ product, addToCart, index }: ProductCardProps) => 
     </Link>
   );
 };
-
-    

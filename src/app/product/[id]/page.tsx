@@ -22,6 +22,30 @@ function ProductDetailContent({ product }: { product: Product }) {
   const [cartItems, setCartItems] = React.useState<CartItem[]>([]);
   const router = useRouter();
   const { toast } = useToast();
+  
+  const [wishlist, setWishlist] = React.useState<Set<string>>(new Set());
+
+  React.useEffect(() => {
+    const storedWishlist = localStorage.getItem('voltix-wishlist');
+    if (storedWishlist) {
+        setWishlist(new Set(JSON.parse(storedWishlist)));
+    }
+  }, []);
+
+  const toggleWishlist = React.useCallback((productId: string) => {
+    const newWishlist = new Set(wishlist);
+    if (newWishlist.has(productId)) {
+        newWishlist.delete(productId);
+        toast({ title: "Retiré des favoris" });
+    } else {
+        newWishlist.add(productId);
+        toast({ title: "Ajouté aux favoris !" });
+    }
+    setWishlist(newWishlist);
+    localStorage.setItem('voltix-wishlist', JSON.stringify(Array.from(newWishlist)));
+     // Dispatch storage event to sync other components
+    window.dispatchEvent(new Event('storage'));
+  }, [wishlist, toast]);
 
   const addToCart = React.useCallback((product: Product) => {
     setCartItems((prevItems) => {
@@ -91,6 +115,8 @@ function ProductDetailContent({ product }: { product: Product }) {
     }
   }
 
+  const isWishlisted = wishlist.has(product.id);
+
   return (
      <div className="flex min-h-screen w-full flex-col bg-gradient-to-b from-black to-gray-900/80">
       <Header
@@ -125,8 +151,14 @@ function ProductDetailContent({ product }: { product: Product }) {
                       <ShoppingCart className="mr-3"/>
                       Ajouter au Panier
                     </Button>
-                    <Button variant="outline" size="lg" className="border-2 border-primary/30 text-primary hover:bg-primary/20 hover:border-primary transition-colors p-7">
-                        <Heart />
+                    <Button 
+                        variant="outline" 
+                        size="lg" 
+                        className="border-2 border-primary/30 text-primary hover:bg-primary/20 hover:border-primary transition-colors p-7 data-[active=true]:bg-primary/20"
+                        data-active={isWishlisted}
+                        onClick={() => toggleWishlist(product.id)}
+                    >
+                        <Heart className={isWishlisted ? "fill-current" : ""}/>
                     </Button>
                 </div>
 
@@ -150,7 +182,14 @@ function ProductDetailContent({ product }: { product: Product }) {
             <h2 className="text-3xl font-bold font-headline text-center mb-12">Produits Similaires</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {similarProducts.map((p, index) => (
-                <ProductCard key={p.id} product={p} addToCart={addToCart} index={index} />
+                <ProductCard 
+                    key={p.id} 
+                    product={p} 
+                    addToCart={addToCart} 
+                    index={index}
+                    wishlist={wishlist}
+                    toggleWishlist={toggleWishlist}
+                />
               ))}
             </div>
           </div>
@@ -205,5 +244,3 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
 
   return <ProductDetailContent product={product} />;
 }
-
-    

@@ -7,6 +7,7 @@ import { ProductCard } from "./product-card";
 import { Button } from "./ui/button";
 import type { Category, Product } from "@/lib/types";
 import { SearchX } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface ProductsSectionProps {
   allProducts: Product[];
@@ -17,6 +18,39 @@ interface ProductsSectionProps {
 export const ProductsSection = ({ allProducts, addToCart, searchTerm }: ProductsSectionProps) => {
   const [activeFilter, setActiveFilter] = React.useState<Category>('all');
   const [visibleProducts, setVisibleProducts] = React.useState(9);
+  const [wishlist, setWishlist] = React.useState<Set<string>>(new Set());
+  const { toast } = useToast();
+
+  React.useEffect(() => {
+    // Initial load from localStorage
+    const storedWishlist = localStorage.getItem('voltix-wishlist');
+    if (storedWishlist) {
+      setWishlist(new Set(JSON.parse(storedWishlist)));
+    }
+
+    // Listen for storage changes to update wishlist across tabs/components
+    const handleStorageChange = () => {
+        const updatedStoredWishlist = localStorage.getItem('voltix-wishlist');
+        setWishlist(updatedStoredWishlist ? new Set(JSON.parse(updatedStoredWishlist)) : new Set());
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
+  const toggleWishlist = React.useCallback((productId: string) => {
+    setWishlist(prev => {
+        const newWishlist = new Set(prev);
+        if (newWishlist.has(productId)) {
+            newWishlist.delete(productId);
+            toast({ title: "Retiré des favoris", description: "Le produit a été retiré de votre liste de souhaits." });
+        } else {
+            newWishlist.add(productId);
+            toast({ title: "Ajouté aux favoris!", description: "Le produit a été ajouté à votre liste de souhaits." });
+        }
+        localStorage.setItem('voltix-wishlist', JSON.stringify(Array.from(newWishlist)));
+        return newWishlist;
+    });
+  }, [toast]);
 
   const filteredProducts = React.useMemo(() => {
     let products = allProducts;
@@ -73,7 +107,14 @@ export const ProductsSection = ({ allProducts, addToCart, searchTerm }: Products
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 min-h-[500px]">
           {productsToShow.length > 0 ? (
             productsToShow.map((product, index) => (
-              <ProductCard key={product.id} product={product} addToCart={addToCart} index={index} />
+              <ProductCard 
+                key={product.id} 
+                product={product} 
+                addToCart={addToCart} 
+                index={index}
+                wishlist={wishlist}
+                toggleWishlist={toggleWishlist}
+              />
             ))
           ) : (
              <div className="col-span-full flex flex-col items-center justify-center text-center text-muted-foreground py-20">
@@ -95,5 +136,3 @@ export const ProductsSection = ({ allProducts, addToCart, searchTerm }: Products
     </section>
   );
 };
-
-    
