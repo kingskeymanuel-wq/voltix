@@ -155,28 +155,30 @@ const EbookContentModal = ({ ebook, content, isOpen, onOpenChange }: { ebook: Eb
 
                 <div className="flex-1 grid md:grid-cols-2 gap-2 p-4 min-h-0">
                     {/* E-book Content */}
-                    <ScrollArea className="flex flex-col gap-4 min-h-0 pr-4">
+                    <div className="flex flex-col gap-4 min-h-0">
                         <h3 className="font-bold text-lg">Plan du Livre</h3>
-                        <Accordion type="multiple" defaultValue={[content.chapters[0]?.title || '']} className="w-full">
-                            {content.chapters.map((chapter, index) => (
-                                <AccordionItem key={index} value={chapter.title}>
-                                    <AccordionTrigger>{index + 1}. {chapter.title}</AccordionTrigger>
-                                    <AccordionContent className="pl-4 space-y-2">
-                                        <Accordion type="multiple" className="w-full">
-                                            {chapter.sections.map((section, pIndex) => (
-                                                <AccordionItem key={pIndex} value={section.title}>
-                                                    <AccordionTrigger className="text-sm hover:no-underline">{section.title}</AccordionTrigger>
-                                                    <AccordionContent className="pl-4 text-muted-foreground whitespace-pre-wrap text-sm">
-                                                        {section.content}
-                                                    </AccordionContent>
-                                                </AccordionItem>
-                                            ))}
-                                        </Accordion>
-                                    </AccordionContent>
-                                </AccordionItem>
-                            ))}
-                        </Accordion>
-                    </ScrollArea>
+                        <ScrollArea className="flex-1 pr-4">
+                             <Accordion type="multiple" defaultValue={[content.chapters[0]?.title || '']} className="w-full">
+                                {content.chapters.map((chapter, index) => (
+                                    <AccordionItem key={index} value={chapter.title}>
+                                        <AccordionTrigger>{index + 1}. {chapter.title}</AccordionTrigger>
+                                        <AccordionContent className="pl-4 space-y-2">
+                                            <Accordion type="multiple" className="w-full">
+                                                {chapter.sections.map((section, pIndex) => (
+                                                    <AccordionItem key={pIndex} value={section.title}>
+                                                        <AccordionTrigger className="text-sm hover:no-underline">{section.title}</AccordionTrigger>
+                                                        <AccordionContent className="pl-4 text-muted-foreground whitespace-pre-wrap text-sm">
+                                                            {section.content}
+                                                        </AccordionContent>
+                                                    </AccordionItem>
+                                                ))}
+                                            </Accordion>
+                                        </AccordionContent>
+                                    </AccordionItem>
+                                ))}
+                            </Accordion>
+                        </ScrollArea>
+                    </div>
 
                     {/* AI Tutor */}
                     <div className="flex flex-col border rounded-lg overflow-hidden">
@@ -513,13 +515,29 @@ const AccountSettings = () => (
                 <AccordionContent className="space-y-4 pt-4">
                     <div className="p-4 rounded-lg bg-background/50 space-y-3">
                     <Label>Langue</Label>
-                    <Select defaultValue="fr">
+                     <Select defaultValue="fr">
                         <SelectTrigger>
-                        <SelectValue placeholder="Sélectionnez une langue" />
+                            <SelectValue placeholder="Sélectionnez une langue" />
                         </SelectTrigger>
                         <SelectContent>
-                        <SelectItem value="fr">Français</SelectItem>
-                        <SelectItem value="en">English</SelectItem>
+                            <SelectItem value="fr">
+                                <span className="flex items-center gap-2">
+                                    <Image src="https://flag.pk/flags/4x3/fr.svg" alt="Français" width={20} height={15} />
+                                    Français
+                                </span>
+                            </SelectItem>
+                            <SelectItem value="en">
+                               <span className="flex items-center gap-2">
+                                    <Image src="https://flag.pk/flags/4x3/gb.svg" alt="English" width={20} height={15} />
+                                    English
+                                </span>
+                            </SelectItem>
+                            <SelectItem value="es">
+                                <span className="flex items-center gap-2">
+                                    <Image src="https://flag.pk/flags/4x3/es.svg" alt="Español" width={20} height={15} />
+                                    Español
+                                </span>
+                            </SelectItem>
                         </SelectContent>
                     </Select>
                     </div>
