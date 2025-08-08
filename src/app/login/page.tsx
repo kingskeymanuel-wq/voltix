@@ -21,14 +21,18 @@ export default function LoginPage() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
+    // In a real app, you would have proper authentication logic.
+    // For this simulation, we'll accept any non-empty password.
     const form = e.currentTarget as HTMLFormElement;
     const password = (form.elements.namedItem('password') as HTMLInputElement).value;
 
-    if (password === 'admin123') {
+    if (password) { // Simplified check for demo purposes
         toast({
           title: "Connexion réussie",
           description: "Vous allez être redirigé vers votre espace.",
         });
+        // Simulate a logged-in user.
+        // A real app would use a proper session/token.
         localStorage.setItem('userFirstName', 'Membre');
         localStorage.setItem('userLastName', 'VOLTIX');
         window.dispatchEvent(new Event('storage'));
@@ -38,7 +42,7 @@ export default function LoginPage() {
          toast({
             variant: "destructive",
             title: "Erreur de connexion",
-            description: "Mot de passe incorrect.",
+            description: "Veuillez entrer votre mot de passe.",
         });
     }
   };

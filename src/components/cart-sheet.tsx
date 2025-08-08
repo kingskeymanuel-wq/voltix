@@ -30,8 +30,8 @@ interface CartSheetProps {
   onOpenChange: (isOpen: boolean) => void;
   cartItems: CartItem[];
   cartTotal: number;
-  updateCartQuantity: (name: string, quantity: number) => void;
-  removeFromCart: (name: string) => void;
+  updateCartQuantity: (id: string, quantity: number) => void;
+  removeFromCart: (id: string) => void;
   clearCart: () => void;
   addToCart: (product: Product) => void;
 }
@@ -126,12 +126,12 @@ export const CartSheet = ({
                         <h4 className="font-bold">{item.name}</h4>
                         <p className="text-primary font-semibold">{item.price.toLocaleString()} FCFA</p>
                         <div className="flex items-center gap-2 mt-2">
-                          <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => updateCartQuantity(item.name, item.quantity - 1)}><Minus size={14}/></Button>
+                          <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => updateCartQuantity(item.id, item.quantity - 1)}><Minus size={14}/></Button>
                           <span className="font-bold w-5 text-center">{item.quantity}</span>
-                          <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => updateCartQuantity(item.name, item.quantity + 1)}><Plus size={14}/></Button>
+                          <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => updateCartQuantity(item.id, item.quantity + 1)}><Plus size={14}/></Button>
                         </div>
                       </div>
-                      <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-red-500" onClick={() => removeFromCart(item.name)}>
+                      <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-red-500" onClick={() => removeFromCart(item.id)}>
                         <Trash2 size={18} />
                       </Button>
                     </div>
@@ -317,7 +317,3 @@ const PaymentFormWrapper = ({ method, onPay, isProcessing }: { method: 'orange' 
     </TabsContent>
   );
 };
-
-    
-
-    

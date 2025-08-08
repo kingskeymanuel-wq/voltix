@@ -28,7 +28,6 @@ const mockContracts: Order[] = [
 
 const AccountDetails = () => {
     const { toast } = useToast();
-    const router = useRouter();
     const [firstName, setFirstName] = React.useState("");
     const [lastName, setLastName] = React.useState("");
     const [email, setEmail] = React.useState("client@voltix.ci");
@@ -56,7 +55,6 @@ const AccountDetails = () => {
             title: "Modifications enregistrées !",
             description: "Vos informations ont été mises à jour avec succès.",
         });
-        setTimeout(() => router.push('/'), 1500);
     };
 
     return (

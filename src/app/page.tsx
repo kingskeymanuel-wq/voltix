@@ -19,24 +19,27 @@ export default function Home() {
   const [isContactModalOpen, setIsContactModalOpen] = React.useState(false);
   const [searchTerm, setSearchTerm] = React.useState("");
   
-  // This state is just to trigger re-renders on storage events
-  const [_, setStorageChange] = React.useState(0);
   const [products, setProducts] = React.useState<Product[]>(initialProducts);
 
   const { toast } = useToast();
 
   React.useEffect(() => {
+    // This effect ensures that product list updates from the vendor page
+    // are reflected on the home page.
     const handleStorageChange = () => {
-      setStorageChange(c => c + 1);
-       // Check for product updates from vendor page
       const updatedProducts = localStorage.getItem('voltix-products');
       if (updatedProducts) {
-        setProducts(JSON.parse(updatedProducts));
+        try {
+            setProducts(JSON.parse(updatedProducts));
+        } catch(e) {
+            console.error("Failed to parse products from localStorage", e);
+        }
       }
     };
 
     window.addEventListener('storage', handleStorageChange);
-     handleStorageChange(); // Initial load
+    handleStorageChange(); // Initial load
+    
     return () => {
       window.removeEventListener('storage', handleStorageChange);
     };
@@ -44,10 +47,10 @@ export default function Home() {
 
   const addToCart = React.useCallback((product: Product) => {
     setCart((prevCart) => {
-      const existingItem = prevCart.find((item) => item.name === product.name);
+      const existingItem = prevCart.find((item) => item.id === product.id);
       if (existingItem) {
         return prevCart.map((item) =>
-          item.name === product.name
+          item.id === product.id
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
@@ -60,19 +63,19 @@ export default function Home() {
     });
   }, [toast]);
 
-  const updateCartQuantity = React.useCallback((productName: string, quantity: number) => {
+  const updateCartQuantity = React.useCallback((productId: string, quantity: number) => {
     setCart((prevCart) => {
       if (quantity <= 0) {
-        return prevCart.filter((item) => item.name !== productName);
+        return prevCart.filter((item) => item.id !== productId);
       }
       return prevCart.map((item) =>
-        item.name === productName ? { ...item, quantity } : item
+        item.id === productId ? { ...item, quantity } : item
       );
     });
   }, []);
 
-  const removeFromCart = React.useCallback((productName: string) => {
-    setCart((prevCart) => prevCart.filter((item) => item.name !== productName));
+  const removeFromCart = React.useCallback((productId: string) => {
+    setCart((prevCart) => prevCart.filter((item) => item.id !== productId));
   }, []);
 
   const clearCart = React.useCallback(() => {
