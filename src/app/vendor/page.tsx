@@ -22,35 +22,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { allProducts as initialProducts, categories } from "@/data/products";
-
-
-const salesData = [
-  { name: 'Jan', Ventes: 4000, Benefices: 2400 },
-  { name: 'Fév', Ventes: 3000, Benefices: 1398 },
-  { name: 'Mar', Ventes: 5000, Benefices: 7800 },
-  { name: 'Avr', Ventes: 2780, Benefices: 3908 },
-  { name: 'Mai', Ventes: 1890, Benefices: 4800 },
-  { name: 'Jui', Ventes: 2390, Benefices: 3800 },
-  { name: 'Jui', Ventes: 3490, Benefices: 4300 },
-];
-
-const mockClients = [
-    { id: 'USR-001', name: 'Ali Koné', email: 'ali.kone@example.com', phone: '+225 01234567', totalSpent: 1250000, lastOrder: '2024-05-10', status: 'Actif' },
-    { id: 'USR-002', name: 'Fatou Cissé', email: 'fatou.c@example.com', phone: '+225 02345678', totalSpent: 850000, lastOrder: '2024-05-12', status: 'Actif' },
-    { id: 'USR-003', name: 'Moussa Diarra', email: 'm.diarra@example.com', phone: '+225 03456789', totalSpent: 230000, lastOrder: '2023-11-20', status: 'Inactif' },
-    { id: 'USR-004', name: 'Aïcha Traoré', email: 'a.traore@example.com', phone: '+225 04567890', totalSpent: 3500000, lastOrder: '2024-05-15', status: 'VIP' },
-];
-
-const mockOrders: Order[] = [
-    { id: 'VOLTIX-1234', items: [{id: 'p1', name: 'iPhone 15 Pro Max', quantity:1, price: 850000, category: 's', image: '', dataAiHint: '', description: ''}], total: 850000, date: '2024-05-10', status: 'delivered', signature: 'Ali Koné' },
-    { id: 'VOLTIX-5678', items: [{id: 'p13', name: 'AirPods Pro 2', quantity:1, price: 180000, category: 's', image: '', dataAiHint: '', description: ''}], total: 180000, date: '2024-04-22', status: 'delivered', signature: 'Ali Koné' },
-    { id: 'VOLTIX-9101', items: [{id: 'p7', name: 'MacBook Pro 16" M3', quantity:1, price: 1200000, category: 's', image: '', dataAiHint: '', description: ''}], total: 1200000, date: '2024-02-15', status: 'cancelled', signature: 'Ali Koné' },
-];
-
-const initialSavTickets: SAVTicket[] = [
-    { id: 'SAV-001', clientId: 'USR-001', orderId: 'VOLTIX-1234', product: 'iPhone 15 Pro Max', issue: 'Problème de batterie, ne tient pas la charge.', status: 'En cours', date: '2024-07-20' },
-];
-
+import { mockClients, mockOrders, initialSavTickets, salesData } from "@/data/vendor";
 
 type VendorView = 'login' | 'forgot-password' | 'reset-password';
 type SelectedClient = typeof mockClients[0] | null;

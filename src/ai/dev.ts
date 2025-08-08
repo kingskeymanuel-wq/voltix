@@ -3,3 +3,4 @@ config();
 
 import '@/ai/flows/accessory-recommendations.ts';
 import '@/ai/flows/product-suggester.ts';
+import '@/ai/tools/vendor-tools.ts';

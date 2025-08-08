@@ -16,11 +16,18 @@ interface VoltyAssistantProps {
     addToCart: (product: Product) => void;
 }
 
+type ConversationMessage = {
+    type: 'user' | 'volty';
+    content: string;
+    products?: ProductSuggesterOutput['products'];
+    answer?: string;
+};
+
 export function VoltyAssistant({ addToCart }: VoltyAssistantProps) {
     const [isOpen, setIsOpen] = React.useState(false);
     const [query, setQuery] = React.useState("");
     const [isLoading, setIsLoading] = React.useState(false);
-    const [conversation, setConversation] = React.useState<({type: 'user' | 'volty', content: string, products?: ProductSuggesterOutput['products']})[]>([]);
+    const [conversation, setConversation] = React.useState<ConversationMessage[]>([]);
 
     const { toast } = useToast();
 
@@ -36,20 +43,21 @@ export function VoltyAssistant({ addToCart }: VoltyAssistantProps) {
         
         try {
             const result = await suggestProducts({ query });
-            const voltyMessage = { 
+            const voltyMessage: ConversationMessage = { 
                 type: 'volty' as const, 
                 content: result.thought,
-                products: result.products
+                products: result.products,
+                answer: result.answer
             };
             setConversation(prev => [...prev, voltyMessage]);
         } catch (error) {
             console.error("AI suggestion error:", error);
-            const errorMessage = { type: 'volty' as const, content: "Désolé, je n'arrive pas à trouver de produits pour le moment. Veuillez réessayer."};
+            const errorMessage = { type: 'volty' as const, content: "Désolé, une erreur s'est produite. Veuillez reformuler votre question ou réessayer plus tard."};
             setConversation(prev => [...prev, errorMessage]);
             toast({
                 variant: "destructive",
                 title: "Erreur de l'assistant",
-                description: "Une erreur est survenue lors de la recherche de produits.",
+                description: "Une erreur est survenue lors de la communication avec l'IA.",
             });
         } finally {
             setIsLoading(false);
@@ -106,12 +114,18 @@ export function VoltyAssistant({ addToCart }: VoltyAssistantProps) {
                         <div className="flex-1 p-4 overflow-y-auto space-y-4">
                             <div className="p-3 rounded-lg bg-primary/10 text-sm">
                                 <p className="font-bold">Salut ! Je suis VOLTY.</p>
-                                <p>Décrivez-moi le produit que vous cherchez (ex: "un téléphone pour la photo" ou "un PC portable pour le gaming") et je vous aiderai.</p>
+                                <p>Je peux vous aider à trouver un produit, ou répondre à vos questions sur les clients et commandes (ex: "commandes de Ali Koné").</p>
                             </div>
                             {conversation.map((msg, index) => (
                                 <div key={index} className={`flex flex-col ${msg.type === 'user' ? 'items-end' : 'items-start'}`}>
                                     <div className={`p-3 rounded-lg max-w-xs ${msg.type === 'user' ? 'bg-primary text-primary-foreground' : 'bg-secondary'}`}>
+                                        <p className="text-sm font-semibold text-muted-foreground">{msg.type === 'volty' ? "VOLTY" : "Vous"}</p>
                                         <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                                        
+                                        {msg.answer && (
+                                            <p className="text-sm whitespace-pre-wrap mt-2 pt-2 border-t border-white/10">{msg.answer}</p>
+                                        )}
+
                                         {msg.products && (
                                             <div className="mt-3 space-y-2">
                                                 {msg.products.map(p => (

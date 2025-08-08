@@ -18,6 +18,7 @@ export type Category = 'all' | 'smartphones' | 'laptops' | 'audio' | 'tv' | 'gam
 
 export interface Order {
   id: string;
+  clientId?: string;
   date: string;
   items: CartItem[];
   total: number;
