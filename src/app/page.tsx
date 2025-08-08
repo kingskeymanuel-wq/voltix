@@ -2,6 +2,7 @@
 "use client";
 
 import * as React from "react";
+import { useSearchParams } from 'next/navigation'
 import { Header } from "@/components/header";
 import { Hero } from "@/components/hero";
 import { ProductsSection } from "@/components/products-section";
@@ -13,11 +14,12 @@ import type { CartItem, Product } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
 import { allProducts as initialProducts } from "@/data/products";
 
-export default function Home() {
+function HomePageContent() {
   const [cart, setCart] = React.useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = React.useState(false);
   const [isContactModalOpen, setIsContactModalOpen] = React.useState(false);
-  const [searchTerm, setSearchTerm] = React.useState("");
+  const searchParams = useSearchParams()
+  const [searchTerm, setSearchTerm] = React.useState(searchParams.get('search') || "");
   
   const [products, setProducts] = React.useState<Product[]>(initialProducts);
 
@@ -118,4 +120,12 @@ export default function Home() {
       <VoltyAssistant addToCart={addToCart} />
     </div>
   );
+}
+
+export default function Home() {
+  return (
+    <React.Suspense fallback={<div>Loading...</div>}>
+      <HomePageContent />
+    </React.Suspense>
+  )
 }
