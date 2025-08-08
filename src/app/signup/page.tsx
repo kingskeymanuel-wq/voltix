@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -23,6 +24,14 @@ export default function SignupPage() {
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (file.size > 2 * 1024 * 1024) { // Limite de 2MB
+        toast({
+          variant: "destructive",
+          title: "Fichier trop volumineux",
+          description: "Veuillez choisir une image de moins de 2MB.",
+        });
+        return;
+      }
       const reader = new FileReader();
       reader.onloadend = () => {
         setPhotoPreview(reader.result as string);
@@ -37,11 +46,7 @@ export default function SignupPage() {
     const firstName = formData.get('firstname') as string;
     const lastName = formData.get('lastname') as string;
 
-    // In a real app, you would send this to your backend for registration.
-    // Here, we'll just simulate it.
-    
     if (firstName && lastName) {
-        // Store user info in localStorage for the demo
         localStorage.setItem('userFirstName', firstName);
         localStorage.setItem('userLastName', lastName);
         if (photoPreview) {
@@ -53,7 +58,6 @@ export default function SignupPage() {
             description: "Votre compte a été créé avec succès.",
         });
         
-        // Redirect to the welcome page
         router.push(`/welcome?name=${encodeURIComponent(firstName)}`);
     } else {
         toast({
@@ -90,7 +94,14 @@ export default function SignupPage() {
                         <User className="h-12 w-12 text-muted-foreground"/>
                     </AvatarFallback>
                 </Avatar>
-                <Input id="photo" name="photo" type="file" accept="image/*" onChange={handlePhotoChange} className="w-auto text-sm file:text-primary file:font-semibold" />
+                <Input 
+                  id="photo" 
+                  name="photo" 
+                  type="file" 
+                  accept="image/png, image/jpeg, image/webp" 
+                  onChange={handlePhotoChange} 
+                  className="w-auto text-sm file:text-primary file:font-semibold" 
+                />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -1,15 +1,20 @@
+
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Sparkles } from 'lucide-react';
 
 const WelcomePage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const name = searchParams.get('name') || 'Client';
+  const [name, setName] = useState('');
 
   useEffect(() => {
+    // This needs to run client-side to access searchParams
+    const clientName = searchParams.get('name') || 'Client';
+    setName(clientName);
+    
     // Trigger storage event for header update
     window.dispatchEvent(new Event('storage'));
 
@@ -18,7 +23,11 @@ const WelcomePage = () => {
     }, 3000); // Redirect after 3 seconds
 
     return () => clearTimeout(timer); // Cleanup timer on unmount
-  }, [router, name]);
+  }, [router, searchParams]);
+  
+  if (!name) {
+    return null; // or a loading spinner
+  }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-black to-gray-900/80 text-white">

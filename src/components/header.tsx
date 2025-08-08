@@ -9,6 +9,7 @@ import { LightningIcon } from "./icons";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { Input } from "./ui/input";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 interface HeaderProps {
   cartCount: number;
@@ -19,31 +20,35 @@ interface HeaderProps {
 }
 
 export const Header = ({ cartCount, onCartClick, onContactClick, searchTerm, setSearchTerm }: HeaderProps) => {
-  const [userName, setUserName] = React.useState<string | null>(null);
   const [isClient, setIsClient] = React.useState(false);
+  const [userName, setUserName] = React.useState<string | null>(null);
+  const [userPhoto, setUserPhoto] = React.useState<string | null>(null);
+
   const router = useRouter();
 
   React.useEffect(() => {
-    const updateUserName = () => {
+    const updateUserData = () => {
       const storedFirstName = localStorage.getItem('userFirstName');
-      setUserName(storedFirstName);
+      const storedPhoto = localStorage.getItem('userPhoto');
+      
       setIsClient(!!storedFirstName);
+      setUserName(storedFirstName);
+      setUserPhoto(storedPhoto);
     }
     
-    updateUserName();
+    updateUserData(); // Initial check
 
-    window.addEventListener('storage', updateUserName);
+    window.addEventListener('storage', updateUserData); // Listen for changes
     return () => {
-      window.removeEventListener('storage', updateUserName);
+      window.removeEventListener('storage', updateUserData);
     }
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('userFirstName');
     localStorage.removeItem('userLastName');
-    setUserName(null);
-    setIsClient(false);
-    window.dispatchEvent(new Event('storage'));
+    localStorage.removeItem('userPhoto');
+    window.dispatchEvent(new Event('storage')); // Trigger update for all components
     router.push('/login');
   }
 
@@ -73,15 +78,23 @@ export const Header = ({ cartCount, onCartClick, onContactClick, searchTerm, set
           
           <div className="flex flex-1 items-center justify-end gap-2">
             {isClient && userName ? (
-               <div className="hidden sm:flex items-center gap-2 text-sm">
-                <Button variant="ghost" asChild className="text-primary font-bold">
-                    <Link href="/account">Bonjour, {userName}</Link>
-                </Button>
-                <Button variant="ghost" size="icon" onClick={handleLogout} title="Déconnexion">
-                    <LogOut className="text-red-500" />
-                    <span className="sr-only">Déconnexion</span>
-                </Button>
-              </div>
+               <div className="flex items-center gap-2 text-sm">
+                 <Button variant="ghost" asChild className="text-primary font-bold">
+                    <Link href="/account" className="flex items-center gap-2">
+                      <Avatar className="h-8 w-8">
+                          <AvatarImage src={userPhoto || undefined}/>
+                          <AvatarFallback>
+                              <User className="h-4 w-4"/>
+                          </AvatarFallback>
+                      </Avatar>
+                      Bonjour, {userName}
+                    </Link>
+                 </Button>
+                 <Button variant="ghost" size="icon" onClick={handleLogout} title="Déconnexion">
+                     <LogOut className="text-red-500" />
+                     <span className="sr-only">Déconnexion</span>
+                 </Button>
+               </div>
             ) : (
                  <Button variant="ghost" asChild>
                   <Link href="/login" title="Espace Client">
