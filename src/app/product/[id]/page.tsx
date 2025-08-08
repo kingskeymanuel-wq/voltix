@@ -147,8 +147,7 @@ function ProductDetailContent({ product }: { product: Product }) {
 }
 
 export default function ProductDetailPage({ params }: { params: { id: string } }) {
-  const productId = params.id;
-  const product = allProducts.find(p => p.id === productId);
+  const product = allProducts.find(p => p.id === params.id);
 
   if (!product) {
     notFound();
