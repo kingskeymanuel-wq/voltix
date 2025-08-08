@@ -1,3 +1,4 @@
+
 import { cn } from "@/lib/utils";
 
 export const LightningIcon = () => (
@@ -53,9 +54,10 @@ const OperatorLogo = ({ className, children }: { className?: string, children: R
 );
 
 export const OrangeLogo = () => (
-    <div className="w-[100px] h-[60px] flex items-center justify-center rounded-lg bg-black p-1">
-        <svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" className="w-auto h-full">
-            <path d="M30,5A25,25,0,1,0,55,30,25,25,0,0,0,30,5ZM42.5,42.5H17.5a2.5,2.5,0,0,1,0-5h25a2.5,2.5,0,0,1,0,5Zm0-10H17.5a2.5,2.5,0,0,1,0-5h25a2.5,2.5,0,0,1,0,5Zm0-10H17.5a2.5,2.5,0,0,1,0-5h25a2.5,2.5,0,0,1,0,5Z" fill="#ff7900"/>
+    <div className="w-[100px] h-[60px] flex items-center justify-center rounded-lg bg-black p-2">
+        <svg viewBox="0 0 55 55" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-auto h-full">
+            <path d="M52.35,46.19H2.65A2.65,2.65,0,0,1,0,43.54V2.65A2.65,2.65,0,0,1,2.65,0H43.54A2.65,2.65,0,0,1,46.19,2.65V7.47h6.16A2.65,2.65,0,0,1,55,10.12V43.54A2.65,2.65,0,0,1,52.35,46.19ZM5.3,38.24H48.7V10.12H43.54A2.65,2.65,0,0,1,40.89,7.47V5.3H5.3Z" fill="#FF7900"/>
+            <path d="M27.5,23.18a7,7,0,0,0-7,7v.88a7,7,0,0,0,7,7h0a7,7,0,0,0,7-7v-.88a7,7,0,0,0-7-7Zm0,11.3a4.34,4.34,0,1,1,4.34-4.34A4.34,4.34,0,0,1,27.5,34.48Z" fill="#FF7900"/>
         </svg>
     </div>
 );
@@ -71,10 +73,10 @@ export const MtnLogo = () => (
     <div className="w-[100px] h-[60px] flex items-center justify-center rounded-lg bg-[#ffcc00] p-1">
         <svg viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg" className="w-auto h-full">
             <path d="M99.5,10.5v40a10,10,0,0,1-10,10H10.5a10,10,0,0,1-10-10V10.5a10,10,0,0,1,10-10h80a10,10,0,0,1,9,5Z" fill="#ffcc00"/>
-            <path d="M99.5,10.5v40a10,10,0,0,1-10,10H10.5a10,10,0,0,1-10-10V10.5a10,10,0,0,1,10-10h80a10,10,0,0,1,9,5Z" stroke="#fff" stroke-width="1" fill="none"/>
+            <path d="M99.5,10.5v40a10,10,0,0,1-10,10H10.5a10,10,0,0,1-10-10V10.5a10,10,0,0,1,10-10h80a10,10,0,0,1,9,5Z" stroke="#fff" strokeWidth="1" fill="none"/>
             <g fill="#00447c">
-                <text x="10" y="25" font-family="sans-serif" font-size="20" font-weight="bold">MTN</text>
-                <text x="10" y="45" font-family="sans-serif" font-size="10" font-weight="bold">Mobile Money</text>
+                <text x="10" y="25" fontFamily="sans-serif" fontSize="20" fontWeight="bold">MTN</text>
+                <text x="10" y="45" fontFamily="sans-serif" fontSize="10" fontWeight="bold">Mobile Money</text>
             </g>
         </svg>
     </div>
