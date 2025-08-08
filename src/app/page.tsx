@@ -11,6 +11,7 @@ import { ContactBar } from "@/components/contact-bar";
 import { VoltyAssistant } from "@/components/volty-assistant";
 import type { CartItem, Product } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
+import { allProducts as initialProducts } from "@/data/products";
 
 export default function Home() {
   const [cart, setCart] = React.useState<CartItem[]>([]);
@@ -20,15 +21,22 @@ export default function Home() {
   
   // This state is just to trigger re-renders on storage events
   const [_, setStorageChange] = React.useState(0);
+  const [products, setProducts] = React.useState<Product[]>(initialProducts);
 
   const { toast } = useToast();
 
   React.useEffect(() => {
     const handleStorageChange = () => {
       setStorageChange(c => c + 1);
+       // Check for product updates from vendor page
+      const updatedProducts = localStorage.getItem('voltix-products');
+      if (updatedProducts) {
+        setProducts(JSON.parse(updatedProducts));
+      }
     };
 
     window.addEventListener('storage', handleStorageChange);
+     handleStorageChange(); // Initial load
     return () => {
       window.removeEventListener('storage', handleStorageChange);
     };
@@ -91,7 +99,7 @@ export default function Home() {
       />
       <main className="flex-1">
         <Hero />
-        <ProductsSection addToCart={addToCart} searchTerm={searchTerm} />
+        <ProductsSection allProducts={products} addToCart={addToCart} searchTerm={searchTerm} />
       </main>
       <CartSheet
         isOpen={isCartOpen}

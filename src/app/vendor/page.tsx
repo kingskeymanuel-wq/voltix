@@ -11,16 +11,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { DollarSign, ShoppingCart, Users, CreditCard, Lock, BarChart2, Mail, KeyRound, Eye, Bell, Truck, FileSignature, Wrench } from "lucide-react";
+import { DollarSign, ShoppingCart, Users, CreditCard, Lock, BarChart2, Mail, KeyRound, Eye, Bell, Truck, FileSignature, Wrench, PackagePlus, Edit } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
-import type { Order, SAVTicket } from "@/lib/types";
+import type { Order, SAVTicket, Product } from "@/lib/types";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { allProducts as initialProducts, categories } from "@/data/products";
 
 
 const salesData = [
@@ -53,6 +54,7 @@ const initialSavTickets: SAVTicket[] = [
 
 type VendorView = 'login' | 'forgot-password' | 'reset-password';
 type SelectedClient = typeof mockClients[0] | null;
+type SelectedProduct = Product | null;
 
 const CreateSavTicketModal = ({ client, isOpen, onOpenChange, onTicketCreated }: { client: SelectedClient, isOpen: boolean, onOpenChange: (open: boolean) => void, onTicketCreated: (ticket: SAVTicket) => void }) => {
     if (!client) return null;
@@ -255,6 +257,99 @@ const ClientDetailsModal = ({ client, isOpen, onOpenChange, onAlert, savTickets,
     )
 }
 
+const ProductEditModal = ({ product, isOpen, onOpenChange, onProductUpdate }: { product: SelectedProduct, isOpen: boolean, onOpenChange: (open: boolean) => void, onProductUpdate: (product: Product) => void }) => {
+    const [name, setName] = React.useState("");
+    const [price, setPrice] = React.useState(0);
+    const [description, setDescription] = React.useState("");
+    const [category, setCategory] = React.useState("");
+
+    React.useEffect(() => {
+        if (product) {
+            setName(product.name);
+            setPrice(product.price);
+            setDescription(product.description);
+            setCategory(product.category);
+        } else {
+            // Reset for new product
+            setName("");
+            setPrice(0);
+            setDescription("");
+            setCategory(categories[1].key); // Default to smartphones
+        }
+    }, [product]);
+
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const updatedProduct: Product = product 
+            ? { ...product, name, price, description, category }
+            : {
+                id: `p${Date.now()}`,
+                name,
+                price,
+                description,
+                category,
+                image: 'https://placehold.co/600x400', // Placeholder for new products
+                dataAiHint: 'new product'
+            };
+        onProductUpdate(updatedProduct);
+        onOpenChange(false);
+    };
+
+    return (
+        <Dialog open={isOpen} onOpenChange={onOpenChange}>
+            <DialogContent className="bg-background/95 backdrop-blur-xl">
+                <DialogHeader>
+                    <DialogTitle className="text-primary text-2xl flex items-center gap-3">
+                        {product ? <Edit/> : <PackagePlus />}
+                        {product ? "Modifier le Produit" : "Ajouter un Produit"}
+                    </DialogTitle>
+                    <DialogDescription>
+                        {product ? `Modification de ${product.name}` : "Ajouter un nouvel article au catalogue."}
+                    </DialogDescription>
+                </DialogHeader>
+                <form onSubmit={handleSubmit}>
+                    <div className="py-4 space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="product-name">Nom du produit</Label>
+                            <Input id="product-name" value={name} onChange={(e) => setName(e.target.value)} required />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="product-price">Prix (FCFA)</Label>
+                                <Input id="product-price" type="number" value={price} onChange={(e) => setPrice(Number(e.target.value))} required />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="product-category">Catégorie</Label>
+                                <Select value={category} onValueChange={setCategory} name="category" required>
+                                    <SelectTrigger id="product-category">
+                                        <SelectValue placeholder="Sélectionner une catégorie" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {categories.filter(c => c.key !== 'all').map(cat => (
+                                            <SelectItem key={cat.key} value={cat.key}>
+                                                {cat.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="product-description">Description</Label>
+                            <Textarea id="product-description" value={description} onChange={(e) => setDescription(e.target.value)} required />
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <DialogClose asChild><Button type="button" variant="secondary">Annuler</Button></DialogClose>
+                        <Button type="submit">{product ? "Enregistrer les modifications" : "Ajouter le produit"}</Button>
+                    </DialogFooter>
+                </form>
+            </DialogContent>
+        </Dialog>
+    );
+};
+
+
 export default function VendorPage() {
   const [isContactModalOpen, setIsContactModalOpen] = React.useState(false);
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
@@ -267,9 +362,24 @@ export default function VendorPage() {
   const [selectedClient, setSelectedClient] = React.useState<SelectedClient>(null);
   const [isClientModalOpen, setIsClientModalOpen] = React.useState(false);
   const [savTickets, setSavTickets] = React.useState<SAVTicket[]>(initialSavTickets);
+  const [products, setProducts] = React.useState<Product[]>([]);
+  const [selectedProduct, setSelectedProduct] = React.useState<SelectedProduct>(null);
+  const [isProductModalOpen, setIsProductModalOpen] = React.useState(false);
   
   const { toast } = useToast();
   const router = useRouter();
+  
+  React.useEffect(() => {
+    const storedProducts = localStorage.getItem('voltix-products');
+    setProducts(storedProducts ? JSON.parse(storedProducts) : initialProducts);
+  }, []);
+
+  const persistProducts = (updatedProducts: Product[]) => {
+    setProducts(updatedProducts);
+    localStorage.setItem('voltix-products', JSON.stringify(updatedProducts));
+    // Dispatch a storage event to notify other tabs/pages (like home)
+    window.dispatchEvent(new Event('storage'));
+  };
 
   const handleLogin = () => {
     if (password === vendorPassword) {
@@ -323,6 +433,31 @@ export default function VendorPage() {
         description: `Le ticket ${ticket.id} a été ouvert pour ${selectedClient?.name}.`,
     });
   };
+
+  const handleEditProduct = (product: Product) => {
+    setSelectedProduct(product);
+    setIsProductModalOpen(true);
+  };
+  
+  const handleAddProduct = () => {
+    setSelectedProduct(null);
+    setIsProductModalOpen(true);
+  };
+  
+  const handleProductUpdate = (product: Product) => {
+    let updatedProducts;
+    if (products.some(p => p.id === product.id)) {
+        // Update existing product
+        updatedProducts = products.map(p => p.id === product.id ? product : p);
+        toast({ title: "Produit mis à jour", description: `${product.name} a été modifié.` });
+    } else {
+        // Add new product
+        updatedProducts = [product, ...products];
+        toast({ title: "Produit ajouté", description: `${product.name} est maintenant en vente.` });
+    }
+    persistProducts(updatedProducts);
+  };
+
 
   if (!isAuthenticated) {
     return (
@@ -425,9 +560,10 @@ export default function VendorPage() {
         </div>
         
         <Tabs defaultValue="dashboard" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 max-w-lg mx-auto bg-gray-800/50 mb-8">
+            <TabsList className="grid w-full grid-cols-3 max-w-2xl mx-auto bg-gray-800/50 mb-8">
                 <TabsTrigger value="dashboard"><BarChart2 className="mr-2"/> Tableau de Bord</TabsTrigger>
                 <TabsTrigger value="clients"><Users className="mr-2"/> Gestion Clients</TabsTrigger>
+                <TabsTrigger value="products"><ShoppingCart className="mr-2"/> Gestion Produits</TabsTrigger>
             </TabsList>
             <TabsContent value="dashboard">
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
@@ -518,9 +654,49 @@ export default function VendorPage() {
                     </CardContent>
                 </Card>
             </TabsContent>
+             <TabsContent value="products">
+                <Card className="bg-card/50 border-primary/20">
+                    <CardHeader className="flex flex-row items-center justify-between">
+                        <div>
+                            <CardTitle>Gestion du Catalogue</CardTitle>
+                            <CardDescription>Ajoutez, modifiez ou supprimez des produits.</CardDescription>
+                        </div>
+                        <Button onClick={handleAddProduct}>
+                            <PackagePlus className="mr-2"/> Ajouter un produit
+                        </Button>
+                    </CardHeader>
+                    <CardContent>
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Produit</TableHead>
+                                    <TableHead>Catégorie</TableHead>
+                                    <TableHead>Prix</TableHead>
+                                    <TableHead className="text-right">Actions</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {products.map(product => (
+                                    <TableRow key={product.id}>
+                                        <TableCell className="font-medium">{product.name}</TableCell>
+                                        <TableCell className="hidden md:table-cell text-muted-foreground">{product.category}</TableCell>
+                                        <TableCell>{product.price.toLocaleString()} FCFA</TableCell>
+                                        <TableCell className="text-right">
+                                            <Button variant="ghost" size="icon" onClick={() => handleEditProduct(product)}>
+                                                <Edit className="h-4 w-4" />
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </CardContent>
+                </Card>
+            </TabsContent>
         </Tabs>
       </main>
       <ClientDetailsModal client={selectedClient} isOpen={isClientModalOpen} onOpenChange={setIsClientModalOpen} onAlert={handleAlert} savTickets={savTickets} onTicketCreated={handleCreateTicket} />
+      <ProductEditModal product={selectedProduct} isOpen={isProductModalOpen} onOpenChange={setIsProductModalOpen} onProductUpdate={handleProductUpdate} />
       <ContactModal isOpen={isContactModalOpen} onOpenChange={setIsContactModalOpen} />
     </div>
     </>

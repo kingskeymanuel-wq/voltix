@@ -1,7 +1,8 @@
+
 "use client";
 
 import * as React from "react";
-import { allProducts, categories } from "@/data/products";
+import { categories } from "@/data/products";
 import { ProductCard } from "./product-card";
 import { Button } from "./ui/button";
 import type { Category, Product } from "@/lib/types";
@@ -10,11 +11,12 @@ import { SearchX } from "lucide-react";
 interface ProductsSectionProps {
   addToCart: (product: Product) => void;
   searchTerm: string;
+  allProducts: Product[];
 }
 
 const PRODUCTS_PER_PAGE = 6;
 
-export const ProductsSection = ({ addToCart, searchTerm }: ProductsSectionProps) => {
+export const ProductsSection = ({ allProducts, addToCart, searchTerm }: ProductsSectionProps) => {
   const [activeFilter, setActiveFilter] = React.useState<Category>('all');
   const [currentPage, setCurrentPage] = React.useState(1);
 
@@ -33,7 +35,7 @@ export const ProductsSection = ({ addToCart, searchTerm }: ProductsSectionProps)
     }
     
     return products;
-  }, [searchTerm, activeFilter]);
+  }, [searchTerm, activeFilter, allProducts]);
 
   const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
 
@@ -57,7 +59,7 @@ export const ProductsSection = ({ addToCart, searchTerm }: ProductsSectionProps)
 
   React.useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm]);
+  }, [searchTerm, activeFilter]);
 
   return (
     <section id="products" className="py-24 bg-gradient-to-b from-black to-gray-900/80">
