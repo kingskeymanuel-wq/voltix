@@ -45,7 +45,7 @@ export function VoltyAssistant({ addToCart }: VoltyAssistantProps) {
             const result = await suggestProducts({ query });
             const voltyMessage: ConversationMessage = { 
                 type: 'volty' as const, 
-                content: result.thought,
+                content: result.answer || (result.products ? "Voici ce que j'ai trouvé pour vous :" : "Je peux vous aider ?"),
                 products: result.products,
                 answer: result.answer
             };
@@ -120,10 +120,9 @@ export function VoltyAssistant({ addToCart }: VoltyAssistantProps) {
                                 <div key={index} className={`flex flex-col ${msg.type === 'user' ? 'items-end' : 'items-start'}`}>
                                     <div className={`p-3 rounded-lg max-w-xs ${msg.type === 'user' ? 'bg-primary text-primary-foreground' : 'bg-secondary'}`}>
                                         <p className="text-sm font-semibold text-muted-foreground">{msg.type === 'volty' ? "VOLTY" : "Vous"}</p>
-                                        <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
                                         
                                         {msg.answer && (
-                                            <p className="text-sm whitespace-pre-wrap mt-2 pt-2 border-t border-white/10">{msg.answer}</p>
+                                            <p className="text-sm whitespace-pre-wrap">{msg.answer}</p>
                                         )}
 
                                         {msg.products && (

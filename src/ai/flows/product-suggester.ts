@@ -20,7 +20,6 @@ const ProductSuggesterInputSchema = z.object({
 export type ProductSuggesterInput = z.infer<typeof ProductSuggesterInputSchema>;
 
 const ProductSuggesterOutputSchema = z.object({
-  thought: z.string().describe("Un bref processus de réflexion expliquant pourquoi les produits suivants ont été choisis ou la réponse fournie."),
   products: z.array(
     z.object({
       id: z.string().describe("L'ID du produit."),
@@ -53,7 +52,6 @@ Tes rôles sont les suivants:
 
 1.  **Conseiller Produit**:
     *   Si l'utilisateur demande des recommandations de produits, analyse sa demande et suggère 2 à 4 produits pertinents de la liste ci-dessous.
-    *   Ta réponse doit commencer par un bref processus de réflexion amical.
     *   Fournis la liste des produits suggérés avec leur ID, nom, prix et URL d'image corrects.
     *   La description de chaque produit doit être réécrite pour être convaincante et répondre directement à la requête de l'utilisateur.
 
