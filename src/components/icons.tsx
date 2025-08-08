@@ -53,15 +53,13 @@ const OperatorLogo = ({ className, children }: { className?: string, children: R
 );
 
 export const OrangeLogo = () => (
-    <div className="w-[100px] h-[60px] flex items-center justify-center rounded-lg bg-white p-2">
-        <svg viewBox="0 0 160 90" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-            <path d="M43.68,1.44,1.44,43.68h21.6c9.36,0,14.4-1.8,20.52-8.28,6.12-6.12,8.28-11.52,8.28-20.52V1.44Z" fill="#000000"/>
-            <path d="m116.32,43.68,42.24-42.24v14.4c0,9.36-1.8,14.4-8.28,20.52s-11.52,8.28-20.52,8.28h-13.44Z" fill="#FF7900"/>
-            <text x="0" y="85" fontFamily="Arial, sans-serif" fontSize="32" fontWeight="bold" fill="#000000">Orange</text>
-            <text x="0" y="115" fontFamily="Arial, sans-serif" fontSize="32" fontWeight="bold" fill="#000000">Money</text>
+    <div className="w-[100px] h-[60px] flex items-center justify-center rounded-lg bg-black p-1">
+        <svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" className="w-auto h-full">
+            <path d="M30,5A25,25,0,1,0,55,30,25,25,0,0,0,30,5ZM42.5,42.5H17.5a2.5,2.5,0,0,1,0-5h25a2.5,2.5,0,0,1,0,5Zm0-10H17.5a2.5,2.5,0,0,1,0-5h25a2.5,2.5,0,0,1,0,5Zm0-10H17.5a2.5,2.5,0,0,1,0-5h25a2.5,2.5,0,0,1,0,5Z" fill="#ff7900"/>
         </svg>
     </div>
 );
+
 
 export const WaveLogo = () => (
   <OperatorLogo className="bg-gradient-to-br from-blue-600 to-blue-800">
@@ -70,7 +68,14 @@ export const WaveLogo = () => (
 );
 
 export const MtnLogo = () => (
-  <OperatorLogo className="bg-gradient-to-br from-yellow-400 to-yellow-600 text-black">
-    MTN
-  </OperatorLogo>
+    <div className="w-[100px] h-[60px] flex items-center justify-center rounded-lg bg-[#ffcc00] p-1">
+        <svg viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg" className="w-auto h-full">
+            <path d="M99.5,10.5v40a10,10,0,0,1-10,10H10.5a10,10,0,0,1-10-10V10.5a10,10,0,0,1,10-10h80a10,10,0,0,1,9,5Z" fill="#ffcc00"/>
+            <path d="M99.5,10.5v40a10,10,0,0,1-10,10H10.5a10,10,0,0,1-10-10V10.5a10,10,0,0,1,10-10h80a10,10,0,0,1,9,5Z" stroke="#fff" stroke-width="1" fill="none"/>
+            <g fill="#00447c">
+                <text x="10" y="25" font-family="sans-serif" font-size="20" font-weight="bold">MTN</text>
+                <text x="10" y="45" font-family="sans-serif" font-size="10" font-weight="bold">Mobile Money</text>
+            </g>
+        </svg>
+    </div>
 );
