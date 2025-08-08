@@ -15,7 +15,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { ScrollArea } from "./ui/scroll-area";
 import type { CartItem, Product, Order } from "@/lib/types";
-import { Minus, Plus, ShoppingCart, Trash2, X, CheckCircle, Smartphone, FileSignature } from "lucide-react";
+import { Minus, Plus, ShoppingCart, Trash2, X, CheckCircle, Smartphone, FileSignature, QrCode } from "lucide-react";
 import { Separator } from "./ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
@@ -149,19 +149,43 @@ export const CartSheet = ({
             </ScrollArea>
           )}
 
-          {step === 'payment' && (
+          {step === 'payment' && order && (
             <div className="p-1">
               <h3 className="text-xl font-bold mb-4 text-center">💳 Paiement Mobile Sécurisé</h3>
               <Tabs defaultValue="orange" className="w-full">
-                <TabsList className="grid w-full grid-cols-3 bg-gray-800/50">
+                <TabsList className="grid w-full grid-cols-4 bg-gray-800/50">
                   <TabsTrigger value="orange"><OrangeLogo /></TabsTrigger>
                   <TabsTrigger value="wave"><WaveLogo /></TabsTrigger>
                   <TabsTrigger value="mtn"><MtnLogo /></TabsTrigger>
+                  <TabsTrigger value="qrcode"><QrCode className="h-6 w-6"/></TabsTrigger>
                 </TabsList>
                 <div className="mt-4">
                   <PaymentFormWrapper method="orange" onPay={handleProcessPayment} isProcessing={isProcessing} />
                   <PaymentFormWrapper method="wave" onPay={handleProcessPayment} isProcessing={isProcessing} />
                   <PaymentFormWrapper method="mtn" onPay={handleProcessPayment} isProcessing={isProcessing} />
+                   <TabsContent value="qrcode">
+                    <Card className="bg-gray-800/50 border-white/20">
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          <QrCode size={20}/>
+                          Paiement par QR Code
+                        </CardTitle>
+                        <CardDescription>Scannez ce code avec votre application de paiement.</CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-4 flex flex-col items-center">
+                         <Image 
+                            src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=voltix:pay?orderId=${order.id}&amount=${order.total}`}
+                            alt="QR Code de paiement"
+                            width={200}
+                            height={200}
+                            className="rounded-lg bg-white p-2"
+                         />
+                        <Button onClick={() => handleProcessPayment('QR Code')} disabled={isProcessing} className="w-full bg-accent text-accent-foreground hover:bg-accent/90">
+                          {isProcessing ? "Vérification..." : "J'ai scanné, continuer"}
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
                 </div>
               </Tabs>
               <Button variant="link" onClick={() => setStep('cart')} className="w-full mt-4 text-primary">Retour au panier</Button>
@@ -293,5 +317,7 @@ const PaymentFormWrapper = ({ method, onPay, isProcessing }: { method: 'orange' 
     </TabsContent>
   );
 };
+
+    
 
     
