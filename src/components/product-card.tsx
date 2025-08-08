@@ -54,7 +54,7 @@ export const ProductCard = ({ product, addToCart, index }: ProductCardProps) => 
             <ShoppingCart className="mr-2 h-4 w-4"/>
             Ajouter au panier
           </Button>
-          <Button variant="outline" size="icon" className="border-primary/30 text-primary hover:bg-red-500/20 hover:text-red-400 hover:border-red-500/50 transition-colors">
+          <Button variant="outline" size="icon" className="border-primary/30 text-primary hover:bg-primary/10 hover:text-primary transition-colors">
             <Heart className="h-4 w-4"/>
           </Button>
         </CardFooter>

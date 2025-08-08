@@ -118,7 +118,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                       <ShoppingCart className="mr-3"/>
                       Ajouter au panier
                     </Button>
-                    <Button variant="outline" size="lg" className="border-2 border-primary/30 text-primary hover:bg-red-500/20 hover:text-red-400 hover:border-red-500/50 transition-colors p-7">
+                    <Button variant="outline" size="lg" className="border-2 border-primary/30 text-primary hover:bg-primary/10 hover:text-primary transition-colors p-7">
                       <Heart />
                     </Button>
                 </div>
