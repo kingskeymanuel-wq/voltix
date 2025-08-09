@@ -21,6 +21,11 @@ export const allProducts: Product[] = [
   
   {id: 'p13', name: 'AirPods Pro 2', category: 'audio', price: 180000, image: 'https://images.unsplash.com/photo-1694650523737-233454792039?q=80&w=2670&auto=format&fit=crop', dataAiHint: "airpods pro", description: 'Une réduction de bruit jusqu\'à 2x plus efficace, un mode Transparence adaptatif et un son immersif.'},
   {id: 'p14', name: 'Sony WH-1000XM5', category: 'audio', price: 250000, image: 'https://images.unsplash.com/photo-1659974538848-971715102a9a?q=80&w=2670&auto=format&fit=crop', dataAiHint: "sony headphones", description: 'Le meilleur casque à réduction de bruit du marché. Un silence inégalé et un son Hi-Res Audio.'},
+
+  {id: 'p15', name: 'Xiaomi 14 Ultra', category: 'smartphones', price: 750000, image: 'https://images.unsplash.com/photo-1604342416075-26a31853a8a5?q=80&w=2574&auto=format&fit=crop', dataAiHint: "xiaomi phone", description: 'Partenariat avec Leica pour une expérience photographique inégalée sur smartphone. Un design élégant et des performances de pointe.'},
+  {id: 'p16', name: 'Razer Blade 16', category: 'laptops', price: 1800000, image: 'https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?q=80&w=2832&auto=format&fit=crop', dataAiHint: "razer laptop", description: 'Le nec plus ultra du gaming portable. Écran mini-LED, carte graphique NVIDIA RTX série 40 et un refroidissement avancé.', badge: 'Gaming Pro'},
+  {id: 'p17', name: 'Bose QuietComfort Ultra Headphones', category: 'audio', price: 280000, image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=2670&auto=format&fit=crop', dataAiHint: "bose headphones", description: 'Un son spatial immersif et une réduction de bruit de classe mondiale pour une écoute sans distraction.'},
+  {id: 'p18', name: 'Anker PowerCore 20K', category: 'accessories', price: 35000, image: 'https://images.unsplash.com/photo-1613435284344-9e348a296562?q=80&w=2670&auto=format&fit=crop', dataAiHint: "power bank", description: 'Ne tombez plus jamais en panne de batterie. Une capacité énorme pour recharger plusieurs fois votre smartphone ou votre tablette.'}
 ];
 
 export const categories = [
@@ -39,4 +44,3 @@ export const getCategoryName = (key: string) => {
   const category = categories.find(c => c.key === key);
   return category ? category.name : key;
 };
-
