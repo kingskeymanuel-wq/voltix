@@ -27,6 +27,14 @@ const featuredContent = [
   },
   {
     type: "video",
+    title: "Son Immersif & Gaming",
+    description: "Plongez au cœur de l'action avec notre sélection de casques et d'équipements gaming pour une expérience inégalée.",
+    mediaUrl: "https://videos.pexels.com/video-files/7162529/7162529-hd_1920_1080_30fps.mp4",
+    primaryCta: { text: "Équipez-vous pour la victoire", action: 'scrollAndFilter', target: '#products', filter: 'gaming' as Category },
+    secondaryCta: { text: "Découvrir l'audio", action: 'scrollAndFilter', target: '#products', filter: 'audio' as Category },
+  },
+  {
+    type: "video",
     title: "Capturez l'Instant",
     description: "Des appareils photos et drones équipés des dernières technologies pour des images à couper le souffle.",
     mediaUrl: "https://videos.pexels.com/video-files/4692372/4692372-hd_1920_1080_25fps.mp4",
