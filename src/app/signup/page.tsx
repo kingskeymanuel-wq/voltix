@@ -14,10 +14,12 @@ import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function SignupPage() {
   const [isContactModalOpen, setIsContactModalOpen] = React.useState(false);
   const [photoPreview, setPhotoPreview] = React.useState<string | null>(null);
+  const [termsAccepted, setTermsAccepted] = React.useState(false);
   const router = useRouter();
   const { toast } = useToast();
 
@@ -42,6 +44,14 @@ export default function SignupPage() {
 
   const handleSignup = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!termsAccepted) {
+      toast({
+        variant: "destructive",
+        title: "Conditions non acceptées",
+        description: "Vous devez accepter les conditions générales de confidentialité pour créer un compte.",
+      });
+      return;
+    }
     const formData = new FormData(e.currentTarget);
     const firstName = formData.get('firstname') as string;
     const lastName = formData.get('lastname') as string;
@@ -52,6 +62,7 @@ export default function SignupPage() {
         if (photoPreview) {
           localStorage.setItem('userPhoto', photoPreview);
         }
+        localStorage.setItem('voltix-terms-accepted', 'true');
         
         toast({
             title: "Inscription réussie !",
@@ -129,7 +140,17 @@ export default function SignupPage() {
                 <Input id="password" name="password" type="password" placeholder="••••••••" required />
               </div>
               
-              <Button type="submit" className="w-full font-bold text-lg p-6">
+              <div className="flex items-center space-x-2">
+                  <Checkbox id="terms" checked={termsAccepted} onCheckedChange={(checked) => setTermsAccepted(!!checked)} />
+                  <label
+                      htmlFor="terms"
+                      className="text-sm font-medium leading-none text-muted-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                      J'accepte les <Link href="/terms" className="text-primary hover:underline">Conditions Générales de Confidentialité</Link>
+                  </label>
+              </div>
+
+              <Button type="submit" className="w-full font-bold text-lg p-6" disabled={!termsAccepted}>
                 Créer mon compte
               </Button>
             </form>

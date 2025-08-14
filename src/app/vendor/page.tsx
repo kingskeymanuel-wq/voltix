@@ -2,6 +2,7 @@
 "use client";
 
 import * as React from "react";
+import Link from 'next/link';
 import { useRouter } from "next/navigation";
 import { Header } from "@/components/header";
 import { ContactBar } from "@/components/contact-bar";
@@ -594,6 +595,17 @@ export default function VendorPage() {
   const router = useRouter();
   
   React.useEffect(() => {
+    const termsAccepted = localStorage.getItem('voltix-terms-accepted') === 'true';
+    if (!termsAccepted) {
+      toast({
+        variant: 'destructive',
+        title: 'Accès non autorisé',
+        description: 'Vous devez accepter les conditions pour accéder à cet espace.',
+      });
+      router.push('/signup');
+      return;
+    }
+
     const storedProducts = localStorage.getItem('voltix-products');
     setProducts(storedProducts ? JSON.parse(storedProducts) : initialProducts);
     
@@ -602,7 +614,7 @@ export default function VendorPage() {
         setPurchasedEbooks(new Set(JSON.parse(storedPurchases)));
     }
 
-  }, []);
+  }, [router, toast]);
 
   const persistProducts = (updatedProducts: Product[]) => {
     setProducts(updatedProducts);
@@ -735,6 +747,7 @@ export default function VendorPage() {
               </div>
               <Button onClick={handleLogin} className="w-full">Se connecter</Button>
               <Button variant="link" size="sm" className="w-full" onClick={() => setView('forgot-password')}>Mot de passe oublié ?</Button>
+               <p className="text-xs text-muted-foreground text-center pt-2">L'accès est réservé aux utilisateurs ayant accepté les conditions de confidentialité. <Link href="/signup" className="underline">Créer un compte</Link>.</p>
             </CardContent>
           </Card>
         )}
