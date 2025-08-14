@@ -15,7 +15,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { ScrollArea } from "./ui/scroll-area";
 import type { CartItem, Product, Order } from "@/lib/types";
-import { Minus, Plus, ShoppingCart, Trash2, X, CheckCircle, Smartphone, FileSignature, QrCode } from "lucide-react";
+import { Minus, Plus, ShoppingCart, Trash2, X, CheckCircle, Smartphone, FileSignature, QrCode, CreditCard, Lock } from "lucide-react";
 import { Separator } from "./ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
@@ -152,40 +152,18 @@ export const CartSheet = ({
           {step === 'payment' && order && (
             <div className="p-1">
               <h3 className="text-xl font-bold mb-4 text-center">💳 Paiement Mobile Sécurisé</h3>
-              <Tabs defaultValue="orange" className="w-full">
+              <Tabs defaultValue="card" className="w-full">
                 <TabsList className="grid w-full grid-cols-4 bg-gray-800/50">
+                  <TabsTrigger value="card"><CreditCard /></TabsTrigger>
                   <TabsTrigger value="orange"><OrangeLogo /></TabsTrigger>
                   <TabsTrigger value="wave"><WaveLogo /></TabsTrigger>
                   <TabsTrigger value="mtn"><MtnLogo /></TabsTrigger>
-                  <TabsTrigger value="qrcode"><QrCode className="h-6 w-6"/></TabsTrigger>
                 </TabsList>
                 <div className="mt-4">
-                  <PaymentFormWrapper method="orange" onPay={handleProcessPayment} isProcessing={isProcessing} />
-                  <PaymentFormWrapper method="wave" onPay={handleProcessPayment} isProcessing={isProcessing} />
-                  <PaymentFormWrapper method="mtn" onPay={handleProcessPayment} isProcessing={isProcessing} />
-                   <TabsContent value="qrcode">
-                    <Card className="bg-gray-800/50 border-white/20">
-                      <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                          <QrCode size={20}/>
-                          Paiement par QR Code
-                        </CardTitle>
-                        <CardDescription>Scannez ce code avec votre application de paiement.</CardDescription>
-                      </CardHeader>
-                      <CardContent className="space-y-4 flex flex-col items-center">
-                         <Image 
-                            src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=voltix:pay?orderId=${order.id}&amount=${order.total}`}
-                            alt="QR Code de paiement"
-                            width={200}
-                            height={200}
-                            className="rounded-lg bg-white p-2"
-                         />
-                        <Button onClick={() => handleProcessPayment('QR Code')} disabled={isProcessing} className="w-full bg-accent text-accent-foreground hover:bg-accent/90">
-                          {isProcessing ? "Vérification..." : "J'ai scanné, continuer"}
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  </TabsContent>
+                  <CardPaymentFormWrapper onPay={handleProcessPayment} isProcessing={isProcessing} />
+                  <MobilePaymentFormWrapper method="orange" onPay={handleProcessPayment} isProcessing={isProcessing} />
+                  <MobilePaymentFormWrapper method="wave" onPay={handleProcessPayment} isProcessing={isProcessing} />
+                  <MobilePaymentFormWrapper method="mtn" onPay={handleProcessPayment} isProcessing={isProcessing} />
                 </div>
               </Tabs>
               <Button variant="link" onClick={() => setStep('cart')} className="w-full mt-4 text-primary">Retour au panier</Button>
@@ -287,7 +265,7 @@ export const CartSheet = ({
   );
 };
 
-const PaymentFormWrapper = ({ method, onPay, isProcessing }: { method: 'orange' | 'wave' | 'mtn', onPay: (method: string) => void, isProcessing: boolean }) => {
+const MobilePaymentFormWrapper = ({ method, onPay, isProcessing }: { method: 'orange' | 'wave' | 'mtn', onPay: (method: string) => void, isProcessing: boolean }) => {
   const titles = {
     orange: 'Paiement Orange Money',
     wave: 'Paiement Wave',
@@ -311,6 +289,42 @@ const PaymentFormWrapper = ({ method, onPay, isProcessing }: { method: 'orange' 
           </div>
           <Button onClick={() => onPay(method)} disabled={isProcessing} className="w-full bg-accent text-accent-foreground hover:bg-accent/90">
             {isProcessing ? "Vérification..." : `Payer ${method === 'wave' ? 'avec' : 'par'} ${titles[method]}`}
+          </Button>
+        </CardContent>
+      </Card>
+    </TabsContent>
+  );
+};
+
+const CardPaymentFormWrapper = ({ onPay, isProcessing }: { onPay: (method: string) => void, isProcessing: boolean }) => {
+  return (
+    <TabsContent value="card">
+      <Card className="bg-gray-800/50 border-white/20">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <CreditCard size={20}/>
+            Paiement par Carte Bancaire
+          </CardTitle>
+          <CardDescription>Entrez les détails de votre carte. Transaction 100% sécurisée.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="card-number">Numéro de la carte</Label>
+            <Input id="card-number" placeholder="0000 0000 0000 0000" />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+                <Label htmlFor="card-expiry">Expiration (MM/AA)</Label>
+                <Input id="card-expiry" placeholder="MM/AA" />
+            </div>
+             <div className="space-y-2">
+                <Label htmlFor="card-cvc">CVC</Label>
+                <Input id="card-cvc" placeholder="123" />
+            </div>
+          </div>
+          <Button onClick={() => onPay("Carte Bancaire")} disabled={isProcessing} className="w-full bg-accent text-accent-foreground hover:bg-accent/90">
+            <Lock className="mr-2"/>
+            {isProcessing ? "Vérification..." : "Payer en toute sécurité"}
           </Button>
         </CardContent>
       </Card>

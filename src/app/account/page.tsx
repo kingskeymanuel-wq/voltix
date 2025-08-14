@@ -35,6 +35,43 @@ type ConversationMessage = {
     text: string;
 };
 
+const CardPaymentFormWrapper = ({ ebook, onPay, isProcessing }: { ebook: Ebook, onPay: (method: string) => void, isProcessing: boolean }) => {
+  return (
+    <TabsContent value="card">
+      <Card className="bg-gray-800/50 border-white/20">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <CreditCard size={20}/>
+            Paiement par Carte
+          </CardTitle>
+          <CardDescription>Payer {ebook.price.toLocaleString('fr-FR')} FCFA en toute sécurité.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="card-number-acc">Numéro de carte</Label>
+            <Input id="card-number-acc" placeholder="0000 0000 0000 0000" />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="card-expiry-acc">Expiration</Label>
+              <Input id="card-expiry-acc" placeholder="MM/AA" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="card-cvc-acc">CVC</Label>
+              <Input id="card-cvc-acc" placeholder="123" />
+            </div>
+          </div>
+          <Button onClick={() => onPay('Carte Bancaire')} disabled={isProcessing} className="w-full bg-accent text-accent-foreground hover:bg-accent/90">
+            <Lock className="mr-2"/>
+            {isProcessing ? "Vérification..." : `Payer ${ebook.price.toLocaleString('fr-FR')} FCFA`}
+          </Button>
+        </CardContent>
+      </Card>
+    </TabsContent>
+  );
+};
+
+
 const EbookPaymentModal = ({ ebook, isOpen, onOpenChange, onPaymentSuccess }: { ebook: Ebook | null, isOpen: boolean, onOpenChange: (open: boolean) => void, onPaymentSuccess: (ebookId: string) => void }) => {
     const [isProcessing, setIsProcessing] = React.useState(false);
     const { toast } = useToast();
@@ -64,22 +101,24 @@ const EbookPaymentModal = ({ ebook, isOpen, onOpenChange, onPaymentSuccess }: { 
                         Finalisez l'achat de <span className="font-bold text-white">{ebook.title}</span> pour {ebook.price.toLocaleString('fr-FR')} FCFA.
                     </DialogDescription>
                 </DialogHeader>
-                 <Tabs defaultValue="orange" className="w-full">
-                    <TabsList className="grid w-full grid-cols-3 bg-gray-800/50">
+                 <Tabs defaultValue="card" className="w-full">
+                    <TabsList className="grid w-full grid-cols-4 bg-gray-800/50">
+                        <TabsTrigger value="card"><CreditCard /></TabsTrigger>
                         <TabsTrigger value="orange"><OrangeLogo /></TabsTrigger>
                         <TabsTrigger value="wave"><WaveLogo /></TabsTrigger>
                         <TabsTrigger value="mtn"><MtnLogo /></TabsTrigger>
                     </TabsList>
-                    <PaymentFormWrapper method="orange" onPay={handleProcessPayment} isProcessing={isProcessing} ebook={ebook} />
-                    <PaymentFormWrapper method="wave" onPay={handleProcessPayment} isProcessing={isProcessing} ebook={ebook} />
-                    <PaymentFormWrapper method="mtn" onPay={handleProcessPayment} isProcessing={isProcessing} ebook={ebook} />
+                    <CardPaymentFormWrapper onPay={handleProcessPayment} isProcessing={isProcessing} ebook={ebook} />
+                    <MobilePaymentFormWrapper method="orange" onPay={handleProcessPayment} isProcessing={isProcessing} ebook={ebook} />
+                    <MobilePaymentFormWrapper method="wave" onPay={handleProcessPayment} isProcessing={isProcessing} ebook={ebook} />
+                    <MobilePaymentFormWrapper method="mtn" onPay={handleProcessPayment} isProcessing={isProcessing} ebook={ebook} />
                 </Tabs>
             </DialogContent>
         </Dialog>
     )
 }
 
-const PaymentFormWrapper = ({ method, onPay, isProcessing, ebook }: { method: 'orange' | 'wave' | 'mtn', onPay: (method: string) => void, isProcessing: boolean, ebook: Ebook }) => {
+const MobilePaymentFormWrapper = ({ method, onPay, isProcessing, ebook }: { method: 'orange' | 'wave' | 'mtn', onPay: (method: string) => void, isProcessing: boolean, ebook: Ebook }) => {
   const titles = {
     orange: 'Orange Money',
     wave: 'Wave',
