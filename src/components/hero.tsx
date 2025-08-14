@@ -25,6 +25,14 @@ const featuredContent = [
     primaryCta: { text: "Voir les Laptops", action: 'scrollAndFilter', target: '#products', filter: 'laptops' as Category },
     secondaryCta: { text: "Comparer les modèles", action: 'scroll', target: '#products' },
   },
+    {
+    type: "video",
+    title: "Restez Connecté, Vivez Mieux",
+    description: "Découvrez notre gamme de montres intelligentes et d'objets connectés pour suivre votre santé et rester productif.",
+    mediaUrl: "https://videos.pexels.com/video-files/8443383/8443383-hd_1920_1080_25fps.mp4",
+    primaryCta: { text: "Explorer les Wearables", action: 'scrollAndFilter', target: '#products', filter: 'wearables' as Category },
+    secondaryCta: { text: "Voir tous les gadgets", action: 'scroll', target: '#products' },
+  },
   {
     type: "video",
     title: "Son Immersif & Gaming",
